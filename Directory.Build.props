@@ -1,0 +1,49 @@
+<Project>
+
+    <!--
+      仓库级公共属性。本目录及所有子目录的工程自动导入，**包括将来新增的工程**。
+
+      ⚠️ MSBuild 找到**第一个** Directory.Build.props 就停止向上查找。
+         `src/Directory.Build.props` 因此必须显式 Import 本文件（它已经这么做了），
+         否则 src 下的包工程拿不到这里的任何设置，且**不报错**。
+    -->
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Product>Kimi.AppKit</Product>
+        <Company>Kimi</Company>
+        <Authors>kamazheng</Authors>
+        <Copyright>Copyright (c) Kimi</Copyright>
+        <RepositoryUrl>https://github.com/kamazheng/Kimi.AppKit</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <!-- 默认不打包。src/Directory.Build.props 会把包工程翻成 true。 -->
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <!--
+      MinVer 从 git tag 推导版本号，配合 GitHub Release 发版。
+      ⚠️ CI 的 actions/checkout 必须 `fetch-depth: 0`，否则 MinVer 看不到 tag，
+         所有包会被打成 0.0.0-alpha.0，且**不报错**。
+    -->
+    <PropertyGroup>
+        <MinVerTagPrefix></MinVerTagPrefix>
+        <MinVerDefaultPreReleaseIdentifiers>alpha.0</MinVerDefaultPreReleaseIdentifiers>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MinVer" PrivateAssets="all" />
+        <PackageReference Include="DotNet.ReproducibleBuilds" PrivateAssets="all" />
+    </ItemGroup>
+
+</Project>

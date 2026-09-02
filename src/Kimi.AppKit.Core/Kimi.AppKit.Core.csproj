@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Description>Kimi.AppKit 的零依赖基座：抽象接口、契约 POCO、反射与字符串工具、单号生成器、四层设置契约。不引用 EF Core、不引用 Blazor。</Description>
+    </PropertyGroup>
+</Project>

@@ -1,0 +1,135 @@
+<Project>
+
+    <!--
+      中央包版本管理（CPM）。全仓所有 <PackageReference> 一律**不写 Version**，版本只在这里定义一次。
+
+      为什么启用：原模板里 OpenTelemetry 家族的版本号重复 10 条、EFCore 系列重复多处，
+      升级时漏改一条就会出现「同一家族跨版本混用」——NuGet 只在少数情况下报错，
+      多数时候是静默选一个较高版本，运行期才暴露。
+
+      ⚠️ 升级 MudBlazor 主版本时，MudBlazor.ThemeManager / CodeBeam.MudBlazor.Extensions /
+         FormCraft 必须同步跳版（它们的大版本与 MudBlazor 一一对应）。
+         本仓库刻意停在 MudBlazor 8 系，8→9 是 P5 的独立分支。
+    -->
+
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    </PropertyGroup>
+
+    <!-- ── 构建与打包基础设施 ────────────────────────────────────────── -->
+    <ItemGroup>
+        <PackageVersion Include="MinVer" Version="7.0.0" />
+        <PackageVersion Include="DotNet.ReproducibleBuilds" Version="2.0.5" />
+        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.400" />
+    </ItemGroup>
+
+    <!-- ── ASP.NET Core / EF Core（整族对齐 10.0.11）──────────────────── -->
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.11" />
+        <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+
+        <!-- ⚠️ 这个包不跟随 ASP.NET Core 的版本线：它是 netstandard2.0 的老 shim，
+             最新就是 2.3.x。看到 "2.3.12" 不要以为是漏升了。 -->
+        <PackageVersion Include="Microsoft.AspNetCore.Http" Version="2.3.12" />
+    </ItemGroup>
+
+    <!-- ── API 版本化 / 文档 ──────────────────────────────────────────── -->
+    <ItemGroup>
+        <PackageVersion Include="Asp.Versioning.Mvc" Version="10.2.1" />
+        <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.2.1" />
+        <!-- P3 换成 Microsoft.AspNetCore.OpenApi + Scalar.AspNetCore（决策 #8） -->
+        <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+    </ItemGroup>
+
+    <!-- ── 可观测性（整族对齐 1.18.0）────────────────────────────────────
+         Prometheus 导出器与 EventCounters 至今没有正式版，只有与主线同版号的
+         beta/alpha。这不是版本落后，是上游就这么发的。
+         `Instrumentation.SqlClient` 在 1.18.0 已经转正（原先是 beta）。
+         ⚠️ 原模板对 GHSA-4625-4j76-fww9 的 NuGetAuditSuppress 已随本次升级删除：
+            该建议的修复版本是 1.15.3+，1.18.0 已涵盖。 -->
+    <ItemGroup>
+        <PackageVersion Include="OpenTelemetry" Version="1.18.0" />
+        <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.18.0" />
+        <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.18.0" />
+        <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.18.0-beta.1" />
+        <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.EventCounters" Version="1.18.0-alpha.1" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
+        <PackageVersion Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.18.0" />
+    </ItemGroup>
+
+    <!-- ── 后台任务 ───────────────────────────────────────────────────── -->
+    <ItemGroup>
+        <PackageVersion Include="Hangfire" Version="1.8.25" />
+        <PackageVersion Include="Hangfire.Console" Version="1.4.3" />
+    </ItemGroup>
+
+    <!-- ── UI（MudBlazor 8 系，8→9 是 P5 的独立分支）────────────────────
+         ⚠️ MudBlazor 一律钉死具体版本，禁用浮动 `8.*`：浮动会在每次 restore/部署
+            静默升级，曾导致文件上传行为在无代码改动的情况下回归。
+         ⚠️ ThemeManager / CodeBeam / FormCraft 的大版本与 MudBlazor 一一对应，
+            停在 MudBlazor 8 就必须停在这三个的旧版（各自最新分别是 4.0.0 / 9.1.0 / 3.1.0）。
+            这三个都在删除清单里（决策 #8 与 #11），无需为它们做 9 系适配。 -->
+    <ItemGroup>
+        <PackageVersion Include="MudBlazor" Version="8.15.0" />
+        <PackageVersion Include="MudBlazor.ThemeManager" Version="3.0.0" />
+        <PackageVersion Include="CodeBeam.MudBlazor.Extensions" Version="8.3.0" />
+        <PackageVersion Include="FormCraft" Version="2.5.0" />
+        <PackageVersion Include="FormCraft.ForMudBlazor" Version="2.5.0" />
+        <PackageVersion Include="Blazor-ApexCharts" Version="7.0.0" />
+        <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
+        <PackageVersion Include="Blazored.SessionStorage" Version="2.4.0" />
+        <PackageVersion Include="BlazorDownloadFileFast" Version="1.0.0.1" />
+    </ItemGroup>
+
+    <!-- ── 待内化的私有包（P1/P2/P5 后全部移除）────────────────────────
+         都是 net8.0/net9.0，可被 net10 工程引用（同框架家族向前兼容）。 -->
+    <ItemGroup>
+        <PackageVersion Include="Kimi.EFExtensions" Version="1.0.8" />
+        <PackageVersion Include="Kimi.MudBlazorExtentions" Version="1.1.13" />
+        <PackageVersion Include="Kimi.CkEditor" Version="1.0.1" />
+    </ItemGroup>
+
+    <!-- ── 其它 ───────────────────────────────────────────────────────── -->
+    <ItemGroup>
+        <PackageVersion Include="Bogus" Version="35.6.5" />
+        <PackageVersion Include="Docfx.App" Version="2.78.5" />
+        <PackageVersion Include="FluentValidation" Version="12.1.1" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.9.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.9.0" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="10.7.4" />
+        <PackageVersion Include="NPOI" Version="2.8.0" />
+        <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
+        <PackageVersion Include="nacos-sdk-csharp" Version="1.3.10" />
+        <PackageVersion Include="nacos-sdk-csharp.AspNetCore" Version="1.3.10" />
+        <PackageVersion Include="nacos-sdk-csharp.Extensions.Configuration" Version="1.3.10" />
+        <PackageVersion Include="nacos-sdk-csharp.IniParser" Version="1.3.10" />
+        <PackageVersion Include="nacos-sdk-csharp.YamlParser" Version="1.3.10" />
+    </ItemGroup>
+
+    <!-- ── 测试 ───────────────────────────────────────────────────────── -->
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+        <PackageVersion Include="xunit" Version="2.9.3" />
+        <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
+        <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    </ItemGroup>
+
+</Project>

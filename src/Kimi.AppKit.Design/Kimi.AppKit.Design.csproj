@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <Description>Kimi.AppKit 的设计系统：蓝图配色令牌、MudTheme 预设、.k-* 样式、自托管字体。C# 常量是唯一真相源，CSS 变量由它生成。</Description>
+        <AddRazorSupportForMvc>false</AddRazorSupportForMvc>
+    </PropertyGroup>
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+        <PackageReference Include="MudBlazor" />
+    </ItemGroup>
+</Project>

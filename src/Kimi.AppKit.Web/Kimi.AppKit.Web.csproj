@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Description>Kimi.AppKit 的 ASP.NET Core 10 服务端装配：全局异常处理、健康检查、认证、OpenAPI、Excel、后台任务、可观测性。</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Kimi.AppKit.Data\Kimi.AppKit.Data.csproj" />
+    </ItemGroup>
+</Project>

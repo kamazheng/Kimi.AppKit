@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <Description>Kimi.AppKit 的标准化 Blazor 组件库。渲染模式无关：静态 SSR / InteractiveServer / WebAssembly 三种模式通用。</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+        <PackageReference Include="MudBlazor" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
+        <ProjectReference Include="..\Kimi.AppKit.Design\Kimi.AppKit.Design.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Description>Kimi.AppKit 项目模板（dotnet new kimiapp）。</Description>
+        <PackageType>Template</PackageType>
+        <IncludeContentInPack>true</IncludeContentInPack>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <ContentTargetFolders>content</ContentTargetFolders>
+        <NoWarn>$(NoWarn);NU5128</NoWarn>
+        <!-- P7 才填充模板内容；在此之前不参与打包，避免发出空模板包。 -->
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+</Project>

@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Kimi.AppKit.Components/Kimi.AppKit.Components.csproj" />
+    <Project Path="src/Kimi.AppKit.Core/Kimi.AppKit.Core.csproj" />
+    <Project Path="src/Kimi.AppKit.Crud/Kimi.AppKit.Crud.csproj" />
+    <Project Path="src/Kimi.AppKit.Data/Kimi.AppKit.Data.csproj" />
+    <Project Path="src/Kimi.AppKit.Design/Kimi.AppKit.Design.csproj" />
+    <Project Path="src/Kimi.AppKit.Templates/Kimi.AppKit.Templates.csproj" />
+    <Project Path="src/Kimi.AppKit.Web/Kimi.AppKit.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Kimi.AppKit.Tests/Kimi.AppKit.Tests.csproj" />
+  </Folder>
+</Solution>

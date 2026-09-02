@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Description>Kimi.AppKit 的 EF Core 10 数据层：审计轨迹、软删除、双 provider 方言收口、UTC 时间归一、动态查询引擎。</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
+    </ItemGroup>
+</Project>
