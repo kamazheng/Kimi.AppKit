@@ -13,7 +13,20 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+        <!--
+          警告即错误。
+
+          【为什么值得付这个代价】告警一旦允许存在，数量只会单向增长：几十条噪音里
+          没人看得见新冒出来的那条真问题。而这个仓库的告警里恰恰有真问题——
+          比如 CS1574（XML 注释里 cref 解析不到）说明文档引用的类型压根不存在，
+          消费方在 IntelliSense 里会看到一个断掉的链接；ASPDEPR / NU1903 更是直接的
+          过时 API 与已知漏洞。
+
+          ⚠️ 需要临时豁免时，在**具体工程**里加 NoWarn 并写明理由，
+          不要在这里整体关掉。
+        -->
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
