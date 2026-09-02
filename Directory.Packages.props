@@ -120,6 +120,10 @@
              2.x 是 Apache-2.0，3.x 起改用 Six Labors Split License，闭源商业使用需另购授权。
              2.1.13 既修完漏洞又仍是 Apache-2.0，是这条线上唯一两全的落点。 -->
         <PackageVersion Include="SixLabors.ImageSharp" Version="2.1.13" />
+
+        <!-- Hangfire 依赖 Newtonsoft.Json 11.0.1（1 个 high severity 建议，
+             GHSA-5crp-9r3c-p9vr）。Hangfire 自身没跟进，只能在这里提版。 -->
+        <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     </ItemGroup>
 
     <!-- ── 其它 ───────────────────────────────────────────────────────── -->
@@ -136,6 +140,7 @@
              TODO(P3): ExcelService 迁进 Kimi.AppKit.Web 时定夺——付费、或换 ClosedXML(MIT)。 -->
         <PackageVersion Include="NPOI" Version="2.7.1" />
         <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
+        <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.22.0" />
         <PackageVersion Include="nacos-sdk-csharp" Version="1.3.10" />
         <PackageVersion Include="nacos-sdk-csharp.AspNetCore" Version="1.3.10" />
         <PackageVersion Include="nacos-sdk-csharp.Extensions.Configuration" Version="1.3.10" />

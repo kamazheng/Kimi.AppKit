@@ -1,9 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Description>Kimi.AppKit 的 ASP.NET Core 10 服务端装配：全局异常处理、健康检查、认证、OpenAPI、Excel、后台任务、可观测性。</Description>
+        <Description>Kimi.AppKit 的 ASP.NET Core 10 服务端装配：全局异常处理、健康检查、认证/授权骨架、Excel、后台任务。</Description>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+        <!-- ⚠️ JwtBearer 认证虽然是 ASP.NET Core 的一部分，却不在共享框架里（不同于
+             Cookie 认证），必须显式引用；IdentityModel.Protocols.OpenIdConnect 提供
+             ConfigurationManager，用来替换前身手写的、同步阻塞且关闭证书校验的 JWKS 解析。 -->
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+        <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
+        <PackageReference Include="Hangfire" />
+        <PackageReference Include="Hangfire.Console" />
+        <PackageReference Include="NPOI" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Kimi.AppKit.Data\Kimi.AppKit.Data.csproj" />
