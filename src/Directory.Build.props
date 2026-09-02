@@ -9,6 +9,8 @@
         <IsPackable>true</IsPackable>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageProjectUrl>https://github.com/kamazheng/Kimi.AppKit</PackageProjectUrl>
         <PackageTags>blazor;mudblazor;efcore;aspnetcore;enterprise;crud</PackageTags>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -35,6 +37,11 @@
 
     <ItemGroup Condition="Exists('$(MSBuildProjectDirectory)/README.md')">
         <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <!-- 全部包共用同一个图标，源文件只有一份 -->
+    <ItemGroup>
+        <None Include="$(MSBuildThisFileDirectory)../assets/icon.png" Pack="true" PackagePath="\" Visible="false" />
     </ItemGroup>
 
 </Project>
