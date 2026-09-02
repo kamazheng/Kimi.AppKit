@@ -1,0 +1,134 @@
+/* ==========================================================================
+   Kimi.AppKit「蓝图 Cyanotype」设计系统 — 设计令牌
+   --------------------------------------------------------------------------
+   配色取自模具设计图的氰版蓝（blueprint），而非通用 SaaS 蓝：
+   面向用户在车间与工厂机房，界面要像量具与图纸，不像营销落地页。
+
+   ⚠️ 这份文件是手写的，**必须与 Kimi.AppKit.Design.Tokens.BlueprintPalette 保持一致**。
+      两者不一致时 BlueprintPaletteConsistencyTests 会在 CI 上失败——那正是防止
+      「四处颜色手工同步、改一处忘三处」重演的机制。
+
+   ⚠️ 字体自托管、不引 CDN：客户多为内网/离线交付，
+      引 Google Fonts 会在无外网的现场静默回退成系统字体，排版全线走样。
+   ⚠️ 只装了 Latin 子集（60KB）。中文刻意走系统字面（苹方 / 微软雅黑）——
+      打包中文字库要 10MB+，而中文正文用系统字反而更合读者习惯。
+      所以字体栈里 Latin 字体必须排在中文字体**前面**，
+      顺序反了会让数字与 client_id 也落到中文字体的等宽半角上。
+   ========================================================================== */
+
+@font-face {
+    font-family: 'IBM Plex Sans';
+    src: url('../fonts/IBMPlexSans-var.woff2') format('woff2-variations');
+    font-weight: 100 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IBM Plex Mono';
+    src: url('../fonts/IBMPlexMono-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IBM Plex Mono';
+    src: url('../fonts/IBMPlexMono-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    /* — 蓝图色阶：登录页底、抽屉底、深色表面 — */
+    --k-blueprint: #0B2B4A;
+    --k-blueprint-deep: #07203A;
+    --k-blueprint-lift: #123B63;
+
+    /* — 制图蓝：一切可点击的主操作 — */
+    --k-draft: #1E5F9E;
+    --k-draft-hover: #17527F;
+    --k-draft-soft: #E8F0F8;
+
+    /* — 黄铜：强调、刻度、环境警示。电极黄铜是模具车间的常见材料 — */
+    --k-brass: #C4841D;
+    --k-brass-soft: #FBF2E0;
+
+    /* — 中性：冷调，避免暖白带来的"文档感" — */
+    --k-ink: #151C24;
+    --k-ink-2: #4A5765;
+    --k-ink-3: #74818F;
+    --k-paper: #FFFFFF;
+    --k-mist: #F2F5F8;
+    --k-hair: #DCE3EA;
+
+    /* — 语义 — */
+    --k-ok: #1F7A4D;
+    --k-warn: #B26A00;
+    --k-error: #B3261E;
+    --k-error-soft: #FCEDEC;
+
+    /* — 排版 — */
+    --k-font: 'IBM Plex Sans', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+    --k-mono: 'IBM Plex Mono', 'SFMono-Regular', 'Cascadia Mono', Consolas, monospace;
+
+    /* — 形状：3px 圆角。量具与夹具没有圆润的角，但全直角在屏幕上过于生硬 — */
+    --k-radius: 3px;
+    --k-radius-lg: 6px;
+
+    --k-shadow-card: 0 1px 2px rgba(7, 32, 58, .08), 0 12px 32px rgba(7, 32, 58, .16);
+    --k-shadow-soft: 0 1px 2px rgba(21, 28, 36, .06);
+}
+
+/* ⚠️ 暗色覆盖默认不生效——它只在消费方显式选用的作用域类名下才应用（示例：`.k-darkmode-scope`）。
+   前身的教训：Auth 把这段覆盖限定在 `.k-auth`（登录页外壳）是对的；
+   Files 曾经差点把同一段抄到 `:root`，那样会把控制台里一切靠继承取色的 MudBlazor 元素
+   （未选中的 tab、断线重连遮罩……）拖成浅底浅字，因为控制台的 palette 由 MudThemeProvider
+   决定、且通常没开 IsDarkMode，实测对比度只有 1.1:1，且只在用户系统是暗色时才复现。
+   **绝不要把这段无条件挂到 :root。** 只有真正拥有登录页外壳的消费方才需要引入这段覆盖。 */
+@media (prefers-color-scheme: dark) {
+    .k-darkmode-scope {
+        --k-paper: #16202B;
+        --k-mist: #0E1720;
+        --k-ink: #E4EAF0;
+        --k-ink-2: #A9B6C4;
+        --k-ink-3: #8492A1;
+        --k-hair: #2A3846;
+        --k-draft: #5FA0DC;
+        --k-draft-hover: #7BB4E8;
+        --k-draft-soft: #1B2E42;
+        --k-brass: #E0A33D;
+        --k-brass-soft: #2A2214;
+        --k-error-soft: #33191A;
+    }
+}
+
+/* ==========================================================================
+   打印安全色 —— 浏览器打印时不吃 CSS 变量的场景（部分浏览器的打印渲染路径
+   不解析 :root 自定义属性），因此这里提供固定的十六进制类名，供打印专用样式表使用。
+   前身在 MES 里对同一批颜色各写了 127 处硬编码，这里给一个统一的命名落点。
+   ========================================================================== */
+.k-print-ink { color: #151C24; }
+.k-print-draft { color: #1E5F9E; }
+.k-print-brass { color: #C4841D; }
+.k-print-hair { border-color: #DCE3EA; }
+
+/* ==========================================================================
+   非生产环境警示条 —— 安全信号不是装饰：生产配置守卫与异常页脱敏都按环境分支，
+   哪个环境在跑必须一眼可见，否则漏设环境变量的实例会被当成正式站交付。
+   ========================================================================== */
+.k-envchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    border-radius: var(--k-radius, 3px);
+    background: var(--k-brass-soft, #FBF2E0);
+    color: var(--k-brass, #C4841D);
+    font-family: var(--k-mono, monospace);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}

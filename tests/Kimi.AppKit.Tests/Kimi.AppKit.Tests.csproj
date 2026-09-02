@@ -21,5 +21,6 @@
         <ProjectReference Include="..\..\src\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
         <ProjectReference Include="..\..\src\Kimi.AppKit.Data\Kimi.AppKit.Data.csproj" />
         <ProjectReference Include="..\..\src\Kimi.AppKit.Web\Kimi.AppKit.Web.csproj" />
+        <ProjectReference Include="..\..\src\Kimi.AppKit.Design\Kimi.AppKit.Design.csproj" />
     </ItemGroup>
 </Project>
