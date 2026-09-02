@@ -148,6 +148,8 @@
          测不出「两阶段保存要在同一事务里」这类行为）。 -->
     <ItemGroup>
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+        <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
+        <PackageVersion Include="Testcontainers.MsSql" Version="4.14.0" />
     </ItemGroup>
 
     <!-- ── 测试 ───────────────────────────────────────────────────────── -->

@@ -9,6 +9,7 @@
     <Project Path="src/Kimi.AppKit.Web/Kimi.AppKit.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Kimi.AppKit.IntegrationTests/Kimi.AppKit.IntegrationTests.csproj" />
     <Project Path="tests/Kimi.AppKit.Tests/Kimi.AppKit.Tests.csproj" />
   </Folder>
 </Solution>

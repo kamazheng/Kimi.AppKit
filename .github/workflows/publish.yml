@@ -78,17 +78,30 @@ jobs:
       # ⚠️ 这一步不允许 continue-on-error。
       #    参考教训：Kimi.MudBlazorExtentions 的 CI 里 run_test 跑的是一个 10 行的空 [Fact]，
       #    于是历次发布实质上没有任何自动化验证。gate 必须是真的。
-      - name: 包的回归测试
-        run: dotnet test Kimi.AppKit.slnx -c Release
+      - name: 包的回归测试（单元测试，不含双 provider 集成测试）
+        run: dotnet test Kimi.AppKit.slnx -c Release --filter "FullyQualifiedName!~IntegrationTests"
 
       - name: 样例工程构建与测试
         run: dotnet test samples/AppTemplate/Kimi.AppKit.Sample.sln -c Release
+
+  integration_test:
+    # ubuntu-latest 自带 Docker，Testcontainers 用它拉起真实的 PostgreSQL / SQL Server 容器。
+    # 这条 gate 存在的意义：SQLite 单元测试验证逻辑正确，但测不出两个 provider 的真实分歧
+    # （尤其 UTC 时区归一——必须连真正的 Npgsql 驱动才能验证 timestamptz 的 offset 限制）。
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: 双 provider 集成测试
+        run: dotnet test tests/Kimi.AppKit.IntegrationTests -c Release
 
   deploy:
     # 只有发 GitHub Release 才真正推包。push / PR 只做打包、校验与测试。
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
-    needs: [validate_nuget, run_test]
+    needs: [validate_nuget, run_test, integration_test]
     steps:
       - uses: actions/download-artifact@v4
         with:
