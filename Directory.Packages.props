@@ -107,15 +107,34 @@
         <PackageVersion Include="Kimi.CkEditor" Version="1.0.1" />
     </ItemGroup>
 
+    <!-- ── 传递依赖的安全提版 ──────────────────────────────────────────
+         这些包没有任何工程直接引用，靠 CentralPackageTransitivePinningEnabled 提版。
+         删除任何一条之前，先跑 `dotnet restore` 确认审计不再报 NU1903。 -->
+    <ItemGroup>
+        <!-- NPOI 依赖 System.Security.Cryptography.Xml 8.0.2，该版本有 8 个 high severity
+             建议（GHSA-23rf-6693-g89p 等）。NPOI 自身没跟进，只能在这里提到 10.0.11。 -->
+        <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.11" />
+
+        <!-- NPOI 2.7.1 依赖 SixLabors.ImageSharp 2.1.8（2 个 high + 2 个 moderate 建议）。
+             ⚠️ **只能提到 2.1.x 的最新补丁，不要跳 3.x** —— 这同样是许可问题：
+             2.x 是 Apache-2.0，3.x 起改用 Six Labors Split License，闭源商业使用需另购授权。
+             2.1.13 既修完漏洞又仍是 Apache-2.0，是这条线上唯一两全的落点。 -->
+        <PackageVersion Include="SixLabors.ImageSharp" Version="2.1.13" />
+    </ItemGroup>
+
     <!-- ── 其它 ───────────────────────────────────────────────────────── -->
     <ItemGroup>
         <PackageVersion Include="Bogus" Version="35.6.5" />
-        <PackageVersion Include="Docfx.App" Version="2.78.5" />
         <PackageVersion Include="FluentValidation" Version="12.1.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.9.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.9.0" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="10.7.4" />
-        <PackageVersion Include="NPOI" Version="2.8.0" />
+        <!-- ⚠️ 刻意停在 2.7.1，不要升 2.8.0 —— 这是许可问题不是技术问题。
+             2.7.1 = Apache-2.0（无附加条件）；
+             2.8.0 起 nuget.org 上的**二进制包**改用 OSMF（Open Source Maintenance Fee）协议：
+             用于营利活动且年营收 ≥ US$10,000 的用户须按月付维护费，构建时还要求显式写
+             <AcceptNPOIOSMFLicense>true</AcceptNPOIOSMFLicense> 表示接受 EULA。
+             本产品是对外销售的商业软件，会落进收费区间。
+             TODO(P3): ExcelService 迁进 Kimi.AppKit.Web 时定夺——付费、或换 ClosedXML(MIT)。 -->
+        <PackageVersion Include="NPOI" Version="2.7.1" />
         <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
         <PackageVersion Include="nacos-sdk-csharp" Version="1.3.10" />
         <PackageVersion Include="nacos-sdk-csharp.AspNetCore" Version="1.3.10" />

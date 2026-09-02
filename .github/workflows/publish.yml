@@ -1,0 +1,103 @@
+name: publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+  release:
+    types: [published]
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_NOLOGO: true
+  NuGetDirectory: ${{ github.workspace }}/nuget
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  create_nuget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # ⚠️ 不可省。MinVer 靠 git tag 推导版本号，浅克隆下它看不到任何 tag，
+          #    会**静默**把所有包打成 0.0.0-alpha.0——构建全绿、包却是废的。
+          #    tests/PackagingTests 里有一条断言专门守这个。
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - run: dotnet pack Kimi.AppKit.slnx -c Release -o "${{ env.NuGetDirectory }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nuget
+          if-no-files-found: error
+          retention-days: 7
+          path: ${{ env.NuGetDirectory }}/*
+
+  validate_nuget:
+    runs-on: ubuntu-latest
+    needs: [create_nuget]
+    steps:
+      - uses: actions/setup-dotnet@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+
+      - run: dotnet tool install --global Meziantou.Framework.NuGetPackageValidation.Tool
+
+      # 119 = "作者与所有者相同"，个人仓库天然如此，不是问题。
+      - name: 校验包元数据
+        run: |
+          shopt -s nullglob
+          for pkg in "${{ env.NuGetDirectory }}"/*.nupkg; do
+            meziantou.validate-nuget-package "$pkg" --excluded-rule-ids 119
+          done
+
+  run_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      # ⚠️ 这一步不允许 continue-on-error。
+      #    参考教训：Kimi.MudBlazorExtentions 的 CI 里 run_test 跑的是一个 10 行的空 [Fact]，
+      #    于是历次发布实质上没有任何自动化验证。gate 必须是真的。
+      - name: 包的回归测试
+        run: dotnet test Kimi.AppKit.slnx -c Release
+
+      - name: 样例工程构建与测试
+        run: dotnet test samples/AppTemplate/Kimi.AppKit.Sample.sln -c Release
+
+  deploy:
+    # 只有发 GitHub Release 才真正推包。push / PR 只做打包、校验与测试。
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    needs: [validate_nuget, run_test]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+      - uses: actions/setup-dotnet@v4
+
+      - name: 推送到 nuget.org
+        run: |
+          shopt -s nullglob
+          for pkg in "${{ env.NuGetDirectory }}"/*.nupkg; do
+            dotnet nuget push "$pkg" \
+              --api-key "${{ secrets.NUGET_APIKEY }}" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done

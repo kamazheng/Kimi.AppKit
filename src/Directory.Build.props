@@ -12,8 +12,16 @@
         <PackageTags>blazor;mudblazor;efcore;aspnetcore;enterprise;crud</PackageTags>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+        <!-- 调试符号内嵌进 DLL（DotNet.ReproducibleBuilds 已设 DebugType=embedded），
+             配合 SourceLink 即可直接 F11 进包的源码，消费方无需配置符号服务器。
+
+             ⚠️ 因此**不要**再打开 IncludeSymbols/SymbolPackageFormat=snupkg：
+                没有独立 .pdb 文件时 snupkg 是空的，而零依赖的 Kimi.AppKit.Core
+                会因为「既无依赖也无内容」直接 NU5017 打包失败——
+                其余几个包只是因为碰巧有依赖项才侥幸通过，问题一样存在。 -->
+        <DebugType>embedded</DebugType>
+        <IncludeSymbols>false</IncludeSymbols>
 
         <!-- 包必须带 XML doc：本产品把「实测换来的隐性知识」写在 XML 注释里，
              消费方靠 IntelliSense 读到它们。丢了等于知识丢了。 -->
