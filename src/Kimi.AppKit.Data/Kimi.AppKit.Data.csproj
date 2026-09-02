@@ -1,7 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Description>Kimi.AppKit 的 EF Core 10 数据层：审计轨迹、软删除、双 provider 方言收口、UTC 时间归一、动态查询引擎。</Description>
+        <Description>Kimi.AppKit 的 EF Core 10 数据层：审计轨迹、软删除、双 provider 方言收口、UTC 时间归一。不包含迁移——迁移属于消费方的数据库。</Description>
     </PropertyGroup>
+
+    <!-- ⚠️ 只依赖 Relational，**绝不依赖任何 provider 包**。
+         前身 Kimi.EFExtensions 直接引了 EntityFrameworkCore.SqlServer，
+         于是引用它的共享工程把 Microsoft.Data.SqlClient 一路拖进了 WASM 浏览器端。
+         tests/PackagingTests 有一条断言守这个。 -->
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    </ItemGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
     </ItemGroup>

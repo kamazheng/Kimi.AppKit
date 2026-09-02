@@ -143,6 +143,13 @@
         <PackageVersion Include="nacos-sdk-csharp.YamlParser" Version="1.3.10" />
     </ItemGroup>
 
+    <!-- 测试用的 provider。SQLite 内存模式能真正跑事务与约束，
+         比 EFCore.InMemory 有意义得多（后者不支持事务、不校验约束，
+         测不出「两阶段保存要在同一事务里」这类行为）。 -->
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+    </ItemGroup>
+
     <!-- ── 测试 ───────────────────────────────────────────────────────── -->
     <ItemGroup>
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />

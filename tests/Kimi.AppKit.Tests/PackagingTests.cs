@@ -52,4 +52,27 @@ public class PackagingTests
         Assert.DoesNotContain(referenced, n => n.StartsWith("Microsoft.AspNetCore"));
         Assert.DoesNotContain(referenced, n => n.StartsWith("Microsoft.Data.SqlClient"));
     }
+
+    /// <summary>
+    /// Data 包只能依赖 EF Core 的 Relational 层，**不得依赖任何具体 provider**。
+    ///
+    /// 这条守的是一个已经发生过的真实事故：前身 <c>Kimi.EFExtensions</c> 直接引用了
+    /// <c>Microsoft.EntityFrameworkCore.SqlServer</c>，于是引用它的共享工程把
+    /// <c>Microsoft.Data.SqlClient</c> 一路拖进了 **Blazor WebAssembly 浏览器端** ——
+    /// 一个永远不可能连数据库的地方，白白背了几 MB 的负载。
+    ///
+    /// 更根本的问题是：包一旦绑定某个 provider，「支持双 provider」这个承诺就是假的。
+    /// </summary>
+    [Fact]
+    public void Data_不依赖任何具体的数据库_provider()
+    {
+        var referenced = typeof(AppKit.Data.AppKitMarker).Assembly
+            .GetReferencedAssemblies()
+            .Select(a => a.Name!)
+            .ToArray();
+
+        Assert.DoesNotContain(referenced, n => n.StartsWith("Microsoft.EntityFrameworkCore.SqlServer"));
+        Assert.DoesNotContain(referenced, n => n.StartsWith("Microsoft.Data.SqlClient"));
+        Assert.DoesNotContain(referenced, n => n.StartsWith("Npgsql"));
+    }
 }
