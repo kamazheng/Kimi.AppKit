@@ -29,11 +29,17 @@ public static class HangfireSetup
     /// PostgreSQL 存储的接线方式，通常是 <c>c => c.UsePostgreSqlStorage(cs)</c>
     /// （来自 <c>Hangfire.PostgreSql</c> 包）。<paramref name="provider"/> 为 SqlServer 时不会被调用。
     /// </param>
+    /// <param name="configureAdditional">
+    /// 逃生舱：在应用兼容性级别/序列化设置这组基线之后、选择存储之前，做进一步调整。
+    /// 基线本身（<c>CompatibilityLevel</c>、序列化设置）是 Hangfire 官方推荐值，
+    /// 关系到任务持久化格式的兼容性，不作为可自由更改的参数开放——真的需要偏离时用这个钩子。
+    /// </param>
     public static IServiceCollection AddAppKitHangfire(
         this IServiceCollection services,
         DatabaseProvider provider,
         string connectionString,
-        Action<IGlobalConfiguration> configurePostgres)
+        Action<IGlobalConfiguration> configurePostgres,
+        Action<IGlobalConfiguration>? configureAdditional = null)
     {
         services.AddHangfire((serviceProvider, configuration) =>
         {
@@ -42,6 +48,8 @@ public static class HangfireSetup
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
                 .UseConsole();
+
+            configureAdditional?.Invoke(configuration);
 
             if (provider == DatabaseProvider.SqlServer)
             {

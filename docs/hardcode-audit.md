@@ -155,6 +155,22 @@
 
 ---
 
+## 补充教训：新写的包代码也会犯同一类错
+
+P3a 写 `ConfigureAppKitJwtBearer` 时，把「无条件关闭证书校验」换成了「无条件用
+`RequireHttpsMetadata=true` / `RoleClaimType="role"` / `ClockSkew=TimeSpan.Zero`」——
+**同一类硬编码问题换了个位置**，只是从"不安全的硬编码"变成"安全但不可覆盖的硬编码"。
+
+判据：一个字面量该不该开放成参数，看**"不同部署/环境下这个值是否真的需要不同"**：
+- 需要（本地开发用 http、对接非 `role` 命名的 IdP、多副本时钟未对齐）→ 开放成带安全默认值的可选参数
+- 不需要（Hangfire 的 `CompatibilityLevel`、序列化设置——这是框架推荐的兼容性基线，
+  改错会破坏任务持久化格式）→ 保持硬编码，但仍给一个 `Action<T>` 逃生舱，
+  不要因为"这是安全默认值"就完全不留扩展点
+
+修复的三处：`JwtBearerSetup`（`requireHttpsMetadata`/`roleClaimType`/`clockSkew` 三个可选参数
++ `configureValidation` 逃生舱）、`HealthCheckSetup`（`checkName` 参数，默认 `"database"`）、
+`CorsSetup`（`allowedMethods`/`allowedHeaders` 可选参数）、`HangfireSetup`（`configureAdditional` 逃生舱）。
+
 ## 处理排期
 
 | 优先级 | 内容 | 落在哪个阶段 |

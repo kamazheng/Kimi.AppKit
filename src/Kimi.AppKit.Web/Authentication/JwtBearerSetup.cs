@@ -20,6 +20,23 @@ public static class JwtBearerSetup
     /// <param name="audience">
     /// 本 API 的受众标识（对应 IdP 侧的 resource/scope 配置）。
     /// </param>
+    /// <param name="requireHttpsMetadata">
+    /// 元数据端点是否必须走 HTTPS。默认 <c>true</c>。
+    /// ⚠️ 只应在本地开发对接跑在 http 上的自建 IdP 时关闭，生产环境不要改。
+    /// </param>
+    /// <param name="roleClaimType">
+    /// 角色声明的 claim 名。默认 <c>"role"</c>，需与 IdP 签发令牌时使用的名字一致——
+    /// 不同 IdP 约定不同（Okta/Auth0 等常用别的命名空间前缀），配错的后果是**静默**的：
+    /// 令牌里明明有角色，<c>User.IsInRole(...)</c> 却一路返回 false。
+    /// </param>
+    /// <param name="clockSkew">
+    /// 时钟偏移容忍度。默认 <see cref="TimeSpan.Zero"/>（不放宽）。
+    /// 多副本部署且宿主机时钟没对齐 NTP 时，可能需要放宽到几十秒。
+    /// </param>
+    /// <param name="configureValidation">
+    /// 逃生舱：在应用上述默认值之后，对 <see cref="TokenValidationParameters"/> 做进一步调整。
+    /// 用于本方法未覆盖到的场景，不要为了改一个字段就绕过本方法重新写一遍装配。
+    /// </param>
     /// <remarks>
     /// 【与前身实现的核心差异——这是架构评审 R1，认证根基级别的修复】
     ///
@@ -40,18 +57,32 @@ public static class JwtBearerSetup
     /// 前身关闭了受众校验，意味着同一 IdP 上任意其它注册客户端签发的令牌，只要签发者和
     /// 签名对得上就会被这个 API 接受——典型的 confused deputy。本方法要求消费方显式给出
     /// <paramref name="audience"/>，不提供默认放行的重载。
+    ///
+    /// 【⚠️ 首版实现曾把 <paramref name="requireHttpsMetadata"/>/<paramref name="roleClaimType"/>/
+    /// <paramref name="clockSkew"/> 写死在方法体里，只是把「无条件关证书校验」换成了另一种
+    /// 「无条件用这三个值」——同一类问题换了个位置。这三项在不同部署（本地开发、对接非
+    /// <c>role</c> 命名约定的 IdP、多副本时钟未对齐）下确实需要不同的值，因此改成
+    /// 带安全默认值的可选参数，而不是继续硬编码。
     /// </remarks>
-    public static void ConfigureAppKitJwtBearer(this JwtBearerOptions options, string authority, string audience)
+    public static void ConfigureAppKitJwtBearer(
+        this JwtBearerOptions options,
+        string authority,
+        string audience,
+        bool requireHttpsMetadata = true,
+        string roleClaimType = "role",
+        TimeSpan? clockSkew = null,
+        Action<TokenValidationParameters>? configureValidation = null)
     {
-        options.RequireHttpsMetadata = true;
+        options.RequireHttpsMetadata = requireHttpsMetadata;
         options.SaveToken = true;
 
         // ⚠️ MapInboundClaims 必须为 false：JwtBearer 默认把 role/sub/email 改写成
-        // 长长的 WS-* URI，导致 RoleClaimType="role" 与直接读 claim 的代码全部失配，
-        // 且这类失配是静默的——令牌里明明有角色，接口却一路 403。
+        // 长长的 WS-* URI，导致 RoleClaimType 与直接读 claim 的代码全部失配，
+        // 且这类失配是静默的——令牌里明明有角色，接口却一路 403。这一条不开放为参数：
+        // 它不是"不同部署需要不同值"的配置项，是让 RoleClaimType 参数本身生效的前提。
         options.MapInboundClaims = false;
 
-        options.TokenValidationParameters = new TokenValidationParameters
+        var validationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             ValidateIssuer = true,
@@ -59,9 +90,12 @@ public static class JwtBearerSetup
             ValidateAudience = true,
             ValidAudience = audience,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            RoleClaimType = "role",
+            ClockSkew = clockSkew ?? TimeSpan.Zero,
+            RoleClaimType = roleClaimType,
         };
+
+        configureValidation?.Invoke(validationParameters);
+        options.TokenValidationParameters = validationParameters;
 
         options.ConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
             $"{authority.TrimEnd('/')}/.well-known/openid-configuration",

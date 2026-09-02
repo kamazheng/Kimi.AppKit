@@ -30,9 +30,16 @@ public static class HealthCheckSetup
     /// 新增外部依赖（Redis、消息队列等）时用 <see cref="IHealthChecksBuilder"/> 追加，
     /// 并同样打 <c>ready</c> 标签才会被 <c>/health/ready</c> 纳入。
     /// </summary>
-    public static IHealthChecksBuilder AddAppHealthChecks<TContext>(this IServiceCollection services)
+    /// <param name="services">服务集合。</param>
+    /// <param name="checkName">
+    /// 该检查项在响应 JSON 里的名字。默认 <c>"database"</c>；
+    /// 需要在同一应用里注册多个 <see cref="DbContext"/> 各自的检查时，必须传不同的名字——
+    /// 检查项名字须唯一，重名会在注册时抛异常。
+    /// </param>
+    public static IHealthChecksBuilder AddAppHealthChecks<TContext>(
+        this IServiceCollection services, string checkName = "database")
         where TContext : DbContext =>
-        services.AddHealthChecks().AddDbContextCheck<TContext>("database", tags: [ReadyTag]);
+        services.AddHealthChecks().AddDbContextCheck<TContext>(checkName, tags: [ReadyTag]);
 
     /// <summary>映射 <c>/health/live</c> 与 <c>/health/ready</c> 两个端点。</summary>
     public static WebApplication MapAppHealthChecks(this WebApplication app)
