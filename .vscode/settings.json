@@ -1,0 +1,5 @@
+{
+  // 项目用 .NET resx 本地化（按程序集/类型组织，非单一 locales 目录），
+  // i18n Ally 无法正确建模，且会把 appsettings.json 误识别为语言文件。
+  "i18n-ally.disabled": true
+}
