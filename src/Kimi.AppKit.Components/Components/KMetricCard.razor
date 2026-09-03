@@ -1,0 +1,33 @@
+@* 指标卡片：标题 + 大字号数值 + 可选趋势说明。仪表盘/看板类首页的标准单元。*@
+<MudPaper Class="k-metric-card pa-4" Elevation="1">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.body2" Color="Color.Secondary">@Title</MudText>
+        <MudStack Row AlignItems="AlignItems.Baseline" Spacing="2">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <MudIcon Icon="@Icon" Color="@IconColor" Size="Size.Medium" />
+            }
+            <MudText Typo="Typo.h4">@Value</MudText>
+        </MudStack>
+        @if (!string.IsNullOrWhiteSpace(Delta))
+        {
+            <MudText Typo="Typo.caption" Color="@DeltaColor">@Delta</MudText>
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired] public string Value { get; set; } = string.Empty;
+
+    /// <summary>MudBlazor 图标常量，如 <c>Icons.Material.Filled.Inventory</c>。为空不渲染图标。</summary>
+    [Parameter] public string? Icon { get; set; }
+
+    [Parameter] public Color IconColor { get; set; } = Color.Primary;
+
+    /// <summary>趋势说明，如"较昨日 +12%"。为空不渲染。</summary>
+    [Parameter] public string? Delta { get; set; }
+
+    [Parameter] public Color DeltaColor { get; set; } = Color.Secondary;
+}

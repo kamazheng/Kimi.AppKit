@@ -1,0 +1,22 @@
+@* 筛选条：搜索框 + 插槽式自定义筛选项。只负责"收集用户输入 → 产出搜索词变化事件"，
+   不知道数据源、也不知道 KDataTable——调用方在 SearchChanged 里更新自己持有的 KQuery
+   并调 KDataTable.ReloadAsync()。结构化筛选项（下拉/日期范围等）完全由调用方通过
+   ChildContent 提供并自行管理状态，本组件不替调用方决定筛选项该长什么样。*@
+<MudToolBar Class="k-filter-bar pa-0" Dense="true">
+    <KSearchField Value="@Search" ValueChanged="OnSearchChangedAsync" Placeholder="@SearchPlaceholder" />
+    @ChildContent
+    <MudSpacer />
+</MudToolBar>
+
+@code {
+    [Parameter] public string? Search { get; set; }
+
+    [Parameter] public EventCallback<string?> SearchChanged { get; set; }
+
+    [Parameter] public string SearchPlaceholder { get; set; } = "搜索…";
+
+    /// <summary>自定义筛选项插槽，如下拉/日期范围/预设筛选按钮。</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private Task OnSearchChangedAsync(string? value) => SearchChanged.InvokeAsync(value);
+}

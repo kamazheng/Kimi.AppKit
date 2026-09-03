@@ -1,0 +1,50 @@
+@* 通用错误详情对话框：主消息默认展开，完整异常链折叠在"详情"之后。
+   由 ApiErrorPresenter 收到 5xx/未分类异常时弹出。*@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6" Color="Color.Error">
+            <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Class="mr-2 mb-n1" />出错了
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudAlert Severity="Severity.Error" Style="word-break:break-word;">@Message</MudAlert>
+
+        @if (_showDetail)
+        {
+            @if (!string.IsNullOrWhiteSpace(ServerDetail))
+            {
+                <MudText Typo="Typo.subtitle2" Class="mt-3">服务器异常详情</MudText>
+                <MudPaper Outlined="true" Class="pa-2" Style="max-height:40vh;overflow:auto;">
+                    <pre style="white-space:pre-wrap;word-break:break-word;margin:0;font-family:monospace;">@ServerDetail</pre>
+                </MudPaper>
+            }
+            <MudText Typo="Typo.subtitle2" Class="mt-3">客户端异常</MudText>
+            <MudPaper Outlined="true" Class="pa-2" Style="max-height:40vh;overflow:auto;">
+                <pre style="white-space:pre-wrap;word-break:break-word;margin:0;font-family:monospace;">@ClientDetail</pre>
+            </MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="ToggleDetail">@(_showDetail ? "收起详情" : "详情")</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">关闭</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    /// <summary>主消息：EnsureSuccessCode 一类的调用方已把它友好化。</summary>
+    [Parameter, EditorRequired] public string Message { get; set; } = string.Empty;
+
+    /// <summary>服务器 InnerException 链，来自 <c>ex.Data["serverException"]</c> 跨端契约。</summary>
+    [Parameter] public string? ServerDetail { get; set; }
+
+    /// <summary>客户端异常的完整 <c>ToString()</c>（含堆栈）。</summary>
+    [Parameter] public string? ClientDetail { get; set; }
+
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private bool _showDetail;
+
+    private void ToggleDetail() => _showDetail = !_showDetail;
+
+    private void Close() => MudDialog.Close();
+}

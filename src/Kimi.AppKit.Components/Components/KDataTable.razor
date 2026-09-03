@@ -1,0 +1,65 @@
+@* 服务端分页表格：包 MudTable 的 ServerData 接线，接 ICrudDataSource<T> + KQuery/KPage<T>。
+   薄封装——列由调用方通过 HeaderContent/RowTemplate 描述，不引入新的列 DSL，
+   这样 MudTable 本身的能力（排序标签、密度、固定表头）调用方都还能直接用。*@
+@typeparam T
+
+<MudTable T="T" ServerData="ServerReloadAsync" @ref="_table" Dense="Dense" FixedHeader="FixedHeader" Class="@Class">
+    <HeaderContent>@HeaderContent</HeaderContent>
+    <RowTemplate Context="row">@RowTemplate(row)</RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="PageSizeOptions" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private MudTable<T>? _table;
+
+    [Parameter, EditorRequired] public ICrudDataSource<T> DataSource { get; set; } = null!;
+
+    [Parameter, EditorRequired] public RenderFragment HeaderContent { get; set; } = null!;
+
+    [Parameter, EditorRequired] public RenderFragment<T> RowTemplate { get; set; } = null!;
+
+    /// <summary>
+    /// 外部搜索/筛选状态（来自 <see cref="KFilterBar"/>）。变化后调用方需自行触发
+    /// <see cref="ReloadAsync"/>——本组件不侦测这个参数的变化，避免和 MudTable 自身的
+    /// 分页状态产生"到底谁触发了重新加载"的歧义。
+    /// </summary>
+    [Parameter] public KQuery? Filter { get; set; }
+
+    [Parameter] public bool Dense { get; set; } = true;
+
+    [Parameter] public bool FixedHeader { get; set; } = true;
+
+    [Parameter] public string? Class { get; set; }
+
+    [Parameter] public int[] PageSizeOptions { get; set; } = [20, 50, 100];
+
+    /// <summary>供调用方在筛选条件变化、或增删改之后主动刷新当前页。</summary>
+    public Task ReloadAsync() => _table?.ReloadServerData() ?? Task.CompletedTask;
+
+    private async Task<TableData<T>> ServerReloadAsync(TableState state, CancellationToken cancellationToken)
+    {
+        var query = BuildQuery(Filter, state);
+        var page = await DataSource.LoadAsync(query, cancellationToken);
+        return new TableData<T> { Items = page.Items, TotalItems = page.TotalCount };
+    }
+
+    /// <summary>
+    /// 把 MudTable 的 <see cref="TableState"/> 与外部筛选状态合并成一个 <see cref="KQuery"/>。
+    /// 独立成静态方法是为了能脱离 MudTable 的渲染/JS 互操作直接单测——
+    /// 这里的基准换算正是"第一页显示第二页数据"这类历史事故的根源，必须锁死。
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ <see cref="TableState.Page"/> 是 0-based，<see cref="KQuery.Page"/> 是 1-based。
+    /// 调用方与 <see cref="ICrudDataSource{T}"/> 的实现都只看得到 1-based 的 <see cref="KQuery"/>，
+    /// 两者混用是这类错位 bug 的根源。
+    /// </remarks>
+    public static KQuery BuildQuery(KQuery? filter, TableState state) => (filter ?? new KQuery()) with
+    {
+        Page = state.Page + 1,
+        PageSize = state.PageSize,
+        SortBy = string.IsNullOrEmpty(state.SortLabel) ? null : state.SortLabel,
+        SortDescending = state.SortDirection == SortDirection.Descending,
+    };
+}

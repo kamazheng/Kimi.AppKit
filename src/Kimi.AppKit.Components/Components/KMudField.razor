@@ -1,0 +1,29 @@
+@* KField 的交互式对应物：同样的参数契约，渲染成 MudTextField。用于 InteractiveServer/WASM
+   页面——静态 SSR 页面请用 KField（MudBlazor 表单控件在静态 SSR 下不生成 name、不接交互）。
+   ⚠️ 当前只覆盖字符串字段，与 KField 的覆盖范围保持一致。*@
+<MudTextField T="string" Value="@Value" ValueChanged="OnChangedAsync" For="@For"
+              Label="@Label" HelperText="@HelperText" Disabled="@Disabled"
+              Required="@Required" Placeholder="@Placeholder"
+              Variant="Variant.Outlined" InputType="@InputType" FullWidth="true" />
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter, EditorRequired] public Expression<Func<string?>> For { get; set; } = null!;
+
+    [Parameter] public bool Disabled { get; set; }
+
+    [Parameter] public bool Required { get; set; }
+
+    [Parameter] public string? Placeholder { get; set; }
+
+    [Parameter] public string? HelperText { get; set; }
+
+    [Parameter] public InputType InputType { get; set; } = InputType.Text;
+
+    private Task OnChangedAsync(string? value) => ValueChanged.InvokeAsync(value);
+}

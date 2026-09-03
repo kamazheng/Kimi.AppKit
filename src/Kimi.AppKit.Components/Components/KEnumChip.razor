@@ -1,0 +1,46 @@
+@* 枚举 → 颜色/图标映射的芯片。取代 MES 里 47 处枚举 → 颜色的手写 switch。
+   颜色来源：先看枚举成员上有没有贴 [EnumChipColor]，没有则按声明顺序轮转固定色板——
+   轮转色板不追求语义精确，只保证"同一个枚举值在任何地方颜色一致"。*@
+@typeparam TEnum where TEnum : struct, Enum
+
+<MudChip T="string" Color="@_color" Size="Size" Variant="Variant.Filled">@_label</MudChip>
+
+@code {
+    private static readonly Color[] Palette =
+    [
+        Color.Primary, Color.Secondary, Color.Tertiary, Color.Info,
+        Color.Success, Color.Warning, Color.Error, Color.Dark,
+    ];
+
+    [Parameter, EditorRequired] public TEnum Value { get; set; }
+
+    [Parameter] public Size Size { get; set; } = Size.Small;
+
+    private string _label = string.Empty;
+    private Color _color;
+
+    protected override void OnParametersSet() => (_label, _color) = Resolve(Value);
+
+    /// <summary>
+    /// 计算展示标签与颜色，与渲染分离——可以脱离 MudBlazor 渲染管线直接单测，
+    /// 不必为了验证"轮转色板/特性覆盖对不对"而拉起整套 MudChip 的 JS 互操作依赖。
+    /// </summary>
+    public static (string Label, Color Color) Resolve(TEnum value)
+    {
+        var field = typeof(TEnum).GetField(value.ToString());
+        var label = field is not null
+            ? Kimi.AppKit.Core.Reflection.DisplayLabelExtensions.GetDisplayLabel(field)
+            : value.ToString();
+
+        var colorAttribute = field?.GetCustomAttributes(typeof(EnumChipColorAttribute), false)
+            .Cast<EnumChipColorAttribute>().FirstOrDefault();
+
+        if (colorAttribute is not null) return (label, colorAttribute.Color);
+
+        // 未贴特性时按声明顺序轮转，不用 GetHashCode()——枚举的哈希基于底层数值，
+        // 显式赋值的枚举（如 = 10, = 20）会打乱轮转顺序，看着像"颜色随机跳"。
+        var values = Enum.GetValues<TEnum>();
+        var index = Array.IndexOf(values, value);
+        return (label, Palette[(index < 0 ? 0 : index) % Palette.Length]);
+    }
+}

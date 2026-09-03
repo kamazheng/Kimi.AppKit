@@ -1,0 +1,21 @@
+@* 语义状态芯片：颜色词汇与 KAlert 共用同一套 Severity，业务代码不必在
+   "MudAlert 用 Severity、Chip 用 Color" 两套色彩体系间来回换算。*@
+<MudChip T="string" Color="@ToColor(Severity)" Size="Size" Variant="Variant.Filled">@Text</MudChip>
+
+@code {
+    [Parameter, EditorRequired] public string Text { get; set; } = string.Empty;
+
+    [Parameter] public Severity Severity { get; set; } = Severity.Normal;
+
+    [Parameter] public Size Size { get; set; } = Size.Small;
+
+    /// <summary>Severity → Color 的映射，公开出来是为了不必渲染整个 MudChip 就能单测这条规则。</summary>
+    public static Color ToColor(Severity severity) => severity switch
+    {
+        Severity.Info => Color.Info,
+        Severity.Success => Color.Success,
+        Severity.Warning => Color.Warning,
+        Severity.Error => Color.Error,
+        _ => Color.Default,
+    };
+}

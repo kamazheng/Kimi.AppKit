@@ -1,4 +1,5 @@
 using System.Net;
+using Kimi.AppKit.Components.Dialogs;
 using Kimi.AppKit.Core.Abstractions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -14,11 +15,11 @@ namespace Kimi.AppKit.Components.Buttons;
 /// 同一个 403 在这个页面弹一条纯文本吐司、在那个页面弹一个对话框，用户经验不一致，
 /// 还容易漏处理某个状态码（尤其 401——忘了跳登录，用户以为系统卡死了）。
 ///
-/// 【与前身实现的差异】不再依赖自定义的 <c>AccessDeniedDialog</c>/<c>MyErrorContent</c>
-/// 对话框组件——那两个组件本身有价值，但把它们也搬进来会让本次改动的范围失控。
-/// 现在 403/其它错误改用 MudBlazor 自带的 <c>IDialogService.ShowMessageBoxAsync</c>
-/// 展示，交互没有前身精致，但异常分流的核心行为（哪种异常弹什么、要不要跳登录）保留。
-/// 更精致的错误展示对话框留给 P6。
+/// 【P6 起改回富对话框】P5b 阶段曾用 <c>IDialogService.ShowMessageBoxAsync</c> 兜底
+/// （当时判断内化 <c>AccessDeniedDialog</c>/<c>MyErrorContent</c> 会让那一批改动的范围失控）。
+/// 本阶段把 403 接到 <see cref="KAccessDeniedDialog"/>、5xx/未分类异常接到
+/// <see cref="KErrorDetailDialog"/>——两者都是本包内的新组件，不再依赖前身的
+/// <c>JsonViewer</c>/<c>ErrorBoundary.Recover</c> 这类多余的耦合面。
 /// </remarks>
 public static class ApiErrorPresenter
 {
@@ -46,7 +47,7 @@ public static class ApiErrorPresenter
         switch (http.StatusCode)
         {
             case HttpStatusCode.Forbidden:
-                notify.Fail(BuildForbiddenMessage(http));
+                await ShowForbiddenAsync(http, dialogService, notify);
                 return;
 
             case HttpStatusCode.Unauthorized:
@@ -78,20 +79,38 @@ public static class ApiErrorPresenter
             return;
         }
 
-        await dialogService.ShowMessageBoxAsync("发生错误", exception.Message, yesText: "关闭");
+        var parameters = new DialogParameters<KErrorDetailDialog>
+        {
+            { x => x.Message, string.IsNullOrWhiteSpace(exception.Message) ? "发生未知错误" : exception.Message },
+            { x => x.ServerDetail, exception.Data["serverException"] as string },
+            { x => x.ClientDetail, exception.ToString() },
+        };
+        await dialogService.ShowAsync<KErrorDetailDialog>("发生错误", parameters);
     }
 
     /// <summary>
-    /// 403 的提示消息。优先取服务端在 <see cref="Exception.Data"/> 里塞的缺失角色列表——
+    /// 403：优先取服务端在 <see cref="Exception.Data"/> 里塞的缺失角色列表——
     /// 那是 <c>EnsureSuccessCode</c> 一类的服务端契约，跨端约定的键名不能随便改。
+    /// 没有 <paramref name="dialogService"/> 时降级为吐司（与其它分支一致）。
     /// </summary>
-    private static string BuildForbiddenMessage(HttpRequestException http)
+    private static async Task ShowForbiddenAsync(HttpRequestException http, IDialogService? dialogService, IKNotify notify)
     {
-        if (http.Data["missingRoles"] is string[] { Length: > 0 } roles)
+        var roles = http.Data["missingRoles"] as string[];
+        var message = string.IsNullOrWhiteSpace(http.Message) ? "您没有执行此操作的权限。" : http.Message;
+
+        if (dialogService is null)
         {
-            return $"您没有执行此操作的权限，缺少角色：{string.Join("、", roles)}";
+            notify.Fail(roles is { Length: > 0 }
+                ? $"{message}缺少角色：{string.Join("、", roles)}"
+                : message);
+            return;
         }
 
-        return "您没有执行此操作的权限。";
+        var parameters = new DialogParameters<KAccessDeniedDialog>
+        {
+            { x => x.Message, message },
+            { x => x.MissingRoles, roles },
+        };
+        await dialogService.ShowAsync<KAccessDeniedDialog>("权限不足", parameters);
     }
 }

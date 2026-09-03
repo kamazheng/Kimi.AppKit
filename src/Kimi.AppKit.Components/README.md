@@ -22,7 +22,14 @@
 | `KEmpty` | 空态：列表/详情没有数据时展示，也可直接用作 `MudTable` 的 `NoRecordsContent` | `<KEmpty Text="没有匹配的记录" />` |
 | `KLabeledValue` | 详情页"字段名: 字段值"只读展示 | `<KLabeledValue Label="客户端 ID" Value="@client.Id" />` |
 | `KRoleGate` | 角色门禁：有权限渲染内容，无权限**禁用并提示缺哪个角色**（不隐藏） | `<KRoleGate Roles="Admin,Root">...</KRoleGate>` |
-| `ErrorCatchButton` | 统一"点击→请求→loading→错误处理"的按钮，取代各页各写一遍的 try/catch | `<ErrorCatchButton OnClick="SaveAsync">保存</ErrorCatchButton>` |
+| `ErrorCatchButton` / `ErrorCatchIconButton` / `ErrorCatchFab` | 统一"点击→请求→loading→错误处理"的按钮三种形态，取代各页各写一遍的 try/catch | `<ErrorCatchButton Label="保存" OnClick="SaveAsync" />` |
+| `KEnumChip<TEnum>` | 枚举 → 颜色芯片：贴 `[EnumChipColor]` 声明颜色，不贴则按声明顺序轮转 | `<KEnumChip Value="@order.Status" />` |
+| `KStatusChip` | 语义状态芯片：颜色词汇与 `KAlert` 共用同一套 `Severity` | `<KStatusChip Severity="Severity.Warning" Text="待审核" />` |
+| `KMetricCard` | 仪表盘指标卡片：标题 + 大字号数值 + 可选趋势 | `<KMetricCard Title="今日入库" Value="128" />` |
+| `KCodeBlock` | 等宽代码/日志块，带一键复制 | `<KCodeBlock Code="@json" />` |
+| `KDataTable<T>` | 服务端分页表格：接 `ICrudDataSource<T>` + `KQuery`/`KPage<T>`，内部处理 0/1-based 换算 | `<KDataTable DataSource="@source" HeaderContent="..." RowTemplate="row => ..." />` |
+| `KFilterBar` / `KSearchField` | 筛选条：搜索框（防抖+Enter 触发）+ 自定义筛选项插槽 | `<KFilterBar Search="@s" SearchChanged="OnSearch">...</KFilterBar>` |
+| `KField` / `KMudField` | 表单字段双变体：静态 SSR 用 `KField`（原生 input），交互式用 `KMudField`（MudBlazor）。当前只覆盖字符串字段 | `<KField Label="邮箱" Id="Email" @bind-Value="m.Email" For="() => m.Email" />` |
 
 ## 服务注册
 
@@ -30,11 +37,8 @@
 builder.Services.AddAppKitDialogs(); // 注册 IKConfirm/IKNotify 的 MudBlazor 实现
 ```
 
-## 已知限制（本批次未覆盖，见 P6）
+## 已知限制（本批次未覆盖，见 P6b）
 
-- `KEnumChip`/`KStatusChip`（枚举→颜色/图标映射）
-- `KSearchSelect`（可搜索下拉）
-- `KMetricCard`/`KCodeBlock`
-- `ErrorCatchButton` 的 Icon/Fab/Loading 变体（当前只有基础按钮）
-- `ApiErrorPresenter` 的 403/500 错误展示目前用 `ShowMessageBoxAsync` 兜底，
-  更精致的自定义错误详情对话框留给 P6
+- `KSearchSelect`（可搜索下拉，依赖 `ICrudDataSource<T>` 做异步选项加载，随 Crud 包一起做）
+- `KField`/`KMudField` 只覆盖字符串字段；数值/日期/布尔变体待真实需求出现再抽象
+- 反射驱动的 `KEntityTable`/`KEntityForm`/`KEntityCrudPage<T>` 见 `Kimi.AppKit.Crud` 包

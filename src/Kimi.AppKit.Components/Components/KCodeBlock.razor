@@ -1,0 +1,17 @@
+@* 等宽代码/日志块，带一键复制。复制按钮调用浏览器原生 navigator.clipboard——
+   静态 SSR 下没有交互性，按钮点击不会触发任何事（渲染仍然正常，只是复制功能不可用），
+   这是静态 SSR 的固有限制，不是本组件的 bug。*@
+@inject IJSRuntime JsRuntime
+
+<div class="k-code-block">
+    <pre><code>@Code</code></pre>
+    <MudIconButton Icon="@Icons.Material.Filled.ContentCopy" Size="Size.Small"
+                   Class="k-code-block__copy" OnClick="CopyAsync" title="复制" />
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Code { get; set; } = string.Empty;
+
+    private async Task CopyAsync() =>
+        await JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", Code);
+}

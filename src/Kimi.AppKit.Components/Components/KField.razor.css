@@ -1,0 +1,28 @@
+.k-field {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    margin-bottom: 1rem;
+}
+
+.k-label {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: var(--k-ink-2, #4A5765);
+}
+
+.k-input {
+    padding: .5rem .625rem;
+    border: 1px solid var(--k-hair, #DCE3EA);
+    border-radius: var(--k-radius, 3px);
+    font: inherit;
+}
+
+.k-input:disabled {
+    opacity: .6;
+}
+
+.k-field__error {
+    color: var(--k-error, #B3261E);
+    font-size: .75rem;
+}

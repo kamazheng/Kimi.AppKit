@@ -1,0 +1,22 @@
+.k-code-block {
+    position: relative;
+}
+
+.k-code-block pre {
+    margin: 0;
+    padding: 1rem;
+    overflow-x: auto;
+    background: var(--mud-palette-background-grey, var(--k-mist));
+    border: 1px solid var(--mud-palette-divider, var(--k-hair));
+    border-radius: var(--k-radius);
+    font-family: var(--k-mono, monospace);
+    font-size: .875rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.k-code-block__copy {
+    position: absolute;
+    top: .375rem;
+    right: .375rem;
+}

@@ -1,0 +1,33 @@
+@* 原生表单字段：给静态 SSR 用（如登录/找回密码页）。MudBlazor 的表单控件在静态 SSR 下
+   不生成 name 属性、也不接交互事件——这不是本组件要解决的问题，是"该用原生控件"的场景，
+   交互式页面请用 KMudField。
+   ⚠️ 当前只覆盖字符串字段，覆盖 Auth 现有全部 23 处 InputText 用法；数值/日期/复选框
+   变体等有真实需求时再按实际用量抽象（另有 2 处 InputSelect 用法不在本组件覆盖范围）。*@
+<div class="k-field">
+    <label class="k-label" for="@Id">@Label</label>
+    <InputText Value="@Value" ValueChanged="OnChangedAsync" ValueExpression="@For"
+               id="@Id" name="@Id" class="k-input" disabled="@Disabled"
+               placeholder="@Placeholder" autocomplete="@Autocomplete" />
+    <ValidationMessage For="@For" class="k-field__error" />
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired] public string Id { get; set; } = string.Empty;
+
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter, EditorRequired] public Expression<Func<string?>> For { get; set; } = null!;
+
+    [Parameter] public bool Disabled { get; set; }
+
+    [Parameter] public string? Placeholder { get; set; }
+
+    /// <summary>浏览器自动填充提示，如 <c>"email"</c>/<c>"current-password"</c>。</summary>
+    [Parameter] public string? Autocomplete { get; set; }
+
+    private Task OnChangedAsync(string? value) => ValueChanged.InvokeAsync(value);
+}

@@ -1,0 +1,25 @@
+@* 搜索输入框：防抖用 MudTextField 自带的 DebounceInterval，不手搓计时器——
+   MudBlazor 已经把"输入停顿 N 毫秒后才触发"这个常见需求做成了内置参数。
+   Enter 立即触发，不必等防抖窗口。*@
+<MudTextField T="string" Value="@Value" ValueChanged="OnChangedAsync"
+              Placeholder="@Placeholder" Variant="Variant.Outlined" Margin="Margin.Dense"
+              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+              Immediate="true" DebounceInterval="DebounceMilliseconds"
+              OnKeyDown="OnKeyDownAsync" Clearable="true" Class="@Class" />
+
+@code {
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter] public string Placeholder { get; set; } = "搜索…";
+
+    [Parameter] public int DebounceMilliseconds { get; set; } = 400;
+
+    [Parameter] public string? Class { get; set; }
+
+    private Task OnChangedAsync(string? value) => ValueChanged.InvokeAsync(value);
+
+    private Task OnKeyDownAsync(KeyboardEventArgs e) =>
+        e.Key == "Enter" ? ValueChanged.InvokeAsync(Value) : Task.CompletedTask;
+}

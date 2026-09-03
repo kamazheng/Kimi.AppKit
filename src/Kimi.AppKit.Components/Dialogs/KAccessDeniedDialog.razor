@@ -1,0 +1,42 @@
+@* 「权限不足」对话框：由 ApiErrorPresenter 收到 403 时弹出，取代 P5b 阶段的
+   ShowMessageBoxAsync 兜底。不建议直接在页面里手动打开——想要这个交互，
+   让 ApiErrorPresenter 接管异常即可。*@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Rounded.Lock" Color="Color.Error" Class="mr-2 mb-n1" />
+            权限不足
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudAlert Severity="Severity.Error" Class="mb-3" Style="word-break:break-word;">@Message</MudAlert>
+
+        @if (MissingRoles is { Count: > 0 })
+        {
+            <MudText Typo="Typo.subtitle2" Class="mt-2">需要以下角色</MudText>
+            <div class="d-flex flex-wrap gap-2 mt-1">
+                @foreach (var role in MissingRoles)
+                {
+                    <MudChip T="string" Color="Color.Error" Size="Size.Small">@role</MudChip>
+                }
+            </div>
+        }
+
+        <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-3">如需开通访问权限，请联系系统管理员。</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">知道了</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    /// <summary>友好提示消息（通常来自服务器 ProblemDetails 的 detail/message）。</summary>
+    [Parameter] public string? Message { get; set; }
+
+    /// <summary>缺失的角色短名列表（可空）。</summary>
+    [Parameter] public IReadOnlyList<string>? MissingRoles { get; set; }
+
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private void Close() => MudDialog.Close();
+}
