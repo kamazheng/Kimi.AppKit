@@ -81,18 +81,19 @@
         <PackageVersion Include="Hangfire.Console" Version="1.4.3" />
     </ItemGroup>
 
-    <!-- ── UI（MudBlazor 8 系，8→9 是 P5 的独立分支）────────────────────
-         ⚠️ MudBlazor 一律钉死具体版本，禁用浮动 `8.*`：浮动会在每次 restore/部署
+    <!-- ── UI（P5a：MudBlazor 8→9，与 KMold Auth/Files 对齐）────────────
+         ⚠️ MudBlazor 一律钉死具体版本，禁用浮动 `9.*`：浮动会在每次 restore/部署
             静默升级，曾导致文件上传行为在无代码改动的情况下回归。
-         ⚠️ ThemeManager / CodeBeam / FormCraft 的大版本与 MudBlazor 一一对应，
-            停在 MudBlazor 8 就必须停在这三个的旧版（各自最新分别是 4.0.0 / 9.1.0 / 3.1.0）。
-            这三个都在删除清单里（决策 #8 与 #11），无需为它们做 9 系适配。 -->
+         ⚠️ ThemeManager / CodeBeam / FormCraft 的大版本与 MudBlazor 一一对应，必须同步跳版。
+         FormCraft 按决策 #11 最终要删除（统一走 Kimi.AppKit.Crud 的 KEntityForm），
+         但那个替代品要到 P6 才存在——删早了会让样例当下就失去动态表单能力。
+         P5a 先跟着 MudBlazor 一起跳到兼容版本，P6 做完 KEntityForm 后再真正移除。 -->
     <ItemGroup>
-        <PackageVersion Include="MudBlazor" Version="8.15.0" />
-        <PackageVersion Include="MudBlazor.ThemeManager" Version="3.0.0" />
-        <PackageVersion Include="CodeBeam.MudBlazor.Extensions" Version="8.3.0" />
-        <PackageVersion Include="FormCraft" Version="2.5.0" />
-        <PackageVersion Include="FormCraft.ForMudBlazor" Version="2.5.0" />
+        <PackageVersion Include="MudBlazor" Version="9.9.0" />
+        <PackageVersion Include="MudBlazor.ThemeManager" Version="4.0.0" />
+        <PackageVersion Include="CodeBeam.MudBlazor.Extensions" Version="9.1.0" />
+        <PackageVersion Include="FormCraft" Version="3.1.0" />
+        <PackageVersion Include="FormCraft.ForMudBlazor" Version="3.1.0" />
         <PackageVersion Include="Blazor-ApexCharts" Version="7.0.0" />
         <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
         <PackageVersion Include="Blazored.SessionStorage" Version="2.4.0" />
