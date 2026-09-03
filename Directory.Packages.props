@@ -135,6 +135,11 @@
 
     <!-- ── 其它 ───────────────────────────────────────────────────────── -->
     <ItemGroup>
+        <!-- 类型安全的 REST 客户端（决策 14 取代自写的 IStandardApi 家族）。
+             ⚠️ 注册一律用 AddRefitGeneratedClient<T>()，**不要**用 AddRefitClient<T>()——
+                后者走反射，在 trimmed / Native AOT 的 WASM 下会静默退化或抛。 -->
+        <PackageVersion Include="Refit" Version="15.2.0" />
+        <PackageVersion Include="Refit.HttpClientFactory" Version="15.2.0" />
         <PackageVersion Include="Bogus" Version="35.6.5" />
         <PackageVersion Include="FluentValidation" Version="12.1.1" />
         <!-- ⚠️ 不要加回 Microsoft.EntityFrameworkCore.DynamicLinq。
