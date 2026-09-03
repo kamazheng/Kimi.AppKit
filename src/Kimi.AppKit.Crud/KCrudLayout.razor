@@ -1,0 +1,76 @@
+@* 编辑表单外壳：EditForm + 校验 + 保存/删除操作栏。内容完全由调用方给（ChildContent），
+   适合「字段布局要手工控制」的页面；字段能从 T 反射出来时直接用 KEntityForm（它就建在本组件上）。*@
+@typeparam T where T : class
+@using Kimi.AppKit.Components.Buttons
+
+<EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+
+    @if (ShowActionBar)
+    {
+        <MudToolBar Class="px-0" Dense="true">
+            @if (ShowSubmit)
+            {
+                <ErrorCatchButton Label="@SubmitLabel" ButtonType="ButtonType.Submit"
+                                  Variant="Variant.Filled" Color="Color.Primary"
+                                  StartIcon="@Icons.Material.Filled.Check" Disabled="@ReadOnly" />
+            }
+            @if (OnCancel.HasDelegate)
+            {
+                <MudButton OnClick="OnCancel" Class="ml-2">@CancelLabel</MudButton>
+            }
+            @UserActions
+            <MudSpacer />
+            @if (ShowDelete)
+            {
+                <ErrorCatchButton Label="@DeleteLabel" OnClick="OnDelete"
+                                  Variant="Variant.Filled" Color="Color.Error"
+                                  StartIcon="@Icons.Material.Filled.Delete" Disabled="@ReadOnly" />
+            }
+        </MudToolBar>
+    }
+
+    @ChildContent
+
+    @if (FooterContent is not null)
+    {
+        <div class="mt-4">@FooterContent</div>
+    }
+</EditForm>
+
+@code {
+    [Parameter, EditorRequired] public T Model { get; set; } = null!;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>操作栏里插在「保存」之后、右侧「删除」之前的自定义按钮。</summary>
+    [Parameter] public RenderFragment? UserActions { get; set; }
+
+    [Parameter] public RenderFragment? FooterContent { get; set; }
+
+    /// <summary>校验通过后触发，携带的就是 <see cref="Model"/> 实例本身。</summary>
+    [Parameter] public EventCallback<T> OnValidSubmit { get; set; }
+
+    [Parameter] public EventCallback OnDelete { get; set; }
+
+    /// <summary>取消。未绑定时不渲染取消按钮（整页编辑通常没有「取消」，对话框才有）。</summary>
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    /// <summary>只读模式：操作栏按钮全部禁用。字段本身的只读由调用方在 ChildContent 里控制。</summary>
+    [Parameter] public bool ReadOnly { get; set; }
+
+    [Parameter] public bool ShowActionBar { get; set; } = true;
+
+    [Parameter] public bool ShowSubmit { get; set; } = true;
+
+    /// <summary>是否显示删除按钮。新建场景应传 false——还没落库的记录没什么可删。</summary>
+    [Parameter] public bool ShowDelete { get; set; }
+
+    [Parameter] public string SubmitLabel { get; set; } = "保存";
+
+    [Parameter] public string DeleteLabel { get; set; } = "删除";
+
+    [Parameter] public string CancelLabel { get; set; } = "取消";
+
+    private Task OnValidSubmitAsync() => OnValidSubmit.InvokeAsync(Model);
+}

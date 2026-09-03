@@ -12,6 +12,7 @@ Blazor Server/WASM 两种宿主通用。
 | `KEntityCrudPage<T>` | 登记一个实体即得列表 + 新增 + 编辑 + 删除的完整页面 | `<KEntityCrudPage T="Product" DataSource="@dataSource" />` |
 | `KEntityTable<T>` | 只要表格（列从 `T` 反射得到），不要增删改壳子时单独用 | `<KEntityTable T="Product" DataSource="@dataSource" />` |
 | `KEntityForm<T>` | 只要表单（字段从 `T` 反射得到） | `<KEntityForm T="Product" Model="@product" OnValidSubmit="SaveAsync" />` |
+| `KCrudLayout<T>` | 编辑表单外壳：EditForm + 校验 + 保存/删除/取消操作栏，内容自定义。字段能反射出来时用 `KEntityForm`（它就建在本组件上） | `<KCrudLayout T="Product" Model="@p" OnValidSubmit="SaveAsync">...</KCrudLayout>` |
 | `KSearchSelect<T>` | 可搜索下拉，异步分页取候选而不是一次性拉全表 | `<KSearchSelect T="Product" DataSource="@dataSource" DisplayText="@(p => p.Name)" @bind-Value="selected" />` |
 
 ## 最小接入示例
