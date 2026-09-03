@@ -1,0 +1,19 @@
+@* MudBlazor 的弹出层 Provider（Popover/Dialog/Snackbar）。
+
+   ⚠️ **静态 SSR 或 Blazor Server 宿主必须显式让它交互式**，本组件本身不预设渲染模式——
+   这是一个渲染模式无关的包，不能把某一种宿主的假设焊死在组件定义里。
+
+   光把它放进布局是不够的：如果所在布局走静态 SSR（常见于必须在响应里种 cookie 的
+   登录页），Snackbar/Dialog 都是运行期由服务端推送新内容再渲染出来的——Provider
+   若停留在静态渲染里，`ISnackbar.Add` / `IDialogService.ShowAsync` **不会报错**，
+   只是永远什么也不显示：删除确认框弹不出来，按钮点了却「没反应」。
+
+   静态 SSR / Blazor Server 宿主的用法（在调用处显式指定渲染模式）：
+       <KMudProviders @rendermode="InteractiveServer" />
+
+   全站已经是 InteractiveServer 或 Blazor WebAssembly 宿主：直接
+       <KMudProviders />
+   即可，整个应用本来就是交互式的，不需要再指定。 *@
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />

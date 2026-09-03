@@ -1,0 +1,35 @@
+@* 「必填原因」确认对话框：不可逆/需要审计追责的操作统一走这个范式，
+   取代各页各自手搓的"MudAlert + 必填原因文本框 + 提交禁用"组合。
+   由 MudConfirm.WithReasonAsync 内部使用，不建议直接在页面里手动打开——
+   想要这个交互就注入 IKConfirm 调 WithReasonAsync，不要绕过它直接 new 这个对话框。*@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="2">
+            <MudAlert Severity="Severity.Warning" Dense="true">@Message</MudAlert>
+            <MudTextField T="string" Label="@ReasonLabel" @bind-Value="_reason"
+                          Variant="Variant.Outlined" Margin="Margin.Dense" Lines="2" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">取消</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@string.IsNullOrWhiteSpace(_reason)">确认</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public string Message { get; set; } = string.Empty;
+    [Parameter] public string ReasonLabel { get; set; } = "原因（必填）";
+
+    private string _reason = string.Empty;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(_reason.Trim()));
+
+    private void Cancel() => MudDialog.Cancel();
+}

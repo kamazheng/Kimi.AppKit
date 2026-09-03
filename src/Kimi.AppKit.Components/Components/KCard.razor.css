@@ -1,0 +1,27 @@
+.k-card {
+    padding: 1.5rem;
+    background: var(--mud-palette-surface, var(--k-paper));
+    border: 1px solid var(--mud-palette-divider, var(--k-hair));
+    border-radius: var(--k-radius-lg);
+}
+
+.k-card--narrow {
+    max-width: 30rem;
+}
+
+.k-card + .k-card {
+    margin-top: 1.25rem;
+}
+
+.k-card__title {
+    margin: 0 0 .375rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    color: var(--mud-palette-text-primary);
+}
+
+.k-card__lede {
+    margin: 0 0 1rem;
+    color: var(--mud-palette-text-secondary);
+}

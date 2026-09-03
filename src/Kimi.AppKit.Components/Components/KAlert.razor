@@ -1,0 +1,15 @@
+@* 语义化提示条：薄封装 MudAlert，统一四种严重级别与图标的取舍，
+   避免各页各自决定"这条消息该用什么颜色/图标"。*@
+<MudAlert Severity="@Severity" Variant="Variant.Outlined" Dense="Dense" ContentAlignment="HorizontalAlignment.Left">
+    @ChildContent
+</MudAlert>
+
+@code {
+    /// <summary>严重级别：Normal（信息）、Info、Success、Warning、Error。</summary>
+    [Parameter] public Severity Severity { get; set; } = Severity.Normal;
+
+    /// <summary>是否收紧内边距（列表/表格内嵌场景用）。</summary>
+    [Parameter] public bool Dense { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

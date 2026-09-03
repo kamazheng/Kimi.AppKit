@@ -1,0 +1,51 @@
+@using System.Security.Claims
+@* 角色门禁：有权限渲染 <see cref="Authorized"/>，无权限渲染 <see cref="NotAuthorized"/>。
+
+   ⚠️ **无权限时禁用并提示缺哪个角色，不要隐藏**——隐藏会让用户以为功能不存在、
+   增大支持成本；禁用 + 提示"需要 XX 角色"，用户知道找谁要权限。这条 UX 原则
+   比具体样式更重要，`NotAuthorized` 插槽的实现可以随便换皮，但语义不能变成隐藏。
+
+   与原生 `<AuthorizeView>` 的区别：额外通过 `context.MissingRolesHint` 计算出
+   "还差哪些角色"的现成文案，消费方不必自己再写一遍角色差集逻辑。 *@
+<AuthorizeView Roles="@Roles" Context="authContext">
+    <Authorized>
+        @Authorized
+    </Authorized>
+    <NotAuthorized>
+        @NotAuthorized(new KRoleGateContext(authContext.User, MissingRolesHint(authContext.User)))
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    /// <summary>逗号分隔角色全名，语义同 <see cref="AuthorizeView.Roles"/>（OR：持有任一即可）。</summary>
+    [Parameter, EditorRequired] public string Roles { get; set; } = string.Empty;
+
+    /// <summary>有权限时渲染的内容。</summary>
+    [Parameter, EditorRequired] public RenderFragment Authorized { get; set; } = null!;
+
+    /// <summary>无权限时渲染的内容，可读取 <see cref="KRoleGateContext.MissingRolesHint"/>。</summary>
+    [Parameter, EditorRequired] public RenderFragment<KRoleGateContext> NotAuthorized { get; set; } = null!;
+
+    /// <summary>
+    /// 角色显示名的格式化方式。默认原样返回——消费方若有角色前缀（如 <c>{AppShortName}_Admin</c>）
+    /// 需要去掉前缀再展示，可以传入自己的格式化函数。
+    /// </summary>
+    [Parameter] public Func<string, string> FormatRoleName { get; set; } = static name => name;
+
+    private string MissingRolesHint(ClaimsPrincipal user)
+    {
+        var have = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToHashSet();
+        var required = Roles.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        var missing = required.Where(r => !have.Contains(r)).Select(FormatRoleName).ToList();
+        // 如果一个都不缺却还是走到了 NotAuthorized（例如未登录），把全部要求的角色都列出来，
+        // 而不是给一个空的、看不出原因的提示。
+        if (missing.Count == 0) missing = required.Select(FormatRoleName).ToList();
+
+        // Roles 是 OR 语义（持有任一即可），提示须用"或"而非顿号枚举——
+        // 否则"需要 A、B 角色"会被误读成需要同时持有两者。
+        return missing.Count > 1
+            ? $"需要以下任一角色：{string.Join(" 或 ", missing)}"
+            : $"需要 {missing.FirstOrDefault()} 角色";
+    }
+}

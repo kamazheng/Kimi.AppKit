@@ -1,0 +1,28 @@
+@* 通用内容卡片：标题 + 说明 + 内容。用于表单分组、详情分节这类"一屏多个独立区块"的场景。*@
+<div class="k-card @(Narrow ? "k-card--narrow" : null) @Class">
+    @if (!string.IsNullOrWhiteSpace(Title))
+    {
+        <h2 class="k-card__title">@Title</h2>
+    }
+    @if (!string.IsNullOrWhiteSpace(Lede))
+    {
+        <p class="k-card__lede">@Lede</p>
+    }
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>标题。为空不渲染标题行。</summary>
+    [Parameter] public string? Title { get; set; }
+
+    /// <summary>标题下的说明文字。为空不渲染。</summary>
+    [Parameter] public string? Lede { get; set; }
+
+    /// <summary>是否收窄为适合单栏表单的宽度（约 30rem）。</summary>
+    [Parameter] public bool Narrow { get; set; }
+
+    /// <summary>附加 CSS 类。</summary>
+    [Parameter] public string? Class { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

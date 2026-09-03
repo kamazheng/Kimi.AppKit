@@ -1,0 +1,36 @@
+@* Blazor Server 断线重连遮罩。
+   ⚠️ 省略这个组件时 Blazor 会自造**英文**的默认重连遮罩——同一客户在两个服务里
+   会看到两种语言，这是「加了会更好、忘了不报错」的那类组件，必须在布局里显式引入：
+       <KReconnectModal />
+   通常放在 App.razor 或最外层布局里，只需要一份。*@
+<script type="module" src="@Assets["_content/Kimi.AppKit.Components/Components/KReconnectModal.razor.js"]"></script>
+
+<dialog id="components-reconnect-modal" data-nosnippet>
+    <div class="components-reconnect-container">
+        <div class="components-rejoining-animation" aria-hidden="true">
+            <div></div>
+            <div></div>
+        </div>
+        <p class="components-reconnect-first-attempt-visible">
+            正在重新连接服务器…
+        </p>
+        <p class="components-reconnect-repeated-attempt-visible">
+            连接失败，<span id="components-seconds-to-next-attempt"></span> 秒后重试。
+        </p>
+        <p class="components-reconnect-failed-visible">
+            无法重新连接。请重试，或刷新页面。
+        </p>
+        <button id="components-reconnect-button" class="components-reconnect-failed-visible">
+            重试
+        </button>
+        <p class="components-pause-visible">
+            会话已被服务器暂停。
+        </p>
+        <p class="components-resume-failed-visible">
+            无法恢复会话。请重试，或刷新页面。
+        </p>
+        <button id="components-resume-button" class="components-pause-visible components-resume-failed-visible">
+            恢复会话
+        </button>
+    </div>
+</dialog>

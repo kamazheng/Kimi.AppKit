@@ -1,0 +1,32 @@
+@* 详情页的"字段名: 字段值"只读展示，取代各详情页各写一遍的两列/两行布局。*@
+<div class="k-labeled-value">
+    <span class="k-labeled-value__label">@Label</span>
+    <span class="k-labeled-value__value">
+        @if (ChildContent is not null)
+        {
+            @ChildContent
+        }
+        else if (string.IsNullOrWhiteSpace(Value))
+        {
+            <span class="k-labeled-value__empty">@EmptyText</span>
+        }
+        else
+        {
+            @Value
+        }
+    </span>
+</div>
+
+@code {
+    /// <summary>字段名。</summary>
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    /// <summary>字段值（纯文本场景）。与 <see cref="ChildContent"/> 二选一，后者优先。</summary>
+    [Parameter] public string? Value { get; set; }
+
+    /// <summary>值为空/空白时的占位文案。</summary>
+    [Parameter] public string EmptyText { get; set; } = "—";
+
+    /// <summary>自定义值内容（如带链接、徽标的复杂展示）。设置后 <see cref="Value"/> 被忽略。</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

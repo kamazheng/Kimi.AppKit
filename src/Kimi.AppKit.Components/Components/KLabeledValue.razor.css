@@ -1,0 +1,19 @@
+.k-labeled-value {
+    display: flex;
+    flex-direction: column;
+    gap: .125rem;
+}
+
+.k-labeled-value__label {
+    font-size: .75rem;
+    color: var(--mud-palette-text-secondary);
+}
+
+.k-labeled-value__value {
+    font-size: .9375rem;
+    color: var(--mud-palette-text-primary);
+}
+
+.k-labeled-value__empty {
+    color: var(--mud-palette-text-disabled);
+}

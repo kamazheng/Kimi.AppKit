@@ -1,0 +1,18 @@
+@* 首字母头像。取代前身在 4 个不同文件里各写一份的 Initial() 私有方法——
+   同一段"取首字母、空值兜底"逻辑散在多处，改一处兜底字符（如 "K" 改成别的）
+   容易漏改其余几处。*@
+<span class="@CssClass" aria-hidden="true">@Initial(Name, Fallback)</span>
+
+@code {
+    /// <summary>用于取首字母的名字。null/空白时用 <see cref="Fallback"/>。</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary><see cref="Name"/> 为空时显示的兜底字符。默认 "K"。</summary>
+    [Parameter] public string Fallback { get; set; } = "K";
+
+    /// <summary>CSS 类名。默认 "k-avatar"，不同场景（品牌区、用户菜单）可传不同类名复用不同样式。</summary>
+    [Parameter] public string CssClass { get; set; } = "k-avatar";
+
+    private static string Initial(string? name, string fallback) =>
+        string.IsNullOrWhiteSpace(name) ? fallback : name.Trim()[..1].ToUpperInvariant();
+}

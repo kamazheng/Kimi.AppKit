@@ -1,0 +1,17 @@
+@* 空态：列表/详情没有数据时展示，取代各页各写一段"暂无数据"文案。*@
+<div class="k-empty">
+    <MudIcon Icon="@Icon" Size="Size.Large" Class="k-empty__icon" />
+    <p class="k-empty__text">@Text</p>
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>提示文案。</summary>
+    [Parameter] public string Text { get; set; } = "暂无数据";
+
+    /// <summary>图标。默认用一个中性的"收件箱"图标。</summary>
+    [Parameter] public string Icon { get; set; } = MudBlazor.Icons.Material.Outlined.Inbox;
+
+    /// <summary>额外内容（如一个"新建"按钮）。</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
