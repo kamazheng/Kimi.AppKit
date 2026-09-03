@@ -1,12 +1,77 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-        <Description>Kimi.AppKit 项目模板（dotnet new kimiapp）。</Description>
+        <PackageId>Kimi.AppKit.Templates</PackageId>
+        <Title>Kimi.AppKit 项目模板</Title>
+        <Description>`dotnet new kimiapp` —— 基于 Kimi.AppKit.* 框架包的企业应用骨架（Blazor WASM Hosted、双 provider 数据层、审计与软删除、OIDC/现场密码双登录、健康检查、Hangfire、通用 CRUD 页面与蓝图设计系统）。</Description>
+        <PackageTags>dotnet-new;templates;blazor;webassembly;efcore;mudblazor</PackageTags>
+
         <PackageType>Template</PackageType>
         <IncludeContentInPack>true</IncludeContentInPack>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <ContentTargetFolders>content</ContentTargetFolders>
-        <NoWarn>$(NoWarn);NU5128</NoWarn>
-        <!-- P7 才填充模板内容；在此之前不参与打包，避免发出空模板包。 -->
-        <IsPackable>false</IsPackable>
+        <IsPackable>true</IsPackable>
+
+        <!--
+          ⚠️ 这一条不能省。NuGet 默认排除所有以 "." 开头的文件与目录，
+             而模板内容里恰恰有一批必须保留的点开头项：**`.template.config/template.json`
+             本身**（少了它 `dotnet new` 根本认不出这是个模板）、`.editorconfig`、
+             `.gitignore`、`.gitattributes`、`.dockerignore`、`.claude/`。
+             不设此项时打包仍会「成功」，只是产出一个 dotnet new 装上也看不见任何模板的包。
+        -->
+        <NoDefaultExcludes>true</NoDefaultExcludes>
+
+        <!-- NU5128：模板包没有 lib/ref，不需要依赖组。
+             NU5110/NU5111：包里带 .ps1（ChangeProjectName.ps1 / migrate-prod.ps1）。
+             这两条针对的是「安装期执行脚本」的老式包约定，对模板包不适用——
+             这些脚本是给生成出来的项目用的源码内容，本来就不该在安装时执行。 -->
+        <NoWarn>$(NoWarn);NU5128;NU5110;NU5111</NoWarn>
+
+        <!-- 模板内容是另一棵源码树，不参与本工程编译。 -->
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+        <TemplateSourceRoot>$(MSBuildThisFileDirectory)../../samples/AppTemplate/</TemplateSourceRoot>
+        <TemplateStagingRoot>$(BaseIntermediateOutputPath)templatecontent/</TemplateStagingRoot>
     </PropertyGroup>
+
+    <!--
+      为什么「先暂存再打包」，而不是直接 Content Include 源目录：
+
+      模板里的 Directory.Packages.props 要把 Kimi.AppKit.* 的版本号替换成**与本包相同**
+      的版本——模板与它引用的框架包必须同版本发布，否则生成出来的项目会拿到一份
+      与模板内容对不上的包。直接 Include 源目录就只能就地改文件，那会弄脏工作副本，
+      版本号还会被误提交进版本控制。
+
+      ⚠️ 暂存目录必须**每次先清空**。增量构建下残留的旧文件会被一并打进包，
+         而包内容不参与编译、没有任何检查会报出来——症状是「明明已经删掉的文件，
+         dotnet new 出来还在」。
+    -->
+    <!-- ⚠️ 必须挂在 _GetPackageFiles **之前**，不能只挂 GenerateNuspec：
+         包文件清单是由 _GetPackageFiles 收集的，GenerateNuspec 时才添加 Content 已经太晚——
+         打包照常「成功」，只是产出一个不含模板内容的空壳包，没有任何告警。
+         MinVer 挂在 GetAssemblyVersion 之前，此时 $(PackageVersion) 已算好。 -->
+    <Target Name="StageTemplateContent"
+            BeforeTargets="_GetPackageFiles"
+            DependsOnTargets="MinVer">
+        <RemoveDir Directories="$(TemplateStagingRoot)" />
+
+        <ItemGroup>
+            <TemplateSourceFile Include="$(TemplateSourceRoot)**/*"
+                                Exclude="$(TemplateSourceRoot)**/bin/**;$(TemplateSourceRoot)**/obj/**;$(TemplateSourceRoot)**/.vs/**;$(TemplateSourceRoot)**/.vscode/**;$(TemplateSourceRoot)**/.idea/**;$(TemplateSourceRoot)**/node_modules/**;$(TemplateSourceRoot)**/*.user;$(TemplateSourceRoot)Kimi.AppKit.Sample/api/**" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(TemplateSourceFile)"
+              DestinationFiles="@(TemplateSourceFile->'$(TemplateStagingRoot)%(RecursiveDir)%(Filename)%(Extension)')" />
+
+        <!-- MinVer 在 GetPackageVersion 阶段填好 $(PackageVersion)，GenerateNuspec 之前已可用。 -->
+        <WriteLinesToFile File="$(TemplateStagingRoot)Directory.Packages.props"
+                          Lines="$([System.IO.File]::ReadAllText('$(TemplateStagingRoot)Directory.Packages.props').Replace('0.0.0-local','$(PackageVersion)'))"
+                          Overwrite="true" />
+
+        <ItemGroup>
+            <Content Include="$(TemplateStagingRoot)**/*"
+                     PackagePath="content/kimiapp/%(RecursiveDir)%(Filename)%(Extension)" />
+        </ItemGroup>
+    </Target>
+
 </Project>
