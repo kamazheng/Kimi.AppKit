@@ -135,7 +135,10 @@
     <ItemGroup>
         <PackageVersion Include="Bogus" Version="35.6.5" />
         <PackageVersion Include="FluentValidation" Version="12.1.1" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="10.7.4" />
+        <!-- ⚠️ 不要加回 Microsoft.EntityFrameworkCore.DynamicLinq。
+             它唯一的用途是让通用查询端点解析客户端传来的过滤表达式字符串，
+             那正是 P2 量化判定「不抽」的能力（MES 里 0 使用），P7c 已连同输入口一并移除。
+             列表查询走 Kimi.AppKit.Data 的 ReflectiveCrudDataSource（表达式树 + 属性白名单）。 -->
         <!-- ⚠️ 刻意停在 2.7.1，不要升 2.8.0 —— 这是许可问题不是技术问题。
              2.7.1 = Apache-2.0（无附加条件）；
              2.8.0 起 nuget.org 上的**二进制包**改用 OSMF（Open Source Maintenance Fee）协议：
