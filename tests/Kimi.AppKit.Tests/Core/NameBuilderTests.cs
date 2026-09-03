@@ -1,3 +1,4 @@
+using System.Globalization;
 using Kimi.AppKit.Core.Naming;
 using Xunit;
 
@@ -41,8 +42,8 @@ public class NameBuilderTests
         var name = NameBuilder.Create()
             .WithSeparator("-")
             .Text("WO")
-            .Optional(null)
-            .Optional("")
+            .Text(null)
+            .Text("")
             .Year(Sample)
             .Build();
 
@@ -111,5 +112,36 @@ public class NameBuilderTests
     private sealed class FixedTimeProvider(DateTimeOffset now) : TimeProvider
     {
         public override DateTimeOffset GetUtcNow() => now;
+    }
+
+    [Fact]
+    public void ToString_与_Build_一致()
+    {
+        // 这两个必须同义。不一致的话，把构建器直接插进字符串插值
+        // （$"{builder}"）会得到与 Build() 不同的结果，而且不会有任何报错。
+        var builder = NameBuilder.Create().WithSeparator("-").Text("WO").Text("2026");
+
+        Assert.Equal(builder.Build(), builder.ToString());
+    }
+
+    [Fact]
+    public void DateFormat_不跟随当前区域性()
+    {
+        // ⚠️ 单号是**机器标识**不是给人读的文本。跟着服务器区域性走的话，
+        //    换个部署环境（如泰语历）同一批数据就会出现两种年份的单号。
+        var previous = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("th-TH");
+            var name = NameBuilder.Create()
+                .DateFormat("yyyyMMdd", new DateTimeOffset(2026, 3, 15, 0, 0, 0, TimeSpan.Zero))
+                .Build();
+
+            Assert.Equal("20260315", name);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previous;
+        }
     }
 }

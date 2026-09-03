@@ -49,7 +49,13 @@ public sealed class NameBuilder
         return this;
     }
 
-    /// <summary>追加一段固定文本。空串会被忽略。</summary>
+    /// <summary>追加一段固定文本。<c>null</c> 与空串会被忽略。</summary>
+    /// <remarks>
+    /// ⚠️ 前身另有一个 <c>Optional(string?)</c>，文档写着「值非空时才追加」，
+    /// 实现却是 <c>=&gt; Text(text)</c> ——与本方法**完全等价**。
+    /// 两个名字做同一件事，读代码的人会以为 <c>Text</c> 不忽略空值，
+    /// 于是在不需要的地方到处改用 <c>Optional</c>。已删除，空值处理就在这里。
+    /// </remarks>
     public NameBuilder Text(string? text)
     {
         if (!string.IsNullOrEmpty(text)) _segments.Add(text);
@@ -90,9 +96,6 @@ public sealed class NameBuilder
 
     /// <summary>条件追加。</summary>
     public NameBuilder When(bool condition, string? text) => condition ? Text(text) : this;
-
-    /// <summary>值非空时才追加。</summary>
-    public NameBuilder Optional(string? text) => Text(text);
 
     /// <summary>拼接成最终字符串。</summary>
     public string Build() => string.Join(_separator, _segments);
