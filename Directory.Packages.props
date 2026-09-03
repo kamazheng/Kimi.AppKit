@@ -163,6 +163,11 @@
          测不出「两阶段保存要在同一事务里」这类行为）。 -->
     <ItemGroup>
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+        <!-- ⚠️ 仅测试用，包本身不依赖 Identity。
+             它存在是为了用**真的** IdentityDbContext 验证「基类名额已被占用的上下文
+             也能接上审计」——这正是 AuditableDbContext 做成基类时接不上的那个场景。
+             换成自造的基类替身就又变成「自己写的消费方」，测不出真实约束。 -->
+        <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.11" />
         <PackageVersion Include="bunit" Version="2.9.0" />
         <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
         <PackageVersion Include="Testcontainers.MsSql" Version="4.14.0" />
