@@ -1,0 +1,36 @@
+@* 可搜索下拉：异步走 ICrudDataSource<T>.LoadAsync 按输入词分页取一小批候选，
+   不像前身实现那样一次性拉全表——选项集合可能有几千行时，"拉全表在客户端过滤"
+   既浪费带宽也会让下拉框卡顿。*@
+@typeparam T where T : class
+
+<MudAutocomplete T="T" Value="Value" ValueChanged="OnValueChangedAsync" SearchFunc="SearchAsync"
+                  ToStringFunc="ToDisplayText" Label="@Label" Disabled="Disabled"
+                  Clearable="true" ResetValueOnEmptyText="true" MaxItems="MaxItems" />
+
+@code {
+    [Parameter, EditorRequired] public ICrudDataSource<T> DataSource { get; set; } = null!;
+
+    [Parameter] public T? Value { get; set; }
+
+    [Parameter] public EventCallback<T?> ValueChanged { get; set; }
+
+    /// <summary>把候选项渲染成下拉里的一行文字，如 <c>x => x.Name</c>。</summary>
+    [Parameter, EditorRequired] public Func<T, string> DisplayText { get; set; } = null!;
+
+    [Parameter] public string? Label { get; set; }
+
+    [Parameter] public bool Disabled { get; set; }
+
+    [Parameter] public int MaxItems { get; set; } = 20;
+
+    private async Task<IEnumerable<T>> SearchAsync(string? search, CancellationToken cancellationToken)
+    {
+        var query = new KQuery { Search = search, PageSize = MaxItems };
+        var page = await DataSource.LoadAsync(query, cancellationToken);
+        return page.Items;
+    }
+
+    private string ToDisplayText(T? item) => item is null ? string.Empty : DisplayText(item);
+
+    private Task OnValueChangedAsync(T? value) => ValueChanged.InvokeAsync(value);
+}

@@ -1,0 +1,78 @@
+@* 登记一个实体（提供 ICrudDataSource<T> 实现）即得列表 + 新增 + 编辑 + 删除。
+   取代 MES Pages/MasterData/ 19 个近乎同构的文件——那批文件的差异几乎全部来自
+   "字段不同"，而字段本来就是从 T 反射得到的。*@
+@typeparam T where T : class, new()
+@using Kimi.AppKit.Components.Buttons
+@inject IDialogService DialogService
+@inject IKConfirm Confirm
+@inject IKNotify Notify
+
+<KFilterBar Search="@_query.Search" SearchChanged="OnSearchChangedAsync" SearchPlaceholder="@SearchPlaceholder">
+    <MudSpacer />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+               OnClick="OnCreateAsync">新增</MudButton>
+</KFilterBar>
+
+<KEntityTable T="T" DataSource="DataSource" Filter="_query" ExcludeInterfaces="ExcludeInterfaces" @ref="_table">
+    <RowActions Context="row">
+        <ErrorCatchIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OnEditAsync(row)" />
+        <ErrorCatchIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                              OnClick="() => OnDeleteAsync(row)" />
+    </RowActions>
+</KEntityTable>
+
+@code {
+    private KQuery _query = new();
+    private KEntityTable<T>? _table;
+
+    [Parameter, EditorRequired] public ICrudDataSource<T> DataSource { get; set; } = null!;
+
+    [Parameter] public IEnumerable<Type>? ExcludeInterfaces { get; set; }
+
+    [Parameter] public string SearchPlaceholder { get; set; } = "搜索…";
+
+    private Task OnSearchChangedAsync(string? search)
+    {
+        _query = _query with { Search = search };
+        return ReloadAsync();
+    }
+
+    private Task OnCreateAsync() => OpenFormAsync(new T(), title: "新增", readOnly: false);
+
+    private Task OnEditAsync(T row) => OpenFormAsync(row, title: "编辑", readOnly: false);
+
+    private async Task OpenFormAsync(T model, string title, bool readOnly)
+    {
+        var parameters = new DialogParameters<Dialogs.KEntityFormDialog<T>>
+        {
+            { x => x.Title, title },
+            { x => x.Model, model },
+            { x => x.ReadOnly, readOnly },
+            { x => x.ExcludeInterfaces, ExcludeInterfaces },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialogs.KEntityFormDialog<T>>(title, parameters);
+        var result = await dialog.Result;
+        if (result is null || result.Canceled) return;
+
+        var saveResult = await DataSource.UpsertAsync((T)result.Data!);
+        Notify.Result(saveResult, "保存成功。");
+        if (saveResult.Succeeded) await ReloadAsync();
+    }
+
+    private async Task OnDeleteAsync(T row)
+    {
+        var confirmed = await Confirm.DangerAsync("确认删除", "确定要删除这条记录吗？此操作不可撤销。");
+        if (!confirmed) return;
+
+        var result = await DataSource.DeleteAsync(GetId(row));
+        Notify.Result(result, "已删除。");
+        if (result.Succeeded) await ReloadAsync();
+    }
+
+    private Task ReloadAsync() => _table?.ReloadAsync() ?? Task.CompletedTask;
+
+    private static object GetId(T row) =>
+        typeof(T).GetProperty("Id")?.GetValue(row)
+        ?? throw new InvalidOperationException($"{typeof(T).Name} 缺少 Id 属性，KEntityCrudPage 无法定位待删除的记录。");
+}

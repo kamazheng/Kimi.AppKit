@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
-        <Description>Kimi.AppKit 的反射驱动通用 CRUD：登记一个实体即得列表、增删改与 Excel 导入导出。数据访问经 ICrudDataSource 抽象，两种宿主通用。</Description>
+        <Description>Kimi.AppKit 的反射驱动通用 CRUD：登记一个实体即得列表、新增、编辑、删除。数据访问经 ICrudDataSource 抽象，两种宿主通用。Excel 导入导出留给后续阶段。</Description>
     </PropertyGroup>
     <ItemGroup>
         <SupportedPlatform Include="browser" />

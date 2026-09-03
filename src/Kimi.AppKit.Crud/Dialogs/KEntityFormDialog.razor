@@ -1,0 +1,33 @@
+@* KEntityForm 的对话框外壳。由 KEntityCrudPage 内部使用，不建议直接在页面里手动打开——
+   想要"新增/编辑某个实体"这个交互，用 KEntityCrudPage 即可。*@
+@typeparam T where T : class
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+    </TitleContent>
+    <DialogContent>
+        <KEntityForm T="T" Model="Model" ReadOnly="ReadOnly" ExcludeInterfaces="ExcludeInterfaces"
+                     OnValidSubmit="OnSubmitAsync" OnCancel="Cancel" />
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired] public T Model { get; set; } = null!;
+
+    [Parameter] public bool ReadOnly { get; set; }
+
+    [Parameter] public IEnumerable<Type>? ExcludeInterfaces { get; set; }
+
+    private Task OnSubmitAsync(T model)
+    {
+        MudDialog.Close(DialogResult.Ok(model));
+        return Task.CompletedTask;
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

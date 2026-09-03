@@ -1,0 +1,70 @@
+@* 反射驱动的实体表格：列由 EntityPropertyInspector 从 T 反射出来，登记一个实体不用手写列定义。
+   需要手工控制列时改用 Kimi.AppKit.Components 的 KDataTable 本身，不要在这上面加列覆盖参数——
+   两套配置列的方式并存正是要避免的"包里有什么没人知道该用哪个"。*@
+@typeparam T where T : class
+
+<KDataTable T="T" DataSource="DataSource" Filter="Filter" @ref="_dataTable"
+            Dense="Dense" PageSizeOptions="PageSizeOptions">
+    <HeaderContent>
+        @foreach (var property in _properties)
+        {
+            <MudTh>@property.GetDisplayLabel()</MudTh>
+        }
+        @if (RowActions is not null)
+        {
+            <MudTh>操作</MudTh>
+        }
+    </HeaderContent>
+    <RowTemplate Context="row">
+        @foreach (var property in _properties)
+        {
+            <MudTd DataLabel="@property.GetDisplayLabel()">@FormatValue(property, row)</MudTd>
+        }
+        @if (RowActions is not null)
+        {
+            <MudTd>@RowActions(row)</MudTd>
+        }
+    </RowTemplate>
+</KDataTable>
+
+@code {
+    private KDataTable<T>? _dataTable;
+    private IReadOnlyList<PropertyInfo> _properties = [];
+
+    [Parameter, EditorRequired] public ICrudDataSource<T> DataSource { get; set; } = null!;
+
+    [Parameter] public KQuery? Filter { get; set; }
+
+    /// <summary>行内操作按钮插槽，如编辑/删除。为空不渲染操作列。</summary>
+    [Parameter] public RenderFragment<T>? RowActions { get; set; }
+
+    /// <summary>排除指定接口自带的属性（如 <c>ISoftDeleteEntity</c>），不在表格里出现。</summary>
+    [Parameter] public IEnumerable<Type>? ExcludeInterfaces { get; set; }
+
+    [Parameter] public bool Dense { get; set; } = true;
+
+    [Parameter] public int[] PageSizeOptions { get; set; } = [20, 50, 100];
+
+    protected override void OnInitialized() =>
+        _properties = EntityPropertyInspector.GetEditableProperties(typeof(T), ExcludeInterfaces);
+
+    /// <summary>供调用方在增删改之后主动刷新当前页。</summary>
+    public Task ReloadAsync() => _dataTable?.ReloadAsync() ?? Task.CompletedTask;
+
+    /// <summary>把属性值格式化成表格单元格文本，独立成静态方法是为了能不渲染 MudTable 直接单测。</summary>
+    public static string FormatValue(PropertyInfo property, T row)
+    {
+        var value = property.GetValue(row);
+        if (value is null) return string.Empty;
+        if (value is bool boolValue) return boolValue ? "是" : "否";
+
+        var underlyingType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+        if (underlyingType.IsEnum)
+        {
+            var field = underlyingType.GetField(value.ToString()!);
+            return field is not null ? field.GetDisplayLabel() : value.ToString()!;
+        }
+
+        return value.ToString() ?? string.Empty;
+    }
+}

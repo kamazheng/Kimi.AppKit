@@ -1,0 +1,90 @@
+@* 反射驱动的单个表单字段：按属性的 CLR 类型分派到对应的 MudBlazor 输入控件。
+   ⚠️ 只覆盖实际验证过的类型集合（字符串/布尔/枚举/数值/DateOnly），
+   其余类型（含嵌套对象/集合）一律退化成只读文本展示，不强行拼凑一个"看起来能编辑但语义不对"的控件。*@
+
+@if (_underlyingType == typeof(bool))
+{
+    <MudCheckBox T="bool" Value="@(_value as bool? ?? false)" ValueChanged="OnBoolChangedAsync"
+                 Label="@_label" Disabled="ReadOnly" />
+}
+else if (_underlyingType.IsEnum)
+{
+    <MudSelect T="string" Value="@(_value?.ToString() ?? string.Empty)" ValueChanged="OnEnumChangedAsync"
+               Label="@_label" Disabled="ReadOnly">
+        @foreach (var name in Enum.GetNames(_underlyingType))
+        {
+            <MudSelectItem T="string" Value="@name">@EnumMemberLabel(name)</MudSelectItem>
+        }
+    </MudSelect>
+}
+else if (_underlyingType == typeof(DateOnly))
+{
+    <MudDatePicker Date="@ToDateTime()" DateChanged="OnDateChangedAsync" Label="@_label" Disabled="ReadOnly" />
+}
+else if (IsNumeric(_underlyingType))
+{
+    <MudNumericField T="double?" Value="@ToDouble()" ValueChanged="OnNumberChangedAsync"
+                      Label="@_label" Disabled="ReadOnly" />
+}
+else if (_underlyingType == typeof(string))
+{
+    <MudTextField T="string" Value="@(_value as string ?? string.Empty)" ValueChanged="OnStringChangedAsync"
+                   Label="@_label" Disabled="ReadOnly" />
+}
+else
+{
+    <KLabeledValue Label="@_label" Value="@_value?.ToString()" />
+}
+
+@code {
+    [Parameter, EditorRequired] public object Model { get; set; } = null!;
+
+    [Parameter, EditorRequired] public PropertyInfo Property { get; set; } = null!;
+
+    [Parameter] public bool ReadOnly { get; set; }
+
+    private Type _underlyingType = typeof(object);
+    private string _label = string.Empty;
+    private object? _value;
+
+    protected override void OnParametersSet()
+    {
+        _underlyingType = Nullable.GetUnderlyingType(Property.PropertyType) ?? Property.PropertyType;
+        _label = Property.GetDisplayLabel();
+        _value = Property.GetValue(Model);
+    }
+
+    private void SetValue(object? value)
+    {
+        Property.SetValue(Model, value);
+        _value = value;
+    }
+
+    private Task OnBoolChangedAsync(bool value) { SetValue(value); return Task.CompletedTask; }
+
+    private Task OnStringChangedAsync(string? value) { SetValue(value); return Task.CompletedTask; }
+
+    private Task OnEnumChangedAsync(string value) { SetValue(Enum.Parse(_underlyingType, value)); return Task.CompletedTask; }
+
+    private Task OnNumberChangedAsync(double? value)
+    {
+        SetValue(value is null ? null : Convert.ChangeType(value.Value, _underlyingType));
+        return Task.CompletedTask;
+    }
+
+    private Task OnDateChangedAsync(DateTime? value)
+    {
+        SetValue(value is null ? null : DateOnly.FromDateTime(value.Value));
+        return Task.CompletedTask;
+    }
+
+    private DateTime? ToDateTime() => _value is DateOnly d ? d.ToDateTime(TimeOnly.MinValue) : null;
+
+    private double? ToDouble() => _value is null ? null : Convert.ToDouble(_value);
+
+    private string EnumMemberLabel(string name) => _underlyingType.GetField(name)?.GetDisplayLabel() ?? name;
+
+    private static bool IsNumeric(Type type) =>
+        type == typeof(int) || type == typeof(long) || type == typeof(short) ||
+        type == typeof(double) || type == typeof(float) || type == typeof(decimal);
+}

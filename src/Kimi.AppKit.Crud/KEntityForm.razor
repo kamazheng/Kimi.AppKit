@@ -1,0 +1,46 @@
+@* 反射驱动的实体表单：字段由 EntityPropertyInspector 从 T 反射出来。
+   Id 字段永远只读，即使整个表单不是只读模式——主键从来不该被手工改。*@
+@typeparam T where T : class
+
+<EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <MudGrid Class="pa-2">
+        @foreach (var property in _properties)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <KEntityField Model="Model" Property="property" ReadOnly="@(ReadOnly || IsIdProperty(property))" />
+            </MudItem>
+        }
+    </MudGrid>
+    <MudStack Row Justify="Justify.FlexEnd" Class="mt-4" Spacing="2">
+        <MudButton OnClick="() => OnCancel.InvokeAsync()">取消</MudButton>
+        @if (!ReadOnly)
+        {
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">保存</MudButton>
+        }
+    </MudStack>
+</EditForm>
+
+@code {
+    private IReadOnlyList<PropertyInfo> _properties = [];
+
+    [Parameter, EditorRequired] public T Model { get; set; } = null!;
+
+    [Parameter] public bool ReadOnly { get; set; }
+
+    /// <summary>排除指定接口自带的属性（如 <c>ISoftDeleteEntity</c>），不出现在表单里。</summary>
+    [Parameter] public IEnumerable<Type>? ExcludeInterfaces { get; set; }
+
+    /// <summary>校验通过后触发，携带的是同一个（已被反射写入新值的）<see cref="Model"/> 实例。</summary>
+    [Parameter] public EventCallback<T> OnValidSubmit { get; set; }
+
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    protected override void OnInitialized() =>
+        _properties = EntityPropertyInspector.GetEditableProperties(typeof(T), ExcludeInterfaces);
+
+    private static bool IsIdProperty(PropertyInfo property) =>
+        property.Name.Equals("Id", StringComparison.OrdinalIgnoreCase);
+
+    private Task OnValidSubmitAsync() => OnValidSubmit.InvokeAsync(Model);
+}
