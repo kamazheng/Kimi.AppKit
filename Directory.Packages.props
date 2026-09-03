@@ -80,6 +80,9 @@
     <ItemGroup>
         <PackageVersion Include="Hangfire" Version="1.8.25" />
         <PackageVersion Include="Hangfire.Console" Version="1.4.3" />
+        <!-- PG 存储。Kimi.AppKit.Web 刻意不引用它（那会把 PG 驱动强加给只用 SQL Server 的
+             消费方），由消费方按需引入并经 AddAppKitHangfire 的 configurePostgres 接线。 -->
+        <PackageVersion Include="Hangfire.PostgreSql" Version="1.21.1" />
     </ItemGroup>
 
     <!-- ── UI（P5a：MudBlazor 8→9，与 KMold Auth/Files 对齐）────────────

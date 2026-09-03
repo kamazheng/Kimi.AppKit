@@ -33,13 +33,19 @@ public static class HangfireSetup
     /// 逃生舱：在应用兼容性级别/序列化设置这组基线之后、选择存储之前，做进一步调整。
     /// 基线本身（<c>CompatibilityLevel</c>、序列化设置）是 Hangfire 官方推荐值，
     /// 关系到任务持久化格式的兼容性，不作为可自由更改的参数开放——真的需要偏离时用这个钩子。
+    ///
+    /// ⚠️ 第一个参数是**应用真正的** <see cref="IServiceProvider"/>。典型用途是接
+    /// <c>UseActivator(...)</c> 让后台任务能用 DI 解析依赖——那必须拿到真容器。
+    /// 若这里不把它传出去，消费方只能退而调 <c>services.BuildServiceProvider()</c>，
+    /// 那会**另造一个容器**：从中解析出的 Singleton 是多余的一份且永不 Dispose，
+    /// 持有数据库连接之类的非托管资源时就是稳定的连接泄漏。
     /// </param>
     public static IServiceCollection AddAppKitHangfire(
         this IServiceCollection services,
         DatabaseProvider provider,
         string connectionString,
         Action<IGlobalConfiguration> configurePostgres,
-        Action<IGlobalConfiguration>? configureAdditional = null)
+        Action<IServiceProvider, IGlobalConfiguration>? configureAdditional = null)
     {
         services.AddHangfire((serviceProvider, configuration) =>
         {
@@ -49,7 +55,7 @@ public static class HangfireSetup
                 .UseRecommendedSerializerSettings()
                 .UseConsole();
 
-            configureAdditional?.Invoke(configuration);
+            configureAdditional?.Invoke(serviceProvider, configuration);
 
             if (provider == DatabaseProvider.SqlServer)
             {
