@@ -163,6 +163,9 @@
          测不出「两阶段保存要在同一事务里」这类行为）。 -->
     <ItemGroup>
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+        <!-- 进程内起 Kestrel 打真实 HTTP 请求。端点的授权、路由优先级、模型绑定
+             这三样都只有真发一次请求才验得到——直接 new 出 handler 调用测不出任何一条。 -->
+        <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.11" />
         <!-- ⚠️ 仅测试用，包本身不依赖 Identity。
              它存在是为了用**真的** IdentityDbContext 验证「基类名额已被占用的上下文
              也能接上审计」——这正是 AuditableDbContext 做成基类时接不上的那个场景。
