@@ -67,12 +67,12 @@ public sealed class ConventionsTests : IDisposable
     }
 
     [Fact]
-    public void PostgresDialect_引号用双引号_布尔用_true_false()
+    public void PostgresDialect_引号用双引号_布尔用_TRUE_FALSE()
     {
         var dialect = new PostgresDialect();
         Assert.Equal("\"Status\"", dialect.Quote("Status"));
-        Assert.Equal("true", dialect.BooleanLiteral(true));
-        Assert.Equal("false", dialect.BooleanLiteral(false));
+        Assert.Equal("TRUE", dialect.BooleanLiteral(true));
+        Assert.Equal("FALSE", dialect.BooleanLiteral(false));
     }
 
     [Fact]

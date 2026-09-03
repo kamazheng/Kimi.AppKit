@@ -22,7 +22,13 @@ public sealed class PostgresDialect : IDbProviderDialect
     public string Quote(string identifier) => $"\"{identifier.Replace("\"", "\"\"")}\"";
 
     /// <inheritdoc />
-    public string BooleanLiteral(bool value) => value ? "true" : "false";
+    /// <remarks>
+    /// ⚠️ 大小写看似无关紧要（SQL 关键字不区分大小写），但这个字符串会被拼进
+    /// <c>HasFilter</c>，而 <c>HasFilter</c> 的内容**是模型的一部分**——
+    /// 改动它会让 EF 判定模型已变，从而要求一次纯粹重建过滤索引的迁移。
+    /// 对现役服务来说那是零收益的升级风险，所以取值一经确定就不要再动。
+    /// </remarks>
+    public string BooleanLiteral(bool value) => value ? "TRUE" : "FALSE";
 
     /// <inheritdoc />
     public bool IsUniqueConstraintViolation(Exception exception)
