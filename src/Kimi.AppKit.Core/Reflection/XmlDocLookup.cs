@@ -65,6 +65,22 @@ public static partial class XmlDocLookup
     /// 返回 bool 而不抛异常：XML 注释是**锦上添花**的能力，
     /// 缺了它应用照常工作（只是没有提示文字），不该让整个应用起不来。
     /// </remarks>
+    /// <summary>
+    /// 按程序集自身的名字推导 XML 文件名并加载（<c>{程序集名}.xml</c>）。
+    /// </summary>
+    /// <typeparam name="TFromAssembly">目标程序集里的任意一个类型。</typeparam>
+    /// <remarks>
+    /// ⚠️ 优先用这个重载，不要手写文件名字符串。
+    /// 写死 <c>"Acme.Foo.Shared.xml"</c> 的问题是：项目改名、程序集名改了，
+    /// 那个字符串**不会有任何编译错误**，只是从此再也找不到文件——
+    /// 而本方法刻意返回 <c>false</c> 而不抛（XML 注释是锦上添花的能力），
+    /// 于是失败是**完全静默**的：界面上的字段提示文字悄悄消失，没人会立刻发现。
+    /// 用 <c>typeof(T).Assembly</c> 推导，改名时编译器会跟着走。
+    /// </remarks>
+    public static bool TryInitFromAssemblyOf<TFromAssembly>() =>
+        TryInitFromBaseDirectory($"{typeof(TFromAssembly).Assembly.GetName().Name}.xml");
+
+    /// <inheritdoc cref="TryInitFromAssemblyOf{TFromAssembly}"/>
     public static bool TryInitFromBaseDirectory(string xmlFileName)
     {
         if (string.IsNullOrWhiteSpace(xmlFileName)) return false;
