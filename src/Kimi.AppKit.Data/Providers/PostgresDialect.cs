@@ -14,7 +14,12 @@ public sealed class PostgresDialect : IDbProviderDialect
     public string Name => "Npgsql";
 
     /// <inheritdoc />
-    public string Quote(string identifier) => $"\"{identifier}\"";
+    /// <remarks>
+    /// ⚠️ 内部双引号必须按 SQL 标准转义成两个，否则标识符提前闭合、
+    /// 后半段被当成 SQL 语法。标识符通常来自模型元数据而非用户输入，
+    /// 但「通常」不是「一定」——拼 SQL 的地方不留这种缺口。
+    /// </remarks>
+    public string Quote(string identifier) => $"\"{identifier.Replace("\"", "\"\"")}\"";
 
     /// <inheritdoc />
     public string BooleanLiteral(bool value) => value ? "true" : "false";

@@ -87,6 +87,19 @@ public sealed class ConventionsTests : IDisposable
     }
 
     [Fact]
+    public void 两个方言都要转义标识符里的结束符()
+    {
+        // 不转义时标识符会**提前闭合**，后半段被数据库当成 SQL 语法。
+        // 标识符通常来自模型元数据而非用户输入，但拼 SQL 的地方不留这种缺口。
+        //
+        // ⚠️ 这条用例是回灌 Kimi.KMold 时补的：包原本两个 Quote 都没转义，
+        // 而两个现役服务的四份实现全都转义了——包在这里是**子集**而不是超集。
+        // 上面那两条用例之所以没发现，是因为它们只传了不含结束符的标识符。
+        Assert.Equal("\"we\"\"ird\"", new PostgresDialect().Quote("we\"ird"));
+        Assert.Equal("[we]]ird]", new SqlServerDialect().Quote("we]ird"));
+    }
+
+    [Fact]
     public void DatabaseProviderSetup_无法识别的名称就地抛而不是静默兜底()
     {
         // 配错 provider 名的后果是整个迁移基线走错方向，越晚发现越贵，不能悄悄选一个默认值。
