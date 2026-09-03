@@ -11,6 +11,7 @@
              Cookie 认证），必须显式引用；IdentityModel.Protocols.OpenIdConnect 提供
              ConfigurationManager，用来替换前身手写的、同步阻塞且关闭证书校验的 JWKS 解析。 -->
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
         <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
         <PackageReference Include="Hangfire" />
         <PackageReference Include="Hangfire.Console" />
