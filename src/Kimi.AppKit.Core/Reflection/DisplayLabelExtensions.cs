@@ -28,7 +28,11 @@ public static class DisplayLabelExtensions
         return SplitPascalCase(member.Name);
     }
 
-    private static string SplitPascalCase(string name)
+    /// <summary>
+    /// 把 PascalCase 标识符拆成空格分隔的词（<c>"OrderItemId"</c> → <c>"Order Item Id"</c>）。
+    /// 公开是因为「把标识符变成人话」在表格列头之外也用得到（如动态构造的下拉项文本）。
+    /// </summary>
+    public static string SplitPascalCase(string name)
     {
         var sb = new StringBuilder(name.Length + 8);
         for (var i = 0; i < name.Length; i++)

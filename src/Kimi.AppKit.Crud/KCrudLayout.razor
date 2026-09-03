@@ -4,7 +4,7 @@
 @using Kimi.AppKit.Components.Buttons
 
 <EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync">
-    <DataAnnotationsValidator />
+    @(Validator ?? DefaultValidator)
 
     @if (ShowActionBar)
     {
@@ -42,6 +42,24 @@
     [Parameter, EditorRequired] public T Model { get; set; } = null!;
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// 校验器组件。默认 <see cref="DataAnnotationsValidator"/>；
+    /// 要换 FluentValidation 之类的方案时传入对应的 validator 组件。
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ 用 <see cref="EditForm"/> 而不是 <c>MudForm</c> 是刻意的：<c>MudForm</c> 在**静态 SSR
+    /// 下不工作**（不生成 name、不接交互），而本包的原则是渲染模式无关。
+    /// <c>EditForm</c> 三种渲染模式通用，代价是校验走标准的 validator 组件机制
+    /// 而不是 MudBlazor 的逐字段 <c>Validation</c> 委托。
+    /// </remarks>
+    [Parameter] public RenderFragment? Validator { get; set; }
+
+    private static readonly RenderFragment DefaultValidator = builder =>
+    {
+        builder.OpenComponent<DataAnnotationsValidator>(0);
+        builder.CloseComponent();
+    };
 
     /// <summary>操作栏里插在「保存」之后、右侧「删除」之前的自定义按钮。</summary>
     [Parameter] public RenderFragment? UserActions { get; set; }

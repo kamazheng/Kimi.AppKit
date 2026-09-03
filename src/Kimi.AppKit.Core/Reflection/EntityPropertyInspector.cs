@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 using Kimi.AppKit.Core.Entities;
 
@@ -65,4 +66,34 @@ public static class EntityPropertyInspector
         "Description" => 2,
         _ => 100,
     };
+
+    /// <summary>
+    /// 构造一个「按此属性取可排序值」的委托，供反射驱动的表格做客户端排序。
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ **必须按类型归一到可比较的值**，不能一律 <c>ToString()</c>：
+    /// 数字按字符串排会得到 1 &lt; 10 &lt; 2，日期按字符串排在非 ISO 格式下同样错乱。
+    /// 这类排序错误不会报错，只是顺序不对——用户往往以为是数据问题而不是排序问题。
+    /// </remarks>
+    public static Func<object, object> BuildSortSelector(this PropertyInfo property)
+    {
+        ArgumentNullException.ThrowIfNull(property);
+
+        var underlying = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+        return Type.GetTypeCode(underlying) switch
+        {
+            TypeCode.DateTime => x => Convert.ToDateTime(property.GetValue(x) ?? DateTime.MinValue, CultureInfo.InvariantCulture),
+
+            TypeCode.Decimal or TypeCode.Double or TypeCode.Single
+                or TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64
+                or TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64
+                or TypeCode.Byte or TypeCode.SByte =>
+                x => Convert.ToDouble(property.GetValue(x) ?? 0, CultureInfo.InvariantCulture),
+
+            // 字符串、枚举、Guid 等按字符串排；枚举按名称排是有意为之——
+            // 按底层数值排对用户没有意义（他看到的是名称）。
+            _ => x => property.GetValue(x)?.ToString() ?? string.Empty,
+        };
+    }
 }

@@ -1,0 +1,64 @@
+@* 内联错误面板：页面在 OnInitialized 阶段就崩了时的兜底 UI。
+   ⚠️ 这个场景**不能用对话框**——页面根本没渲染出来，弹窗没有可依附的宿主，
+   用户看到的会是一片空白。所以这里必须是内联组件，而不是 KErrorDetailDialog。*@
+
+<MudPaper Class="pa-6" Elevation="0">
+    <MudStack Spacing="3">
+        <MudText Typo="Typo.h5" Color="Color.Error">
+            <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Class="mr-2 mb-n1" />@Title
+        </MudText>
+
+        <MudAlert Severity="Severity.Error" Style="word-break:break-word;">@Message</MudAlert>
+
+        @if (_showDetail)
+        {
+            @if (!string.IsNullOrWhiteSpace(ServerDetail))
+            {
+                <MudText Typo="Typo.subtitle2">服务器异常详情</MudText>
+                <MudPaper Outlined="true" Class="pa-2" Style="max-height:40vh;overflow:auto;">
+                    <pre style="white-space:pre-wrap;word-break:break-word;margin:0;font-family:monospace;">@ServerDetail</pre>
+                </MudPaper>
+            }
+            <MudText Typo="Typo.subtitle2">客户端异常</MudText>
+            <MudPaper Outlined="true" Class="pa-2" Style="max-height:40vh;overflow:auto;">
+                <pre style="white-space:pre-wrap;word-break:break-word;margin:0;font-family:monospace;">@ClientDetail</pre>
+            </MudPaper>
+        }
+
+        <MudStack Row Spacing="2">
+            @if (OnRecover.HasDelegate)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnRecover">@RecoverLabel</MudButton>
+            }
+            <MudButton Variant="Variant.Outlined" OnClick="ToggleDetail">@(_showDetail ? "收起详情" : "详情")</MudButton>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+@code {
+    /// <summary>导致页面崩溃的异常。</summary>
+    [Parameter, EditorRequired] public Exception? Exception { get; set; }
+
+    [Parameter] public string Title { get; set; } = "出错了";
+
+    /// <summary>
+    /// 恢复动作。通常绑到 <c>ErrorBoundary.Recover()</c> + 一次页面刷新。
+    /// 未绑定时不渲染恢复按钮——没有恢复手段时给一个点了没反应的按钮更糟。
+    /// </summary>
+    [Parameter] public EventCallback OnRecover { get; set; }
+
+    [Parameter] public string RecoverLabel { get; set; } = "重新加载";
+
+    private bool _showDetail;
+
+    private string Message => string.IsNullOrWhiteSpace(Exception?.Message)
+        ? "发生未知错误"
+        : Exception!.Message;
+
+    /// <summary>服务器 InnerException 链，来自 <c>ex.Data["serverException"]</c> 跨端契约。</summary>
+    private string? ServerDetail => Exception?.Data["serverException"] as string;
+
+    private string ClientDetail => Exception?.ToString() ?? string.Empty;
+
+    private void ToggleDetail() => _showDetail = !_showDetail;
+}
