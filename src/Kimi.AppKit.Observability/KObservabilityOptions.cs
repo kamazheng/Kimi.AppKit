@@ -66,21 +66,16 @@ public sealed class KObservabilityOptions
         "__efmigrationshistory", "select 1", "hangfire",
     ];
 
-    /// <summary>
-    /// 是否把 HTTP 请求体记进链路。**默认关闭。**
-    /// </summary>
-    /// <remarks>
-    /// ⚠️ 打开之前先读 <see cref="KSensitiveDataRedactor"/> 的说明：脱敏靠字段名匹配，
-    /// 业务自定义的敏感字段（<c>userPin</c> 之类）会漏掉，且**不会有任何报错**。
-    /// 请求体进遥测等于把凭据复制到一个防护更弱的地方。
-    /// </remarks>
-    public bool CaptureRequestBody { get; set; }
-
-    /// <summary>记录请求体时的截断长度。</summary>
-    public int RequestBodyLimit { get; set; } = 2048;
-
     /// <summary>业务自定义的敏感字段名，追加到脱敏器的默认清单之后。</summary>
     public List<string> AdditionalSensitiveKeys { get; } = [];
+
+    // 【为什么没有 CaptureRequestBody】曾有过 CaptureRequestBody + RequestBodyLimit 两个选项，
+    // 同样**没有任何实现**：消费方打开它，请求体照样不会进遥测，也不会有任何提示。
+    // 删掉而不是补实现，因为「请求体永不进遥测」是一条更强也更简单的保证：
+    //   脱敏靠字段名匹配，业务自定义的敏感字段（userPin 之类）本来就会漏且不报错
+    //   （见 KSensitiveDataRedactor 与它那条「故意断言缺陷存在」的测试）。
+    //   只要请求体不进去，那个漏洞的影响面就小得多。
+    // 真需要按请求体排查时，用带脱敏的应用日志，别走遥测。
 
     // 【为什么没有 EnablePrometheusEndpoint】曾有过一个默认 true 的同名选项，但**没有任何实现**——
     // 消费方设了它不生效，且不报错。三个理由决定删掉而不是补实现：
