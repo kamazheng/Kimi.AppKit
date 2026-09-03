@@ -151,6 +151,10 @@
              <AcceptNPOIOSMFLicense>true</AcceptNPOIOSMFLicense> 表示接受 EULA。
              本产品是对外销售的商业软件，会落进收费区间。
              TODO(P3): ExcelService 迁进 Kimi.AppKit.Web 时定夺——付费、或换 ClosedXML(MIT)。 -->
+        <!-- 邮件。⚠️ 刻意不用 System.Net.Mail.SmtpClient——微软官方文档原话是
+             「不应当用于新开发」，并直接点名 MailKit 作为替代。这不是风格问题：
+             SmtpClient 对现代 TLS 与 OAuth2 支持不足，连不上 Office 365 这类服务。 -->
+        <PackageVersion Include="MailKit" Version="4.17.0" />
         <PackageVersion Include="NPOI" Version="2.7.1" />
         <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
         <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.22.0" />
