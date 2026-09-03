@@ -57,20 +57,18 @@
         <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
     </ItemGroup>
 
-    <!-- ── 可观测性（整族对齐 1.18.0）────────────────────────────────────
-         Prometheus 导出器与 EventCounters 至今没有正式版，只有与主线同版号的
-         beta/alpha。这不是版本落后，是上游就这么发的。
+    <!-- ── 可观测性（整族对齐 1.18.0，全部正式版）────────────────────────
+         ⚠️ 这里**刻意不列** Prometheus 导出器与 EventCounters：二者至今只有 beta/alpha，
+            不该进一个要发版的包的依赖链。应用只推 OTLP，由 Collector 负责再导出给
+            Prometheus——这也是 OTel 的标准拓扑，不需要每个应用自己开抓取端点。
          `Instrumentation.SqlClient` 在 1.18.0 已经转正（原先是 beta）。
          ⚠️ 原模板对 GHSA-4625-4j76-fww9 的 NuGetAuditSuppress 已随本次升级删除：
             该建议的修复版本是 1.15.3+，1.18.0 已涵盖。 -->
     <ItemGroup>
         <PackageVersion Include="OpenTelemetry" Version="1.18.0" />
-        <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.18.0" />
         <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.18.0" />
-        <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.18.0-beta.1" />
         <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
-        <PackageVersion Include="OpenTelemetry.Instrumentation.EventCounters" Version="1.18.0-alpha.1" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
         <PackageVersion Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.18.0" />

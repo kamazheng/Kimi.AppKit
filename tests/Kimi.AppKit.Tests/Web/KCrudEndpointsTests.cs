@@ -103,6 +103,47 @@ public sealed class KCrudEndpointsTests
         return (host, host.GetTestClient(), source);
     }
 
+    /// <summary>
+    /// 没注册 <see cref="IExcelService"/> 时，映射阶段就要给出说得清的错误。
+    /// </summary>
+    /// <remarks>
+    /// 【这条测试为什么存在】它是一次真实事故的回归。导出/导入 handler 的
+    /// <c>IExcelService</c> 参数在容器里解析不到时，minimal API 会把它**推断成请求体**，
+    /// 启动期抛「Body (Inferred)」——那条信息完全指不到「忘了注册」。
+    ///
+    /// ⚠️ 更值得记的是：本组另外 10 条测试**全绿**，因为 <c>StartAsync</c> 里
+    /// 手动注册了 <c>IExcelService</c>。包自己的测试绿 ≠ 消费方能用；
+    /// 缺口是「包没提供注册入口」，而测试替消费方把它补上了，于是缺口被遮住。
+    /// </remarks>
+    [Fact]
+    public async Task 未注册ExcelService时映射阶段抛出可行动的错误()
+    {
+        var build = async () => await new HostBuilder()
+            .ConfigureWebHost(web => web
+                .UseTestServer()
+                .ConfigureServices(services =>
+                {
+                    services.AddLogging();
+                    services.AddRouting();
+                    services.AddAuthentication("Test").AddScheme<TestSchemeOptions, TestHandler>("Test", _ => { });
+                    services.AddDefaultDenyAuthorization();
+                    services.AddSingleton<ICrudDataSource<Widget>>(new FakeSource());
+                    // 故意不注册 IExcelService
+                })
+                .Configure(app =>
+                {
+                    app.UseRouting();
+                    app.UseEndpoints(e => e.MapCrudEndpoints<Widget>());
+                }))
+            .StartAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(build);
+
+        // 错误信息必须点名缺的是什么、该调哪个方法——否则等于没提示。
+        Assert.Contains(nameof(IExcelService), ex.Message, StringComparison.Ordinal);
+        Assert.Contains("AddAppKitExcel", ex.Message, StringComparison.Ordinal);
+    }
+
     [Fact]
     public async Task 匿名访问读端点返回401()
     {

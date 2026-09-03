@@ -82,6 +82,12 @@ public sealed class KObservabilityOptions
     /// <summary>业务自定义的敏感字段名，追加到脱敏器的默认清单之后。</summary>
     public List<string> AdditionalSensitiveKeys { get; } = [];
 
-    /// <summary>是否暴露 <c>/metrics</c>（Prometheus 抓取端点）。</summary>
-    public bool EnablePrometheusEndpoint { get; set; } = true;
+    // 【为什么没有 EnablePrometheusEndpoint】曾有过一个默认 true 的同名选项，但**没有任何实现**——
+    // 消费方设了它不生效，且不报错。三个理由决定删掉而不是补实现：
+    //   1. 唯一能提供它的 OpenTelemetry.Exporter.Prometheus.AspNetCore 至今仍是 beta，
+    //      不该出现在一个要发版的包的依赖里
+    //   2. 默认 true 意味着 /metrics 免认证外露：路由名、主机名、异常类型、请求量全在里面，
+    //      与已修掉的 ExposeDetailedErrors 默认 true 是同一类「失败倒向更松」的缺陷
+    //   3. 标准拓扑是应用只推 OTLP，由 Collector 负责再导出给 Prometheus——
+    //      不需要每个应用自己开抓取端点
 }

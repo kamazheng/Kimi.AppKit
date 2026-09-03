@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Kimi.AppKit.Web.Crud;
 
@@ -48,6 +49,16 @@ public static class KCrudEndpointRouteBuilderExtensions
         where TEntity : class, new()
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+
+        // ⚠️ 导出/导入 handler 依赖 IExcelService。没注册的话，minimal API 会把这个
+        //    解析不到的接口参数**推断成请求体**，启动期抛「Body (Inferred)」——
+        //    那条错误信息指不到真正原因。这里提前给出可行动的提示。
+        if (endpoints.ServiceProvider.GetService<IExcelService>() is null)
+        {
+            throw new InvalidOperationException(
+                $"MapCrudEndpoints<{typeof(TEntity).Name}>() 需要 IExcelService（导出/导入用），" +
+                "但容器里没有注册。请先调用 services.AddAppKitExcel()。");
+        }
 
         var name = typeof(TEntity).Name;
         var root = prefix ?? $"api/crud/{name.ToLowerInvariant()}";
