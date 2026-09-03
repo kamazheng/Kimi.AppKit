@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Description>Kimi.AppKit 的可观测性装配：OpenTelemetry 链路/指标/日志 + 敏感数据脱敏。</Description>
+    </PropertyGroup>
+
+    <!-- ⚠️ 本包单独存在，就是为了**不把这十个依赖强加给只想要健康检查的消费方**。
+         与 Kimi.AppKit.Web 刻意不引 Hangfire.PostgreSql 是同一条理由。
+         判据：dotnet list package 带 include-transitive 时，Web 包的 OpenTelemetry 计数必须为 0。 -->
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+        <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
+    </ItemGroup>
+</Project>
