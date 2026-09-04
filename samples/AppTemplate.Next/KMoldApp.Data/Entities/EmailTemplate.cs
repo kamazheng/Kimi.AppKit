@@ -12,7 +12,7 @@ namespace KMoldApp.Data.Entities;
 /// **不用 <c>[Table(..., Schema = "Reference")]</c> 特性**——旧版本用特性把
 /// schema 名写成了字面量，与 <c>DbSchema.Reference</c> 常量各写一份，改一处漏一处。
 /// </remarks>
-public class EmailTemplate : ISoftDeleteEntity
+public class EmailTemplate : ISoftDeleteEntity, IConcurrencyStamped
 {
     /// <summary>主键。</summary>
     [Key]
@@ -42,4 +42,14 @@ public class EmailTemplate : ISoftDeleteEntity
 
     /// <summary>软删除标记。由框架拦截 <c>Remove()</c> 自动维护，**不要手写赋值**。</summary>
     public bool Active { get; set; } = true;
+
+    /// <summary>
+    /// 并发令牌。**框架在每次保存时自动换新，业务代码不要手写。**
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ 用真实属性而非默认的影子属性，因为本实体要经 HTTP 往返编辑——
+    /// 影子属性序列化不出来，客户端拿不到令牌、回传默认值，
+    /// 结果是每次编辑都报「已被他人修改」而实际无冲突。
+    /// </remarks>
+    public string? ConcurrencyStamp { get; set; }
 }

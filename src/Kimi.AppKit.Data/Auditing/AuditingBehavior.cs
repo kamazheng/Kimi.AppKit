@@ -217,5 +217,30 @@ public sealed class AuditingBehavior(IKCurrentUser currentUser, TimeProvider tim
                     break;
             }
         }
+
+        StampConcurrency(context);
+    }
+
+    /// <summary>
+    /// 给实现 <see cref="IConcurrencyStamped"/> 的实体换发新的并发令牌。
+    /// </summary>
+    /// <remarks>
+    /// 【为什么在这里换】令牌的语义是「这一行的当前版本」，每次写入都必须变，
+    /// 否则并发检查形同虚设。放在保存管线里换发，业务代码就不必记得维护它——
+    /// **业务代码手写令牌是错误用法**。
+    ///
+    /// ⚠️ 只改 <c>CurrentValue</c>，绝不动 <c>OriginalValue</c>。
+    /// <c>OriginalValue</c> 是调用方带回来的「我基于哪个版本改的」，
+    /// 它要参与 WHERE 子句；改了它并发检查就永远通过——那正是本机制要防的
+    /// lost update（后写无感覆盖前写）。
+    /// </remarks>
+    private static void StampConcurrency(DbContext context)
+    {
+        foreach (var entry in context.ChangeTracker.Entries<IConcurrencyStamped>())
+        {
+            if (entry.State is not (EntityState.Added or EntityState.Modified)) continue;
+
+            entry.Entity.ConcurrencyStamp = Guid.NewGuid().ToString();
+        }
     }
 }

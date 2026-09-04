@@ -1,3 +1,4 @@
+using Kimi.AppKit.Core.Entities;
 using Kimi.AppKit.Data.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -30,6 +31,18 @@ public static class ConcurrencyConvention
             if (entityType.IsOwned() || entityType.FindPrimaryKey() is null) continue;
 
             var entity = modelBuilder.Entity(entityType.ClrType);
+
+            // ⚠️ 实体显式实现 IConcurrencyStamped 时用它的**真实属性**，不要再挂影子属性。
+            //    影子属性序列化不出来，经 HTTP 往返的编辑必然失败——客户端拿不到令牌、
+            //    回传的是默认值、WHERE 子句匹配不到行，于是报「已被他人修改」而实际无冲突。
+            //    令牌值由 AuditingBehavior 在保存时换新，两个 provider 行为一致。
+            if (typeof(IConcurrencyStamped).IsAssignableFrom(entityType.ClrType))
+            {
+                entity.Property(nameof(IConcurrencyStamped.ConcurrencyStamp))
+                    .HasMaxLength(36)
+                    .IsConcurrencyToken();
+                continue;
+            }
 
             if (database.IsSqlServer())
             {

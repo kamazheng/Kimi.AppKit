@@ -51,7 +51,7 @@ namespace KMoldApp.Migrations.SqlServer.Migrations
                     Subject = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Active = table.Column<bool>(type: "bit", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -68,7 +68,7 @@ namespace KMoldApp.Migrations.SqlServer.Migrations
                     IsSystem = table.Column<bool>(type: "bit", nullable: false),
                     ValueTypeFullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     Updated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),

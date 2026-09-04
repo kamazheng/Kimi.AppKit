@@ -48,10 +48,25 @@ public static class EntityPropertyInspector
         return false; // 引用类型（string 除外）视为导航属性/集合，不进表格/表单
     }
 
+    /// <summary>
+    /// 无论消费方怎么配都要排除的框架接口。
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ 这些接口的属性是**框架的实现细节**，对用户没有意义，也不该被用户编辑：
+    /// <see cref="IConcurrencyStamped.ConcurrencyStamp"/> 是一串 GUID，
+    /// 显示在表格里只是噪音，出现在表单里更糟——用户可能改它，
+    /// 而改了就等于伪造「我基于哪个版本修改」，并发保护随之失效。
+    ///
+    /// 【为什么默认排除而不是让消费方标注】框架自己的字段该由框架自己处理。
+    /// 靠每个消费方记得加 <c>[HideFromTable]</c>，漏一个就露一串 GUID 给用户，
+    /// 而这种疏漏不会有任何报错。
+    /// </remarks>
+    private static readonly Type[] AlwaysExcludedInterfaces = [typeof(IConcurrencyStamped)];
+
     private static HashSet<string> BuildExcludedPropertyNames(Type entityType, IEnumerable<Type>? excludeInterfaces)
     {
         var names = new HashSet<string>();
-        foreach (var iface in excludeInterfaces ?? [])
+        foreach (var iface in AlwaysExcludedInterfaces.Concat(excludeInterfaces ?? []))
         {
             if (!iface.IsInterface || !iface.IsAssignableFrom(entityType)) continue;
             foreach (var p in iface.GetProperties()) names.Add(p.Name);

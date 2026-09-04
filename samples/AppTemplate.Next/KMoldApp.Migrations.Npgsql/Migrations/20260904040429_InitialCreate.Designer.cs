@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KMoldApp.Migrations.Npgsql.Migrations
 {
     [DbContext(typeof(KMoldDbContext))]
-    [Migration("20260904034852_InitialCreate")]
+    [Migration("20260904040429_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -39,6 +39,11 @@ namespace KMoldApp.Migrations.Npgsql.Migrations
                     b.Property<string>("Body")
                         .HasColumnType("text");
 
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -58,12 +63,6 @@ namespace KMoldApp.Migrations.Npgsql.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
                     b.HasKey("Id");
 
                     b.ToTable("EmailTemplate", "Reference");
@@ -79,6 +78,11 @@ namespace KMoldApp.Migrations.Npgsql.Migrations
 
                     b.Property<bool>("Active")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
@@ -111,12 +115,6 @@ namespace KMoldApp.Migrations.Npgsql.Migrations
                     b.Property<string>("ValueTypeFullName")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 

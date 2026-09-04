@@ -52,7 +52,7 @@ namespace KMoldApp.Migrations.Npgsql.Migrations
                     Subject = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Body = table.Column<string>(type: "text", nullable: true),
                     Active = table.Column<bool>(type: "boolean", nullable: false),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -69,7 +69,7 @@ namespace KMoldApp.Migrations.Npgsql.Migrations
                     IsSystem = table.Column<bool>(type: "boolean", nullable: false),
                     ValueTypeFullName = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: true),
                     Active = table.Column<bool>(type: "boolean", nullable: false),
                     Updated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     UpdatedBy = table.Column<string>(type: "text", nullable: true),

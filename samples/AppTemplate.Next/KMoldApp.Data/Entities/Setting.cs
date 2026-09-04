@@ -12,7 +12,7 @@ namespace KMoldApp.Data.Entities;
 /// （分组、部门、生效时间……）。包只要求它实现 <see cref="IKSettingEntity"/>。
 /// 要加列，直接在这里加，再生成两套迁移即可。
 /// </remarks>
-public class Setting : AuditableEntityWithName, IKSettingEntity
+public class Setting : AuditableEntityWithName, IKSettingEntity, IConcurrencyStamped
 {
     /// <summary>系统内置设置。系统设置不可删除，编辑也受限。</summary>
     public bool IsSystem { get; set; }
@@ -28,4 +28,14 @@ public class Setting : AuditableEntityWithName, IKSettingEntity
 
     /// <summary>设置值，以 JSON 字符串存储。</summary>
     public string Value { get; set; } = default!;
+
+    /// <summary>
+    /// 并发令牌。**框架在每次保存时自动换新，业务代码不要手写。**
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ 用真实属性而非默认的影子属性，因为本实体要经 HTTP 往返编辑——
+    /// 影子属性序列化不出来，客户端拿不到令牌、回传默认值，
+    /// 结果是每次编辑都报「已被他人修改」而实际无冲突。
+    /// </remarks>
+    public string? ConcurrencyStamp { get; set; }
 }
