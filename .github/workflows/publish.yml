@@ -82,7 +82,7 @@ jobs:
         run: dotnet test Kimi.AppKit.slnx -c Release --filter "FullyQualifiedName!~IntegrationTests"
 
       - name: 样例工程构建与测试
-        run: dotnet test samples/AppTemplate/Kimi.AppKit.Sample.sln -c Release
+        run: dotnet test samples/AppTemplate.Next/KMoldApp.sln -c Release
 
   integration_test:
     # ubuntu-latest 自带 Docker，Testcontainers 用它拉起真实的 PostgreSQL / SQL Server 容器。

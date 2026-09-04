@@ -231,6 +231,20 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(KMoldApp.Client._Imports).Assembly)
     .AllowAnonymous();
 
+// ⚠️ /login **直接发起挑战，不渲染任何页面。**
+//    这里曾经是一个只放着一个「用企业账号登录」按钮的中间页——只有一种企业登录方式
+//    却要用户多点一次，纯属噪音。Cookie handler 的 LoginPath 指向本地址，
+//    未认证的浏览器导航被拦下时会到这里，然后一跳到 IdP。
+// ⚠️ 未配 IdP 时落到现场密码通道，而不是给一个 503 死路：
+//    没有 IdP 的部署（纯脱域现场）本来就只有那条路可走。
+app.MapGet("/login", (string? returnUrl, IOptions<KOidcOptions> oidc) =>
+        oidc.Value.IsConfigured
+            ? Results.Challenge(
+                new AuthenticationProperties { RedirectUri = returnUrl ?? "/" },
+                [KAuthenticationSchemes.Oidc])
+            : Results.Redirect("/password-login"))
+    .AllowAnonymous();
+
 // OIDC 登录入口。做成服务端端点而非 Blazor 页面，因为 Challenge 要在**响应**里
 // 发重定向与相关性 cookie，交互式组件做不到这件事。
 // ⚠️ 未配 IdP 时返回 503 而不是发起挑战：那种情况下 DefaultChallengeScheme 会退回

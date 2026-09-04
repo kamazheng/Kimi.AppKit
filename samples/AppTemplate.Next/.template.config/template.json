@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "kamazheng",
+  "classifications": [ "Web", "Blazor", "WebAssembly", "Enterprise" ],
+  "identity": "Kimi.AppKit.AppTemplate.CSharp",
+  "groupIdentity": "Kimi.AppKit.AppTemplate",
+  "name": "Kimi AppKit 企业应用（Blazor Web App / WebAssembly）",
+  "description": "基于 Kimi.AppKit.* 框架包的企业应用骨架：双 provider 数据层、审计与软删除、OIDC / 现场密码 / 扫码三种登录、健康检查、Hangfire、通用 CRUD 页面与蓝图设计系统。",
+  "shortName": "kimiapp",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "KMoldApp",
+  "preferNameDirectory": true,
+  "defaultName": "MyApp",
+
+  "symbols": {
+    "//companyName": "⚠️ 品牌区的**公司名**必须单独参数化：它不是项目名，sourceName 替换不到。旧模板在这里栽过——生成出来的项目侧栏与页脚仍写着模板自己的名字，而构建与测试全绿，只有肉眼能发现。产品名则刻意复用 sourceName（就是项目名），不再多设一个符号。",
+    "companyName": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "Your Company Ltd.",
+      "replaces": "Your Company Ltd.",
+      "description": "部署方公司名，显示在登录页品牌区。生成后仍可改。"
+    },
+
+    "skipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "跳过生成后的隐式还原。"
+    }
+  },
+
+  "//primaryOutputs": "⚠️ 少了这一段，还原 post-action 会打印 'No projects are configured to restore.' 然后什么都不做——生成看着成功，实际没还原。路径写重命名前的名字，dotnet new 会跟着 sourceName 一起改。",
+  "primaryOutputs": [
+    { "path": "KMoldApp.sln" }
+  ],
+
+  "postActions": [
+    {
+      "condition": "(!skipRestore)",
+      "description": "还原生成项目的 NuGet 包。",
+      "manualInstructions": [ { "text": "在项目目录执行 dotnet restore" } ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ],
+
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "//": "构建产物与本机 IDE 状态不属于模板内容。整目录打包会把它们一并带进去——最典型的后果是生成的项目里带着别人的 launchSettings 与陈旧的 webcil 产物。",
+          "exclude": [
+            "**/bin/**",
+            "**/obj/**",
+            "**/[Bb]in/**",
+            "**/[Oo]bj/**",
+            "**/.vs/**",
+            "**/.vscode/**",
+            "**/.idea/**",
+            "**/*.user",
+            "**/*.suo",
+            "**/.DS_Store",
+            "**/node_modules/**"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -30,7 +30,7 @@
         <!-- 模板内容是另一棵源码树，不参与本工程编译。 -->
         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 
-        <TemplateSourceRoot>$(MSBuildThisFileDirectory)../../samples/AppTemplate/</TemplateSourceRoot>
+        <TemplateSourceRoot>$(MSBuildThisFileDirectory)../../samples/AppTemplate.Next/</TemplateSourceRoot>
         <TemplateStagingRoot>$(BaseIntermediateOutputPath)templatecontent/</TemplateStagingRoot>
     </PropertyGroup>
 
