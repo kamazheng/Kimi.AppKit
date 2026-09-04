@@ -2,9 +2,12 @@ using Kimi.AppKit.Components;
 using Kimi.AppKit.Core.Abstractions;
 using Kimi.AppKit.Data;
 using Kimi.AppKit.Data.Providers;
+using Kimi.AppKit.Web.Crud;
+using Kimi.AppKit.Web.Excel;
 using Kimi.AppKit.Web.HealthChecks;
 using Kimi.AppKit.Web.Identity;
 using KMoldApp.Data;
+using KMoldApp.Data.Entities;
 using KMoldApp.Infrastructure;
 using Kimi.AppKit.Web.Authentication;
 using Kimi.AppKit.Web.Authorization;
@@ -22,7 +25,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveWebAssemblyComponents()
+    .AddInteractiveServerComponents();
 
 // ⚠️ MudBlazor 与对话框服务**两端都要注册**：WASM 端给真正跑在浏览器里的组件用；
 //    服务端在**预渲染**含这些组件的页面时也要能解析它们。
@@ -108,6 +112,18 @@ builder.Services.AddScoped(sp => new UnitOfWork(sp.GetRequiredService<KMoldDbCon
 
 builder.Services.AddAppHealthChecks<KMoldDbContext>();
 
+// ⚠️ 这是**开放面白名单**：没登记的实体既解析不出数据源、也映射不出端点。
+//    前身把「读写任意表」压缩成一个通用端点，于是「这个系统对外开放了哪些表」
+//    在代码里没有任何一处在说明，权限判断因此无处可挂。
+// CRUD 端点自带 Excel 导出/导入，故需要 IExcelService。
+// ⚠️ 漏了它会在启动时抛，且包的错误信息直接给出修法——这类「装配不全」
+//    就该在启动期炸掉，而不是等用户点导出时才 500。
+builder.Services.AddAppKitExcel();
+
+builder.Services.AddKCrud<KMoldDbContext>()
+    .AddEntity<Setting>()
+    .AddEntity<EmailTemplate>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -144,6 +160,7 @@ app.MapStaticAssets().AllowAnonymous();
 //    这里放行的只是「能不能到达 Blazor 管线」，受保护页面照旧由各自的 [Authorize] 把关。
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
+    .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(typeof(KMoldApp.Client._Imports).Assembly)
     .AllowAnonymous();
 
@@ -176,6 +193,12 @@ app.MapGet("/authentication/logout", async (HttpContext http, IOptions<KOidcOpti
 
     return Results.Redirect("/");
 }).AllowAnonymous();
+
+// 每实体一组 CRUD 端点，读写各自挂授权。
+// ⚠️ 出厂即 RequireAuthorization()；这里再显式收紧到管理员——设置与邮件模板
+//    属于系统配置，普通登录用户不该能读写。
+app.MapCrudEndpoints<Setting>().RequireAuthorization(AppPolicies.AdminOnly);
+app.MapCrudEndpoints<EmailTemplate>().RequireAuthorization(AppPolicies.AdminOnly);
 
 app.MapControllers();
 

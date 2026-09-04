@@ -1,0 +1,47 @@
+@using Kimi.AppKit.Components.Components
+
+@* 带角色门禁的导航项。
+
+   ⚠️ 无权限时**禁用并提示缺哪个角色，不隐藏**——隐藏会让用户以为功能不存在，
+   转而去问同事或提工单；禁用 + 说明"需要 XX 角色"，用户知道该找谁开权限。
+
+   门禁与提示文案逻辑全部复用包里的 KRoleGate，本组件只负责「长成一个 MudNavLink」。
+   前身把两者揉在一起写了一遍，于是同一套角色差集算法在包里和应用里各存一份。 *@
+
+<KRoleGate Roles="@Roles" FormatRoleName="@ShortName">
+    <Authorized>
+        <MudNavLink Href="@Href" Match="@Match" Target="@Target" Icon="@Icon">@Title</MudNavLink>
+    </Authorized>
+    <NotAuthorized Context="gate">
+        <MudTooltip Text="@gate.MissingRolesHint" Inline="false">
+            <MudNavLink Disabled="true" Icon="@Icon" Class="mud-width-full">@Title</MudNavLink>
+        </MudTooltip>
+    </NotAuthorized>
+</KRoleGate>
+
+@code {
+    /// <summary>逗号分隔的角色全名，OR 语义（持有任一即可）。</summary>
+    [Parameter, EditorRequired] public string Roles { get; set; } = string.Empty;
+
+    /// <summary>目标地址。</summary>
+    [Parameter, EditorRequired] public string Href { get; set; } = string.Empty;
+
+    /// <summary>菜单文字。</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+
+    /// <summary>路由匹配方式。</summary>
+    [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+
+    /// <summary>图标。</summary>
+    [Parameter] public string? Icon { get; set; }
+
+    /// <summary>同 <c>&lt;a target&gt;</c>，用于 Swagger / Hangfire 这类需另开标签页的外链。</summary>
+    [Parameter] public string? Target { get; set; }
+
+    // 角色全名带应用前缀（KMoldApp_Admin），提示里只显示后半段更易读。
+    private static string ShortName(string role)
+    {
+        var index = role.LastIndexOf('_');
+        return index >= 0 && index < role.Length - 1 ? role[(index + 1)..] : role;
+    }
+}

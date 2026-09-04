@@ -43,6 +43,7 @@
         <PackageVersion Include="Kimi.AppKit.Web" Version="$(KimiAppKitVersion)" />
         <PackageVersion Include="Kimi.AppKit.Design" Version="$(KimiAppKitVersion)" />
         <PackageVersion Include="Kimi.AppKit.Components" Version="$(KimiAppKitVersion)" />
+        <PackageVersion Include="Kimi.AppKit.Crud" Version="$(KimiAppKitVersion)" />
     </ItemGroup>
 
     <!-- ── UI ──────────────────────────────────────────────────────────

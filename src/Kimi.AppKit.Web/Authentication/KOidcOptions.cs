@@ -68,6 +68,24 @@ public sealed class KOidcOptions
     /// </remarks>
     public bool ForceHttpsRedirectUri { get; set; } = true;
 
+    /// <summary>
+    /// 是否要求 IdP 的元数据端点（discovery / JWKS）走 HTTPS。
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ **默认 <c>true</c>，生产环境绝不要关。** 元数据里含签名公钥集，
+    /// 明文传输意味着中间人可以替换公钥，进而伪造出本应用会接受的令牌——
+    /// 那是认证根基被击穿，不是「传输不加密」这种程度的问题。
+    ///
+    /// 关它的唯一合理场景是**本地联调**：本机起的 IdP 通常不配证书，
+    /// 此时 OIDC handler 会抛
+    /// <c>The MetadataAddress or Authority must use HTTPS unless disabled for development</c>，
+    /// 整个登录入口 500。
+    ///
+    /// ⚠️ 与 <c>JwtBearerSetup.ConfigureAppKitJwtBearer</c> 的同名参数保持一致：
+    /// 带安全默认值的可选项，而不是硬编码——「不同部署确实需要不同值」的才该开放为配置。
+    /// </remarks>
+    public bool RequireHttpsMetadata { get; set; } = true;
+
     /// <summary>SignalR 集线器的路径前缀。这些路径的令牌走查询串。</summary>
     /// <remarks>
     /// WebSocket 握手带不了 <c>Authorization</c> 头，令牌只能放查询串。

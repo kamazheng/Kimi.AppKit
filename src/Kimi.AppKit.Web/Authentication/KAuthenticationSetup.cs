@@ -166,6 +166,11 @@ public static class KAuthenticationSetup
     {
         oidc.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         oidc.Authority = options.Issuer;
+
+        // ⚠️ 默认 true。关掉它意味着元数据（含签名公钥集）走明文，
+        //    中间人可替换公钥并伪造出本应用会接受的令牌——认证根基被击穿。
+        //    仅本地联调（IdP 没配证书）时才该关。
+        oidc.RequireHttpsMetadata = options.RequireHttpsMetadata;
         oidc.ClientId = options.ClientId;
         oidc.ClientSecret = options.ClientSecret;
         oidc.ResponseType = OpenIdConnectResponseType.Code;

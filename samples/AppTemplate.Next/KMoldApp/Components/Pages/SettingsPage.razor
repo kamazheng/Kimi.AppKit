@@ -1,0 +1,26 @@
+@page "/admin/settings"
+@rendermode InteractiveServer
+@using Kimi.AppKit.Core.Abstractions
+@using Kimi.AppKit.Crud
+@using KMoldApp.Data.Entities
+@using KMoldApp.Shared.Constants
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = AppPolicies.AdminOnly)]
+@inject ICrudDataSource<Setting> DataSource
+
+@* 系统设置管理。
+
+   ⚠️ **本页刻意走 InteractiveServer 而非全局的 InteractiveWebAssembly。**
+   Blazor Web App 允许按页面选渲染模式，而管理页正适合服务端：
+   可以直接注入 EF 数据源，省掉「客户端 → HTTP 端点 → EF」整整一层往返，
+   也不必把实体类型暴露给 WASM 端。
+
+   ⚠️ 整页只有一个组件——列表、搜索、新增、编辑、删除全部来自 KEntityCrudPage，
+   字段由实体类型反射得出。旧模板三个管理页手写了 592 行，
+   其中差异几乎全部来自「字段不同」，而字段本来就能从类型推导。 *@
+
+<PageTitle>系统设置</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-4">系统设置</MudText>
+
+<KEntityCrudPage T="Setting" DataSource="DataSource" SearchPlaceholder="按名称搜索…" />

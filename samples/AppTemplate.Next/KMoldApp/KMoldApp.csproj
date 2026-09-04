@@ -26,10 +26,12 @@
 
   <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Web\Kimi.AppKit.Web.csproj" />
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Crud\Kimi.AppKit.Crud.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(KimiAppKitLocalDev)' != 'true'">
     <PackageReference Include="Kimi.AppKit.Web" />
+    <PackageReference Include="Kimi.AppKit.Crud" />
   </ItemGroup>
 
 </Project>

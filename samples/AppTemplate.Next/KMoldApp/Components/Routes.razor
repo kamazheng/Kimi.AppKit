@@ -1,0 +1,26 @@
+@* 路由表。
+
+   ⚠️ **本组件必须在服务端项目里**，且 App.razor 里引用它时**不指定 @rendermode**。
+   原因：AppAssembly 决定 Router 扫哪个程序集找 @page。放在客户端项目时
+   AppAssembly 是 Client 程序集，**服务端项目的页面根本不会被发现**——
+   表现是访问服务端页面得到 NotFound，而不是任何错误。
+
+   这也是 `dotnet new blazor -ai`（全局交互）与「部分页面服务端渲染」的固有冲突：
+   全局交互要求 Routes 跑在 WASM 里，而 WASM 里没有服务端程序集。
+   混合渲染的正确做法是**按页面标注 @rendermode**，而不是在 Routes 上一刀切。 *@
+<Router AppAssembly="typeof(Program).Assembly"
+        AdditionalAssemblies="new[] { typeof(KMoldApp.Client._Imports).Assembly }"
+        NotFoundPage="typeof(KMoldApp.Client.Pages.NotFound)">
+    <Found Context="routeData">
+        @* ⚠️ 用 AuthorizeRouteView 而不是 RouteView：页面上的 [Authorize] 才会生效。
+           未登录访问受保护页面时走 NotAuthorized 分支跳登录页——
+           这是**组件级**鉴权，与端点级的 FallbackPolicy 是两回事。 *@
+        <AuthorizeRouteView RouteData="routeData"
+                            DefaultLayout="typeof(KMoldApp.Client.Layout.MainLayout)">
+            <NotAuthorized>
+                <KMoldApp.Client.Layout.NotAuthorizedView />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

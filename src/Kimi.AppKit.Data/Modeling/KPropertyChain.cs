@@ -161,9 +161,37 @@ public sealed class KPropertyChain<TEntity, TProperty>
         || type == typeof(long) || type == typeof(ulong);
 }
 
-/// <summary>属性链式配置的入口。</summary>
+/// <summary>建模辅助扩展。</summary>
 public static class KModelingExtensions
 {
+    /// <summary>
+    /// 把实体映射到指定 schema 下的表，表名默认取实体类型名。
+    /// </summary>
+    /// <typeparam name="TEntity">实体类型。</typeparam>
+    /// <param name="builder">实体 builder。</param>
+    /// <param name="schema">schema 名，用 <see cref="DbSchema"/> 里的常量。</param>
+    /// <param name="tableName">表名。默认 <c>typeof(TEntity).Name</c>。</param>
+    /// <remarks>
+    /// 【为什么值得有】EF Core 的 <c>ToTable(name, schema)</c> 要求显式给表名，
+    /// 于是每个实体都要重复写一遍自己的类名。而「表名等于实体名」正是 EF Core
+    /// 不调 <c>ToTable</c> 时的默认约定——只是一旦要指定 schema 就得把表名也一起写死，
+    /// 类改名时那个字符串不会有编译错误。
+    ///
+    /// ⚠️ 显式传 <paramref name="tableName"/> 时就恢复了「改名不报错」的风险，
+    /// 只在表名确实不等于类名时才传。
+    /// </remarks>
+    public static EntityTypeBuilder<TEntity> ToSchemaTable<TEntity>(
+        this EntityTypeBuilder<TEntity> builder,
+        string schema,
+        string? tableName = null)
+        where TEntity : class
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(schema);
+
+        return builder.ToTable(tableName ?? typeof(TEntity).Name, schema);
+    }
+
     /// <summary>
     /// 开始链式配置属性。
     /// </summary>

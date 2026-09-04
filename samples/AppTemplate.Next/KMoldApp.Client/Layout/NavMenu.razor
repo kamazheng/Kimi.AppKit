@@ -1,6 +1,20 @@
+@using KMoldApp.Shared.Constants
+
 @* MudBlazor 导航。放在 MudDrawer 里，由 MainLayout 控制开合。 *@
 <MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <MudNavLink Href="counter" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
     <MudNavLink Href="weather" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
+
+    @* 需要登录才能看的页面。 *@
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="profile" Icon="@Icons.Material.Filled.Person">我的账号</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+
+    @* 需要管理员角色。⚠️ 无权限时**禁用并说明缺哪个角色**，不隐藏。 *@
+    <RoleNavLink Roles="@($"{AppRoles.Root},{AppRoles.Admin}")"
+                 Href="admin/settings" Title="系统设置"
+                 Icon="@Icons.Material.Filled.Settings" />
 </MudNavMenu>

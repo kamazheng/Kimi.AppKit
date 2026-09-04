@@ -37,7 +37,14 @@
         var have = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToHashSet();
         var required = Roles.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-        var missing = required.Where(r => !have.Contains(r)).Select(FormatRoleName).ToList();
+        // ⚠️ 用 IsInRole 而不是自己比对 ClaimTypes.Role 的 claim 值。
+        //    接了 IdP 的应用通常配 MapInboundClaims = false，此时角色 claim 是短名
+        //    "role" 而非 WS-* 长 URI；按 ClaimTypes.Role 过滤会**一个都匹配不上**，
+        //    提示于是退化成「列出全部要求的角色」——用户明明已持有 A，
+        //    却被告知「需要 A 或 B」。
+        //    IsInRole 内部走 ClaimsIdentity.RoleClaimType，与上面 <AuthorizeView>
+        //    的判定**完全一致**，不会出现「门禁放行了、提示却说没权限」这种自相矛盾。
+        var missing = required.Where(r => !user.IsInRole(r)).Select(FormatRoleName).ToList();
         // 如果一个都不缺却还是走到了 NotAuthorized（例如未登录），把全部要求的角色都列出来，
         // 而不是给一个空的、看不出原因的提示。
         if (missing.Count == 0) missing = required.Select(FormatRoleName).ToList();

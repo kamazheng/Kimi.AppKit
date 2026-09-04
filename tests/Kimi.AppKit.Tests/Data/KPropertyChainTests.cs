@@ -1,3 +1,4 @@
+using Kimi.AppKit.Data;
 using Kimi.AppKit.Data.Modeling;
 using Kimi.AppKit.Data.Providers;
 using Microsoft.EntityFrameworkCore;
@@ -70,6 +71,16 @@ public class KPropertyChainTests
         Assert.Equal(64, entity.FindProperty(nameof(Gadget.Code))!.GetMaxLength());
     }
 
+    [Fact]
+    public void ToSchemaTable_默认用实体类型名做表名()
+    {
+        using var context = new ChainContext();
+        var entity = context.Model.FindEntityType(typeof(Gadget))!;
+
+        Assert.Equal(nameof(Gadget), entity.GetTableName());
+        Assert.Equal(DbSchema.Reference, entity.GetSchema());
+    }
+
     private static string GetRangeConstraintSql(IDbProviderDialect dialect)
     {
         using var context = BuildModel(dialect);
@@ -118,7 +129,7 @@ public class KPropertyChainTests
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var builder = modelBuilder.Entity<Gadget>();
-            builder.ToTable("Gadget");
+            builder.ToSchemaTable(DbSchema.Reference);
 
             builder.KProperty(x => x.Name, dialect)
                 .HasMaxLength(32)

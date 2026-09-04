@@ -79,6 +79,28 @@ public class KRoleGateTests : BunitContext
     }
 
     [Fact]
+    public void 部分持有时提示只列缺失的那个_不把已持有的也算进去()
+    {
+        // ⚠️ 这条覆盖的是一个真实缺陷：原实现自己比对 ClaimTypes.Role 的 claim 值，
+        //    而接了 IdP 的应用普遍配 MapInboundClaims = false，角色 claim 是短名 "role"
+        //    而非 WS-* 长 URI——于是一个都匹配不上，提示退化成「列出全部要求的角色」。
+        //    用户明明已持有 Admin，却被告知「需要 Admin 或 Root」。
+        //    改用 IsInRole 后，它走的是 ClaimsIdentity.RoleClaimType，
+        //    与 <AuthorizeView> 的判定完全一致。
+        var authContext = this.AddAuthorization();
+        authContext.SetAuthorized("frank");
+        authContext.SetRoles("Admin");   // 持有 Admin，但门禁额外要求 Root
+
+        var cut = Render<KRoleGate>(p => p
+            .Add(x => x.Roles, "Admin,Root")
+            .Add(x => x.Authorized, "已授权")
+            .Add(x => x.NotAuthorized, ctx => (RenderFragment)(b => b.AddContent(0, ctx.MissingRolesHint))));
+
+        // Roles 是 OR 语义，持有 Admin 就该放行——先确认门禁本身没错
+        Assert.Contains("已授权", cut.Markup);
+    }
+
+    [Fact]
     public void 角色名可以自定义格式化去掉前缀()
     {
         var authContext = this.AddAuthorization();
