@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Npgsql 的迁移程序集。本工程只放迁移代码，不放任何业务逻辑。
+
+    ⚠️ **一个 provider 一个程序集**：迁移文件里的列类型是生成那一刻按当时的 provider
+       烤进去的字符串（PG 是 character varying(100) / timestamp with time zone，
+       SQL Server 是 nvarchar(100) / datetimeoffset）。共用一套迁移时，
+       dotnet ef migrations script 换个 provider 只会换掉标识符引号，
+       **列类型仍是另一个库的写法**——脚本能生成、能通过 review，拿到目标库上执行才炸。
+  -->
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KMoldApp.Data\KMoldApp.Data.csproj" />
+  </ItemGroup>
+
+</Project>
