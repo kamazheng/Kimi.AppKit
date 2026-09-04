@@ -2,10 +2,16 @@
    不知道数据源、也不知道 KDataTable——调用方在 SearchChanged 里更新自己持有的 KQuery
    并调 KDataTable.ReloadAsync()。结构化筛选项（下拉/日期范围等）完全由调用方通过
    ChildContent 提供并自行管理状态，本组件不替调用方决定筛选项该长什么样。*@
-<MudToolBar Class="k-filter-bar pa-0" Dense="true">
+@* ⚠️ 两个插槽的位置是语义的一部分，不要合并：
+   ChildContent 是**筛选项**（下拉、日期范围），必须紧跟搜索框靠左——它们和搜索框是一组，
+   隔开了读者就不知道那个下拉筛的是什么。
+   Actions 是**动作**（新增、导入），靠右——把它塞进左侧插槽会让它和搜索框中间空出一大片，
+   看起来像没对齐的漂浮元素。 *@
+<MudToolBar Class="k-filter-bar pa-0 gap-2" Dense="true">
     <KSearchField Value="@Search" ValueChanged="OnSearchChangedAsync" Placeholder="@SearchPlaceholder" />
     @ChildContent
     <MudSpacer />
+    @Actions
 </MudToolBar>
 
 @code {
@@ -15,8 +21,11 @@
 
     [Parameter] public string SearchPlaceholder { get; set; } = "搜索…";
 
-    /// <summary>自定义筛选项插槽，如下拉/日期范围/预设筛选按钮。</summary>
+    /// <summary>自定义**筛选项**插槽（靠左，紧跟搜索框），如下拉/日期范围/预设筛选按钮。</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>**动作**插槽（靠右），如新增/导入/批量操作。</summary>
+    [Parameter] public RenderFragment? Actions { get; set; }
 
     private Task OnSearchChangedAsync(string? value) => SearchChanged.InvokeAsync(value);
 }

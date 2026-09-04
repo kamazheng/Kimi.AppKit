@@ -28,4 +28,7 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.H
 // ⚠️ 注册它不等于开放了数据——服务端端点出厂即 RequireAuthorization()。
 builder.Services.AddHttpCrudDataSource<SettingDto>("api/crud/setting");
 
+// 企业标识：读服务端随首屏送来的持久化状态，客户端不打身份服务（跨域 + 多一次往返）。
+builder.Services.AddScoped<KMoldApp.Shared.Auth.IAppBranding, KMoldApp.Client.Infrastructure.ClientBranding>();
+
 await builder.Build().RunAsync();

@@ -4,9 +4,10 @@
 
 <KCrudLayout T="T" Model="Model" ReadOnly="ReadOnly" ShowDelete="ShowDelete"
              OnValidSubmit="OnValidSubmit" OnDelete="OnDelete" OnCancel="OnCancel"
-             SubmitLabel="@SubmitLabel" DeleteLabel="@DeleteLabel">
+             SubmitLabel="@SubmitLabel" DeleteLabel="@DeleteLabel"
+             ShowActionBar="ShowActionBar" FormId="@FormId">
     <MudGrid Class="pa-2">
-        @foreach (var property in _properties)
+        @foreach (var property in VisibleProperties)
         {
             <MudItem xs="12" sm="6" md="4">
                 <KEntityField Model="Model" Property="property" ReadOnly="@(ReadOnly || IsIdProperty(property))" />
@@ -39,6 +40,24 @@
     [Parameter] public string SubmitLabel { get; set; } = "保存";
 
     [Parameter] public string DeleteLabel { get; set; } = "删除";
+
+    /// <summary>是否渲染自带的操作栏。对话框里应传 false——动作按钮归 DialogActions。</summary>
+    [Parameter] public bool ShowActionBar { get; set; } = true;
+
+    /// <summary>表单元素 id，供表单外的提交按钮用 <c>form=</c> 关联。</summary>
+    [Parameter] public string? FormId { get; set; }
+
+    /// <summary>
+    /// 隐藏主键字段。新增场景应传 true。
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ 主键是数据库生成的，新增表单上显示一个只读的 <c>0</c> 既无意义又让人以为要填。
+    /// 编辑场景保留（只读），因为报障时那个值是定位记录的依据。
+    /// </remarks>
+    [Parameter] public bool HideIdentity { get; set; }
+
+    private IEnumerable<PropertyInfo> VisibleProperties =>
+        HideIdentity ? _properties.Where(p => !IsIdProperty(p)) : _properties;
 
     protected override void OnInitialized() =>
         _properties = EntityPropertyInspector.GetEditableProperties(typeof(T), ExcludeInterfaces);

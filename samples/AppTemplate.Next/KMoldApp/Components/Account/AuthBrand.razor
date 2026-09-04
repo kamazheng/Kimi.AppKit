@@ -1,24 +1,42 @@
-@using KMoldApp.Infrastructure
-@using Microsoft.Extensions.Options
-@inject IOptions<BrandingOptions> Branding
+@using Kimi.AppKit.Web.Branding
+@using KMoldApp.Shared.Constants
+@inject KBrandingClient Branding
 
-@* 认证页顶部的企业标识。登录页与二维码卡片共用——各写一份必然漂移。 *@
+@* 认证页顶部的企业标识。登录页与二维码卡片共用——各写一份必然漂移。
+
+   ⚠️ **企业名与 Logo 来自身份服务**（客户只在 Auth 的品牌页设一次）；
+   产品名恒取本地常量——那是本应用自己的名字，同一套 Auth 下的各个应用本来就各叫各的。
+
+   ⚠️ 拉不到时静默回落兜底值。品牌是装饰，身份服务抖一下不能让登录页打不开——
+   而登录页恰恰是身份服务不可达时用户最可能访问的那一屏。 *@
 
 <div class="k-auth__brand">
-    @if (!string.IsNullOrWhiteSpace(Branding.Value.LogoPath))
+    @if (_branding.LogoUrl is { } logo)
     {
-        <img class="k-auth__logo" src="@Branding.Value.LogoPath" alt="@Branding.Value.CompanyName" />
+        <img class="k-auth__logo" src="@logo" alt="@_branding.CompanyName" />
     }
     else
     {
-        @* 未配 Logo 时的内置字标。
+        @* 未上传 Logo 时的内置字标。
            ⚠️ 不要换成三道横线——那和汉堡菜单图标一模一样，用户会去点它，
            点不动就以为界面坏了。方框加字母不会被误认成控件。 *@
-        <span class="k-auth__mark" aria-hidden="true">@Branding.Value.Initial</span>
+        <span class="k-auth__mark" aria-hidden="true">@Initial</span>
     }
 
     <span class="k-auth__names">
-        <span class="k-auth__company">@Branding.Value.CompanyName</span>
-        <span class="k-auth__product">@Branding.Value.ProductName</span>
+        <span class="k-auth__company">@_branding.CompanyName</span>
+        <span class="k-auth__product">@AppBrand.ProductName</span>
     </span>
 </div>
+
+@code {
+    private Kimi.AppKit.Core.Contracts.KBranding _branding =
+        Kimi.AppKit.Core.Contracts.KBranding.Fallback;
+
+    private string Initial =>
+        string.IsNullOrWhiteSpace(_branding.CompanyName)
+            ? "?"
+            : _branding.CompanyName[..1].ToUpperInvariant();
+
+    protected override async Task OnInitializedAsync() => _branding = await Branding.GetAsync();
+}

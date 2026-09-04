@@ -1,18 +1,41 @@
 @* KEntityForm 的对话框外壳。由 KEntityCrudPage 内部使用，不建议直接在页面里手动打开——
-   想要"新增/编辑某个实体"这个交互，用 KEntityCrudPage 即可。*@
+   想要「新增/编辑某个实体」这个交互，用 KEntityCrudPage 即可。*@
 @typeparam T where T : class
 
+@* ⚠️ 动作按钮必须落在 <DialogActions>（对话框底部），不能用表单自带的操作栏。
+   表单那条操作栏排在字段**之前**，那是给整页编辑设计的；放进对话框就成了
+   「标题下面紧跟保存/取消，再往下才是要填的字段」——先给动作、后给内容，读起来是反的。
+   ⚠️ 按钮在 DOM 上不是表单的子节点，所以靠 HTML 的 form="表单id" 关联提交，
+   见 KCrudLayout.FormId。 *@
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">@Title</MudText>
     </TitleContent>
+
     <DialogContent>
         <KEntityForm T="T" Model="Model" ReadOnly="ReadOnly" ExcludeInterfaces="ExcludeInterfaces"
-                     OnValidSubmit="OnSubmitAsync" OnCancel="Cancel" />
+                     HideIdentity="HideIdentity" ShowActionBar="false" FormId="@_formId"
+                     OnValidSubmit="OnSubmitAsync" />
     </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel">取消</MudButton>
+
+        @if (!ReadOnly)
+        {
+            <MudButton form="@_formId" ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled" Color="Color.Primary" Class="mr-2">
+                保存
+            </MudButton>
+        }
+    </DialogActions>
 </MudDialog>
 
 @code {
+    // ⚠️ 每个实例一个 id：同一页面可能先后开多个对话框，
+    //    id 撞了会让 form= 关联到上一个已销毁的表单，点保存毫无反应。
+    private readonly string _formId = $"kform-{Guid.NewGuid():N}";
+
     [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
@@ -20,6 +43,9 @@
     [Parameter, EditorRequired] public T Model { get; set; } = null!;
 
     [Parameter] public bool ReadOnly { get; set; }
+
+    /// <summary>隐藏主键字段。新增场景应传 true。</summary>
+    [Parameter] public bool HideIdentity { get; set; }
 
     [Parameter] public IEnumerable<Type>? ExcludeInterfaces { get; set; }
 

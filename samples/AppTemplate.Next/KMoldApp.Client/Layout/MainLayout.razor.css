@@ -96,3 +96,32 @@ main {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+/* 顶栏的企业字标。未上传 Logo 时用公司名首字。
+   ⚠️ 与认证页的 .k-auth__mark 同一套视觉（黄铜描边方框），两屏必须像一个产品。
+   ⚠️ 不要用三道横线之类的图形占位——那和汉堡菜单图标一模一样，
+      用户会去点它，点不动就以为界面坏了。 */
+.k-appbar-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    border: 1px solid var(--k-brass, #C4841D);
+    border-radius: var(--k-radius, 3px);
+    color: var(--k-brass, #C4841D);
+    font-size: .9375rem;
+    font-weight: 600;
+}
+
+/* 顶栏的企业 Logo。
+   ⚠️ **必须限尺寸。** Logo 由客户在身份服务里上传，尺寸完全不受本应用控制——
+      不限的话一张大图会把顶栏撑破并盖住导航，而本地用兜底字标测试时永远发现不了。
+   ⚠️ object-fit: contain 而不是 cover：cover 会把细长的企业字标裁掉两头。 */
+.k-appbar-logo {
+    max-height: 2rem;
+    max-width: 9rem;
+    object-fit: contain;
+    display: block;
+}

@@ -1,3 +1,7 @@
+@using KMoldApp.Shared.Constants
+@using KMoldApp.Shared.Auth
+@using Kimi.AppKit.Core.Contracts
+@inject IAppBranding BrandingSource
 @inherits LayoutComponentBase
 
 @* ⚠️ 主题与 Provider 必须在布局里、且处于交互式渲染上下文。
@@ -12,7 +16,30 @@
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
                        OnClick="@(() => _drawerOpen = !_drawerOpen)" />
-        <MudText Typo="Typo.h6">KMoldApp</MudText>
+        @* 企业标识。**企业名与 Logo 来自身份服务**（客户只在 Auth 里设一次），
+           产品名恒取本地常量——那是本应用自己的名字，不该跟着身份服务的产品名走。
+           ⚠️ 公司名不能省：一屏上只有产品名时，被单点登录重定向过来的用户
+           无从判断这是谁家的系统。认证页已经放了公司名，控制台不放就是两屏对不上。
+           ⚠️ 窄屏隐藏公司名而不是缩小字号——挤成两行小字比只留产品名更难读。 *@
+        @* ⚠️ 间距用内联 style 而不是 MudBlazor 的 ga-*/gap-* 工具类：那些类名随版本变过，
+           不生效时字标会和文字**贴在一起**且不报错。 *@
+        <div class="d-flex align-center" style="gap:.75rem">
+            @if (_branding.LogoUrl is { } logo)
+            {
+                <img src="@logo" alt="@_branding.CompanyName" class="k-appbar-logo" />
+            }
+            else
+            {
+                @* 未上传 Logo 时的字标。⚠️ 不要用三道横线占位——那和汉堡菜单一模一样。 *@
+                <span class="k-appbar-mark" aria-hidden="true">@Initial</span>
+            }
+            <div class="d-flex flex-column" style="line-height:1.15">
+                <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@AppBrand.ProductName</MudText>
+                <MudText Typo="Typo.caption" Class="d-none d-sm-flex" Style="opacity:.72">
+                    @_branding.CompanyName
+                </MudText>
+            </div>
+        </div>
         <MudSpacer />
         <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
                        Color="Color.Inherit" OnClick="@(() => _isDarkMode = !_isDarkMode)"
@@ -46,6 +73,14 @@
 </div>
 
 @code {
+    private KBranding _branding = KBranding.Fallback;
+
+    private string Initial =>
+        string.IsNullOrWhiteSpace(_branding.CompanyName) ? "?" : _branding.CompanyName[..1].ToUpperInvariant();
+
+    // ⚠️ 服务端预渲染与 WASM 接管各跑一次，两次用的是各自容器里的 IAppBranding 实现。
+    protected override async Task OnInitializedAsync() => _branding = await BrandingSource.GetAsync();
+
     private bool _isDarkMode;
     private bool _drawerOpen = true;
 }

@@ -8,9 +8,11 @@
 @inject IKNotify Notify
 
 <KFilterBar Search="@_query.Search" SearchChanged="OnSearchChangedAsync" SearchPlaceholder="@SearchPlaceholder">
-    <MudSpacer />
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
-               OnClick="OnCreateAsync">新增</MudButton>
+    @* 新增是**动作**不是筛选项，放右侧插槽。塞进左侧会和搜索框之间空出一大片。 *@
+    <Actions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="OnCreateAsync">新增</MudButton>
+    </Actions>
 </KFilterBar>
 
 <KEntityTable T="T" DataSource="DataSource" Filter="_query" ExcludeInterfaces="ExcludeInterfaces" @ref="_table">
@@ -37,17 +39,19 @@
         return ReloadAsync();
     }
 
-    private Task OnCreateAsync() => OpenFormAsync(new T(), title: "新增", readOnly: false);
+    // ⚠️ 新增时隐藏主键：它由数据库生成，显示一个只读的 0 既无意义又让人以为要填。
+    private Task OnCreateAsync() => OpenFormAsync(new T(), title: "新增", readOnly: false, hideIdentity: true);
 
     private Task OnEditAsync(T row) => OpenFormAsync(row, title: "编辑", readOnly: false);
 
-    private async Task OpenFormAsync(T model, string title, bool readOnly)
+    private async Task OpenFormAsync(T model, string title, bool readOnly, bool hideIdentity = false)
     {
         var parameters = new DialogParameters<Dialogs.KEntityFormDialog<T>>
         {
             { x => x.Title, title },
             { x => x.Model, model },
             { x => x.ReadOnly, readOnly },
+            { x => x.HideIdentity, hideIdentity },
             { x => x.ExcludeInterfaces, ExcludeInterfaces },
         };
 

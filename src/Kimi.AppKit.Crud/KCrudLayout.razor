@@ -3,7 +3,7 @@
 @typeparam T where T : class
 @using Kimi.AppKit.Components.Buttons
 
-<EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync">
+<EditForm id="@FormId" Model="Model" OnValidSubmit="OnValidSubmitAsync">
     @(Validator ?? DefaultValidator)
 
     @if (ShowActionBar)
@@ -78,6 +78,18 @@
     [Parameter] public bool ReadOnly { get; set; }
 
     [Parameter] public bool ShowActionBar { get; set; } = true;
+
+    /// <summary>
+    /// 表单元素的 <c>id</c>。
+    /// </summary>
+    /// <remarks>
+    /// 【为什么需要它】对话框的动作按钮必须待在 <c>&lt;DialogActions&gt;</c> 里（底部），
+    /// 而那里在 DOM 上**不是表单的子节点**——按钮点下去不会提交表单。
+    /// HTML 的 <c>form="表单id"</c> 属性正是为这种「按钮在表单外」的场景设计的。
+    /// ⚠️ 不要改成「用 JS 找到 form 再 submit」：那样绕过 Blazor 的 EditForm，
+    /// 校验和 OnValidSubmit 都不会触发，表现是点保存毫无反应。
+    /// </remarks>
+    [Parameter] public string? FormId { get; set; }
 
     [Parameter] public bool ShowSubmit { get; set; } = true;
 

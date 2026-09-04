@@ -23,25 +23,31 @@ namespace KMoldApp.Shared.Entities;
 public sealed class SettingDto : IConcurrencyStamped
 {
     /// <summary>主键。</summary>
+    [Display(Name = "编号")]
     public int Id { get; set; }
 
     /// <summary>设置名。</summary>
     [Required]
     [StringLength(100)]
+    [Display(Name = "名称")]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>说明。</summary>
     [StringLength(500)]
+    [Display(Name = "说明")]
     public string? Description { get; set; }
 
     /// <summary>系统内置设置，不可删除。</summary>
+    [Display(Name = "系统内置")]
     public bool IsSystem { get; set; }
 
     /// <summary>设置值的类型全名。</summary>
     [StringLength(500)]
+    [Display(Name = "值类型")]
     public string ValueTypeFullName { get; set; } = string.Empty;
 
     /// <summary>设置值（JSON 字符串）。</summary>
+    [Display(Name = "值")]
     public string Value { get; set; } = string.Empty;
 
     /// <summary>
@@ -49,5 +55,6 @@ public sealed class SettingDto : IConcurrencyStamped
     /// 唯一载体，丢掉它等于放弃并发保护（后写无感覆盖前写）。
     /// 由服务端换发，客户端不要生成也不要清空。
     /// </summary>
+    [Display(Name = "并发标记")]
     public string? ConcurrencyStamp { get; set; }
 }

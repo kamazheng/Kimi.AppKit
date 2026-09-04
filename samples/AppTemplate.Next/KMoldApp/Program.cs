@@ -20,8 +20,10 @@ using KMoldApp.Shared.Entities;
 using KMoldApp.Infrastructure;
 using Kimi.AppKit.Web.Authentication;
 using Kimi.AppKit.Web.Authorization;
+using Kimi.AppKit.Web.Branding;
 using KMoldApp.Client.Pages;
 using KMoldApp.Components;
+using KMoldApp.Shared.Auth;
 using KMoldApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -79,10 +81,11 @@ builder.Services.AddAppKitOidcTokenService();
 builder.Services.AddAppKitQrLogin(builder.Configuration);
 builder.Services.AddAppKitEnvironment();
 
-// 企业标识（登录页与二维码卡片上的公司名/产品名/Logo）。
-// ⚠️ 刻意做成配置而非落库：本模板生成的是某一个客户自己的应用，品牌在 dotnet new
-//    那一刻就定了。Auth 那套 433 行的可管理品牌是「一套部署服务多个客户」才需要的。
-builder.Services.Configure<BrandingOptions>(builder.Configuration.GetSection(BrandingOptions.SectionName));
+// 企业标识（企业名与 Logo）**向身份服务要**，不各自配——
+// 一套部署里客户只该设一次，各服务各配一份必然出现两个名字并存。
+// ⚠️ 产品名不走这条路，它恒取本地配置：那是本应用自己的名字。
+builder.Services.AddAppKitBranding();
+builder.Services.AddScoped<IAppBranding, ServerBranding>();
 
 // API 文档（/openapi/v1.json + /scalar/v1）。默认只在开发环境开放。
 builder.Services.AddAppOpenApi(builder.Configuration);

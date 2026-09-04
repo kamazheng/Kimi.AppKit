@@ -4,13 +4,14 @@
 
 @if (_underlyingType == typeof(bool))
 {
+    @* ⚠️ 复选框不吃 Variant/Margin（它没有边框），加了编译不过。 *@
     <MudCheckBox T="bool" Value="@(_value as bool? ?? false)" ValueChanged="OnBoolChangedAsync"
-                 Label="@_label" Disabled="ReadOnly" />
+                 Label="@_label" Disabled="ReadOnly" Dense="true" />
 }
 else if (_underlyingType.IsEnum)
 {
     <MudSelect T="string" Value="@(_value?.ToString() ?? string.Empty)" ValueChanged="OnEnumChangedAsync"
-               Label="@_label" Disabled="ReadOnly">
+               Label="@_label" Disabled="ReadOnly" Variant="Variant.Outlined" Margin="Margin.Dense">
         @foreach (var name in Enum.GetNames(_underlyingType))
         {
             <MudSelectItem T="string" Value="@name">@EnumMemberLabel(name)</MudSelectItem>
@@ -19,17 +20,17 @@ else if (_underlyingType.IsEnum)
 }
 else if (_underlyingType == typeof(DateOnly))
 {
-    <MudDatePicker Date="@ToDateTime()" DateChanged="OnDateChangedAsync" Label="@_label" Disabled="ReadOnly" />
+    <MudDatePicker Date="@ToDateTime()" DateChanged="OnDateChangedAsync" Label="@_label" Disabled="ReadOnly" Variant="Variant.Outlined" Margin="Margin.Dense" />
 }
 else if (IsNumeric(_underlyingType))
 {
     <MudNumericField T="double?" Value="@ToDouble()" ValueChanged="OnNumberChangedAsync"
-                      Label="@_label" Disabled="ReadOnly" />
+                      Label="@_label" Disabled="ReadOnly" Variant="Variant.Outlined" Margin="Margin.Dense" />
 }
 else if (_underlyingType == typeof(string))
 {
     <MudTextField T="string" Value="@(_value as string ?? string.Empty)" ValueChanged="OnStringChangedAsync"
-                   Label="@_label" Disabled="ReadOnly" />
+                   Label="@_label" Disabled="ReadOnly" Variant="Variant.Outlined" Margin="Margin.Dense" />
 }
 else
 {
