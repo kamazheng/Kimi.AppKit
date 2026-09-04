@@ -19,12 +19,15 @@
                        aria-label="切换亮/暗配色" />
     </MudAppBar>
 
-    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
+    @* ClipMode.Always：抽屉从 AppBar 下方开始，不盖住标题栏。
+       缺了它抽屉会顶到页面最上沿，把 AppBar 的汉堡按钮与标题挤到右侧。 *@
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
     </MudDrawer>
 
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+    @* pt-16 让内容避开 fixed 定位的 AppBar——没有它首屏内容会被标题栏压住。 *@
+    <MudMainContent Class="pt-16 pa-4">
+        <MudContainer MaxWidth="MaxWidth.Large">
             @Body
         </MudContainer>
     </MudMainContent>

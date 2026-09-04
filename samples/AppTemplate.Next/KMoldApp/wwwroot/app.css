@@ -10,6 +10,14 @@
       一并移除：UI 统一走 MudBlazor，两套样式系统并存只会互相覆盖。
 */
 
+/* ⚠️ 不要删。Routes.razor 里的 <FocusOnNavigate Selector="h1" /> 每次路由导航后都会
+   把焦点移到 h1（为屏幕阅读器播报页面标题），视觉上的副作用是标题被套一个焦点轮廓。
+   这条规则看起来像 Bootstrap 时代的遗留，实际是那个组件的配套——删掉后每次进页面
+   标题都会带一个蓝框。 */
+h1:focus {
+    outline: none;
+}
+
 /* Blazor 的未处理错误提示条，由 MainLayout 里的 #blazor-error-ui 使用。 */
 .blazor-error-boundary {
     background: #b32121;
