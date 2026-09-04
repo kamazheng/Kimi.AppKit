@@ -132,3 +132,90 @@
     letter-spacing: .02em;
     text-transform: uppercase;
 }
+
+/* ==========================================================================
+   基础样式 —— 与设计令牌一同下发，两个现役服务（Auth / Files）此前各存一份
+   **逐字相同**的副本。P8 回灌时确认：12 个公共规则块里 0 处差异。
+
+   ⚠️ 这些不是「令牌」而是「基础样式」，但必须和令牌同源下发：
+      它们全都在消费 --k-* 变量，拆成两个文件只会多一处要保持同步的地方。
+   ========================================================================== */
+/* ⚠️ margin 与 box-sizing 自己重置一遍，不要指望 MudBlazor 的 reset：
+   登录页不在 MudBlazor 的组件体系里，哪天调整样式表加载顺序，
+   body 的默认 8px margin 会让全屏蓝图底露出一圈白边。 */
+html, body {
+    margin: 0;
+    min-height: 100%;
+    font-family: var(--k-font);
+    color: var(--k-ink);
+    -webkit-font-smoothing: antialiased;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* 标识符（client_id、sub、回调地址、指纹）一律等宽。
+   本产品满屏是这类字符串，等宽在此不是装饰，是让人能逐字核对。 */
+.k-mono {
+    font-family: var(--k-mono);
+    font-size: .875em;
+    letter-spacing: -.01em;
+}
+
+/* 键盘焦点必须始终可见。MudBlazor 与浏览器默认样式在若干控件上会抹掉它。 */
+:focus-visible {
+    outline: 2px solid var(--k-brass);
+    outline-offset: 2px;
+}
+
+/* ⚠️ 例外：页面标题。Blazor 的 FocusOnNavigate 每次导航都会**程序化**聚焦 h1
+   （为读屏器宣读新页面），而浏览器把这种聚焦也算进 :focus-visible，
+   于是每个页面的标题上都套着一个黄铜色方框，看着像出错了。
+   标题不可点击，去掉描边不影响键盘可达性。 */
+.k-page-head__title:focus,
+.k-page-head__title:focus-visible,
+.k-auth__title:focus,
+.k-auth__title:focus-visible,
+h1:focus,
+h1:focus-visible {
+    outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* Blazor 断线提示条。默认模板那版是英文且样式与站点无关。 */
+#blazor-error-ui {
+    display: none;
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 2000;
+    padding: .8rem 1.2rem;
+    background: var(--k-brass);
+    color: #1B1300;
+    font-size: .875rem;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, .2);
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    float: right;
+}
+
+.blazor-error-boundary {
+    padding: 1rem 1.25rem;
+    background: var(--k-error-soft);
+    border-left: 3px solid var(--k-error);
+    color: var(--k-error);
+    border-radius: var(--k-radius);
+}
+
+.blazor-error-boundary::after {
+    content: "这个区域出错了，请刷新页面重试。";
+}
