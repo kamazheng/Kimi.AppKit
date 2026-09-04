@@ -18,9 +18,33 @@
         <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <!--
+          Kimi.AppKit.* 包的版本。打模板包时由 Kimi.AppKit.Templates.csproj 替换成
+          与模板包同一个版本号——模板与它引用的框架包必须同版本发布，
+          否则生成出来的项目会拿到一份与模板内容对不上的包。
+          仓库内开发时走 ProjectReference，本值不参与解析。
+        -->
+        <KimiAppKitVersion>0.0.0-local</KimiAppKitVersion>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.11" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.11" />
+    </ItemGroup>
+
+    <!-- ── Kimi.AppKit 框架包 ─────────────────────────────────────────── -->
+    <ItemGroup>
+        <PackageVersion Include="Kimi.AppKit.Core" Version="$(KimiAppKitVersion)" />
+        <PackageVersion Include="Kimi.AppKit.Design" Version="$(KimiAppKitVersion)" />
+        <PackageVersion Include="Kimi.AppKit.Components" Version="$(KimiAppKitVersion)" />
+    </ItemGroup>
+
+    <!-- ── UI ──────────────────────────────────────────────────────────
+         ⚠️ MudBlazor 一律钉死具体版本，禁用浮动 `9.*`：浮动会在每次 restore/部署
+            静默升级，曾导致文件上传行为在无代码改动的情况下回归。 -->
+    <ItemGroup>
+        <PackageVersion Include="MudBlazor" Version="9.9.0" />
     </ItemGroup>
 
 </Project>

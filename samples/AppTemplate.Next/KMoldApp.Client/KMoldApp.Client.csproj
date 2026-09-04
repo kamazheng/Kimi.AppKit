@@ -11,6 +11,21 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+    <PackageReference Include="MudBlazor" />
+  </ItemGroup>
+
+  <!-- 仓库内开发用 ProjectReference（改包立刻生效，不必先发版）；
+       生成出去的项目用 PackageReference。开关见 Directory.Build.props。 -->
+  <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Design\Kimi.AppKit.Design.csproj" />
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Components\Kimi.AppKit.Components.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(KimiAppKitLocalDev)' != 'true'">
+    <PackageReference Include="Kimi.AppKit.Core" />
+    <PackageReference Include="Kimi.AppKit.Design" />
+    <PackageReference Include="Kimi.AppKit.Components" />
   </ItemGroup>
 
 </Project>

@@ -1,23 +1,42 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
+@* ⚠️ 主题与 Provider 必须在布局里、且处于交互式渲染上下文。
+   本项目全站 InteractiveWebAssembly，所以 KMudProviders 不用再显式指定渲染模式；
+   将来若加入走静态 SSR 的页面（例如需要在响应里种 cookie 的登录页），
+   那条路径上的 Provider 要写成 <KMudProviders @@rendermode="InteractiveServer" />，
+   否则 Snackbar/Dialog 不报错、只是永远不显示。 *@
+<MudThemeProvider Theme="AppKitTheme.Instance" @bind-IsDarkMode="_isDarkMode" />
+<KMudProviders />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                       OnClick="@(() => _drawerOpen = !_drawerOpen)" />
+        <MudText Typo="Typo.h6">KMoldApp</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
+                       Color="Color.Inherit" OnClick="@(() => _isDarkMode = !_isDarkMode)"
+                       aria-label="切换亮/暗配色" />
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
         <NavMenu />
-    </div>
+    </MudDrawer>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private bool _isDarkMode;
+    private bool _drawerOpen = true;
+}

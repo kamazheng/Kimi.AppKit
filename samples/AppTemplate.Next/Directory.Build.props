@@ -25,4 +25,19 @@
         <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <!--
+          仓库内开发标记。各工程据此在两种引包方式间切换：
+            true （仅 Kimi.AppKit 仓库内）→ ProjectReference，改包立刻生效，不必先发版
+            false（dotnet new 生成的项目）→ PackageReference，拿 nuget.org 上的正式包
+
+          ⚠️ 靠**探测包源码是否就在旁边**来判断，而不是靠「模板打包时排除本文件」。
+             排除规则与文件内容是两份真相，一旦对不上就会生成出「带着指向不存在目录的
+             ProjectReference」的项目，而那种错误直到还原包时才报、信息指不到真正原因。
+             用 Exists() 则只有一份真相：源码在 → 用源码；不在 → 用包。
+        -->
+        <KimiAppKitLocalDev Condition="'$(KimiAppKitLocalDev)' == '' And Exists('$(MSBuildThisFileDirectory)../../src/Kimi.AppKit.Core/Kimi.AppKit.Core.csproj')">true</KimiAppKitLocalDev>
+        <KimiAppKitLocalDev Condition="'$(KimiAppKitLocalDev)' == ''">false</KimiAppKitLocalDev>
+    </PropertyGroup>
+
 </Project>
