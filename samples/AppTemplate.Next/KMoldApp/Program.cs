@@ -1,6 +1,11 @@
 using Kimi.AppKit.Components;
+using Kimi.AppKit.Web.Authentication;
+using Kimi.AppKit.Web.Authorization;
 using KMoldApp.Client.Pages;
 using KMoldApp.Components;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +21,39 @@ builder.Services.AddRazorComponents()
 //    ⚠️ 这不是「客户端注册就够了」——预渲染跑在服务端进程里，用的是服务端的容器。
 builder.Services.AddMudServices();
 builder.Services.AddAppKitDialogs();
+
+// 认证装配来自 Kimi.AppKit.Web。登录页路径是本应用的策略，因此从这里传。
+// ⚠️ 未配 OpenIDConnect:Issuer / ClientId 时会跳过 OIDC 与 JwtBearer 注册并在控制台
+//    打印提示，应用照常启动——本地起一个空壳来看界面不需要先架一台 IdP。
+builder.Services.AddAppKitAuthentication(builder.Configuration, o =>
+{
+    o.LoginPath = "/login";
+});
+
+// ⚠️ 默认拒绝：没显式标注的端点一律要求登录。安全默认值应当是「忘了标注就拦下」，
+//    而不是裸 AddAuthorization() 那样「忘了标注就裸奔」。
+//    必须匿名的端点（健康检查、首屏引导）显式调 .AllowAnonymous()。
+builder.Services.AddDefaultDenyAuthorization(options =>
+{
+    // ⚠️ _framework 下的资源必须无条件放行，否则 WASM 根本启动不了。
+    //    光靠 MapStaticAssets().AllowAnonymous() 不够：Blazor 会为 WASM 的资源清单
+    //    **单独创建**一组 _framework/resource-collection*.js 端点，它们既不归
+    //    MapStaticAssets 管，也不在 MapRazorComponents 的约定范围内——
+    //    实测 1318 个端点里恰好只有这 6 个（指纹化/非指纹化 × 普通/gz）没有匿名标记。
+    //    被拦下的表现极难追：浏览器拿到 302 后的登录页 HTML，拿它算 SHA-256 与
+    //    import map 里声明的 integrity 对不上，控制台只说
+    //    "Failed to find a valid digest in the 'integrity' attribute ... has been blocked"，
+    //    完全指不到授权。
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAssertion(ctx =>
+            ctx.Resource is HttpContext http
+            && http.Request.Path.StartsWithSegments("/_framework")
+                ? true
+                : ctx.User.Identity?.IsAuthenticated == true)
+        .Build();
+});
+
+builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
 
@@ -33,11 +71,42 @@ else
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseAntiforgery();
 
-app.MapStaticAssets();
+// ⚠️ 必须 AllowAnonymous。MapStaticAssets 是**端点路由**，会被上面的 FallbackPolicy
+//    （默认拒绝）管到；而它取代的 UseStaticFiles 是**中间件**，压根不走端点授权——
+//    这个差异是从 UseStaticFiles 迁到 MapStaticAssets 时最容易漏的一步。
+//    漏掉的表现极具迷惑性：页面照常返回 200（服务端预渲染的 HTML 出得来），
+//    但每一个 css/js 请求都被 302 到登录页并收到一份 HTML，
+//    浏览器把 HTML 当 JS 解析，控制台只有一句 "Unexpected token '<'"，
+//    完全指不到「静态资源被授权拦了」这个真正原因。
+app.MapStaticAssets().AllowAnonymous();
+
+// ⚠️ Blazor 端点必须显式 AllowAnonymous，否则会被上面的 FallbackPolicy（默认拒绝）拦住。
+//    Blazor 的鉴权层是组件级的 AuthorizeRouteView 与页面上的 [Authorize]，不是端点级策略；
+//    端点级一刀切会把**登录页自己**也要求登录，症状是登录后又被弹回登录页的重定向死循环。
+//    这里放行的只是「能不能到达 Blazor 管线」，受保护页面照旧由各自的 [Authorize] 把关。
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(KMoldApp.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(KMoldApp.Client._Imports).Assembly)
+    .AllowAnonymous();
+
+// OIDC 登录入口。做成服务端端点而非 Blazor 页面，因为 Challenge 要在**响应**里
+// 发重定向与相关性 cookie，交互式组件做不到这件事。
+// ⚠️ 未配 IdP 时返回 503 而不是发起挑战：那种情况下 DefaultChallengeScheme 会退回
+//    Cookie，而 Cookie 挑战就是重定向到 LoginPath，于是登录页把自己转回自己——
+//    浏览器上表现为 ERR_TOO_MANY_REDIRECTS，日志里什么也看不出来。
+app.MapGet("/authentication/login", (string? returnUrl, IOptions<KOidcOptions> oidc) =>
+        oidc.Value.IsConfigured
+            ? Results.Challenge(
+                new AuthenticationProperties { RedirectUri = returnUrl ?? "/" },
+                [KAuthenticationSchemes.Oidc])
+            : Results.Problem(
+                "尚未配置 OpenIDConnect:Issuer / ClientId，单点登录不可用。",
+                statusCode: StatusCodes.Status503ServiceUnavailable))
+    .AllowAnonymous();
 
 app.Run();

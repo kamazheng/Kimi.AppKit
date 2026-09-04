@@ -12,4 +12,14 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
   </ItemGroup>
 
+  <!-- 仓库内开发用 ProjectReference；生成出去的项目用 PackageReference。
+       开关见 Directory.Build.props。 -->
+  <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Web\Kimi.AppKit.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(KimiAppKitLocalDev)' != 'true'">
+    <PackageReference Include="Kimi.AppKit.Web" />
+  </ItemGroup>
+
 </Project>
