@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!--
+    ⚠️ 刻意**不**照搬旧 Shared 工程的两处配置：
+
+    1. `<NoWarn>S3246;CS1591;CS1587</NoWarn>` —— 铁律 8「告警即错误，修根因不要用
+       NoWarn 压制」。CS1591（缺 XML 注释）该做的是补注释；旧工程压掉它之后，
+       这一层的公共 API 有大半没有文档。需要豁免时在**具体文件**上写明理由，
+       不在这里整体关掉。
+
+    2. `<DocumentationFile>` 直接输出到 Client 的 wwwroot，且路径里**写死了项目名**。
+       那份 XML 是给运行期字段提示用的（前身的 XmlDocLookup 读它），但写死项目名
+       意味着模板改名后静默失效——Program.cs 里恰好有一条注释在说这件事
+       （「用泛型参数从程序集推导文件名，不要写死」），而这里正是它说的对象。
+       该机制留到 X2-7 真正需要时再接，届时用 MSBuild 属性推导而非常量。
+  -->
+
+  <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(KimiAppKitLocalDev)' != 'true'">
+    <PackageReference Include="Kimi.AppKit.Core" />
+  </ItemGroup>
+
+</Project>

@@ -3,6 +3,7 @@ using Kimi.AppKit.Web.Authentication;
 using Kimi.AppKit.Web.Authorization;
 using KMoldApp.Client.Pages;
 using KMoldApp.Components;
+using KMoldApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -51,6 +52,12 @@ builder.Services.AddDefaultDenyAuthorization(options =>
                 ? true
                 : ctx.User.Identity?.IsAuthenticated == true)
         .Build();
+
+    // ⚠️ 角色判断走**策略**，不要用自定义授权特性。策略名与角色名都来自 KMoldApp.Shared
+    //    的常量——两端共用同一份定义，手写字面量写错不会有编译错误，只在有人真的
+    //    访问那个端点时抛 "The AuthorizationPolicy named ... was not found"。
+    options.AddPolicy(AppPolicies.AdminOnly,
+        AuthorizationSetup.RequireAnyRole(AppRoles.Root, AppRoles.Admin));
 });
 
 builder.Services.AddCascadingAuthenticationState();

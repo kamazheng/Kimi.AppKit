@@ -16,6 +16,10 @@
 
   <!-- 仓库内开发用 ProjectReference（改包立刻生效，不必先发版）；
        生成出去的项目用 PackageReference。开关见 Directory.Build.props。 -->
+  <ItemGroup>
+    <ProjectReference Include="..\KMoldApp.Shared\KMoldApp.Shared.csproj" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Design\Kimi.AppKit.Design.csproj" />
