@@ -191,6 +191,17 @@ app.UseWhen(
     branch => branch.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true));
 app.UseHttpsRedirection();
 
+// ⚠️ **必须显式调用，且必须排在状态码页之后。** 不写这一行时框架会把路由中间件
+//    自动插到**管线最前面**，于是 UseStatusCodePagesWithReExecute 重新执行请求时
+//    **不再经过路由匹配**，端点为 null，落进「默认拒绝」的兜底策略——
+//    未登录用户因此被 302 到 IdP。
+//    ⚠️ 症状离根因极远：浏览器请求一个已失效的 /_framework/*.pdb（发布后缓存了旧
+//    index.html 就会发生），本该拿到 404 自愈，实际收到跨域重定向，
+//    控制台只报 CORS 被拦，接着 mono 加载失败、WASM 起不来，
+//    最后表现为页面底部弹出 Blazor 那条黄色「未处理错误」条。
+//    整条链上没有任何一处提到「授权」或「中间件顺序」。
+app.UseRouting();
+
 // ⚠️ 必须排在静态文件中间件**之前**。官方约束是「在任何可能读取请求 culture 的
 //    中间件之前」，并点名 UseStaticFiles 作为例子。放错是静默的——管线照常工作。
 app.UseAppKitRequestLocalization(defaultCulture: "en", supportedCultures: ["en", "zh-CN"]);
@@ -262,6 +273,18 @@ app.MapCrudEndpoints<Setting>().RequireAuthorization(AppPolicies.AdminOnly);
 app.MapCrudEndpoints<EmailTemplate>().RequireAuthorization(AppPolicies.AdminOnly);
 
 app.MapControllers();
+
+// ⚠️ 未命中的 /api/* 必须自己接住并回 problem+json。不接的话它没有端点，
+//    落进「默认拒绝」的兜底策略，未登录调用方收到的是 **302 + 一页登录 HTML**，
+//    `response.json()` 当场抛 SyntaxError，错误信息完全指不到「这个地址不存在」。
+//    ⚠️ 挂 AllowAnonymous 是刻意的：地址存不存在不是秘密，
+//    而把「不存在」伪装成「要登录」只会让调用方查错查到别处去。
+app.MapFallback("/api/{**path}", (HttpContext http) =>
+        TypedResults.Problem(
+            title: "接口不存在",
+            detail: $"没有匹配 {http.Request.Path} 的接口。",
+            statusCode: StatusCodes.Status404NotFound))
+    .AllowAnonymous();
 
 // 健康检查：/health/live（进程存活）与 /health/ready（含数据库连通性）。
 // ⚠️ 两个端点在包里已带 AllowAnonymous——探针不可能先登录。

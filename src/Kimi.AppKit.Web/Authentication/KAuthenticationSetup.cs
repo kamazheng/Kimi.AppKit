@@ -117,7 +117,38 @@ public static class KAuthenticationSetup
             HasBearerToken(context) || IsHubPath(context, options)
                 ? JwtBearerDefaults.AuthenticationScheme
                 : null;
+
+        // ⚠️ **API 路径不重定向到登录页，直接给状态码。**
+        //    Cookie handler 出厂行为是 302 到 LoginPath，那对浏览器导航是对的，
+        //    对 API 调用方却是灾难：拿到的是一页登录 HTML，`response.json()` 当场抛
+        //    SyntaxError，错误信息完全指不到「其实是没登录」。
+        //    ⚠️ 判据用 Accept 头而不只是路径前缀：路径前缀由各应用自己定，
+        //    而「我要的是 JSON」是调用方自己声明的，跨应用都成立。
+        cookie.Events.OnRedirectToLogin = context =>
+            RespondWithStatusCodeForApi(context, StatusCodes.Status401Unauthorized);
+
+        cookie.Events.OnRedirectToAccessDenied = context =>
+            RespondWithStatusCodeForApi(context, StatusCodes.Status403Forbidden);
     }
+
+    /// <summary>API 请求给状态码，其余照常重定向。</summary>
+    private static Task RespondWithStatusCodeForApi(
+        RedirectContext<CookieAuthenticationOptions> context, int statusCode)
+    {
+        if (WantsJson(context.Request))
+        {
+            context.Response.StatusCode = statusCode;
+            return Task.CompletedTask;
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    }
+
+    private static bool WantsJson(HttpRequest request) =>
+        request.Path.StartsWithSegments("/api")
+        || request.Headers.Accept.Any(v => v?.Contains("application/json", StringComparison.OrdinalIgnoreCase) == true)
+        || string.Equals(request.Headers.XRequestedWith, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
 
     private static bool HasBearerToken(HttpContext context) =>
         context.Request.Headers.Authorization.Count > 0
@@ -190,11 +221,27 @@ public static class KAuthenticationSetup
                 ? JwtBearerDefaults.AuthenticationScheme
                 : KAuthenticationSchemes.Oidc;
 
-        if (options.ForceHttpsRedirectUri)
+        // ⚠️ 这两件事必须挂在**同一个** OnRedirectToIdentityProvider 上。
+        //    事件是赋值不是叠加，分开写第二个会把第一个整个顶掉，且没有任何编译或运行时信号。
+        oidc.Events.OnRedirectToIdentityProvider = context =>
         {
-            oidc.Events.OnRedirectToIdentityProvider = context =>
+            var request = context.HttpContext.Request;
+
+            // ⚠️ **API 请求不发起 OIDC 挑战，直接回 401。**
+            //    默认挑战方案配了 OIDC 之后，未认证的 API 调用拿到的是
+            //    302 + 一整页 IdP 登录 HTML，`response.json()` 当场抛 SyntaxError；
+            //    浏览器里更糟——跨域重定向被报成 CORS 错误，
+            //    整条信息链没有一处提到「没登录」。
+            //    ⚠️ Cookie handler 上那份同样的短路**不够**：配了 OIDC 时挑战根本不走 Cookie。
+            if (WantsJson(request))
             {
-                var request = context.HttpContext.Request;
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.HandleResponse();
+                return Task.CompletedTask;
+            }
+
+            if (options.ForceHttpsRedirectUri)
+            {
                 context.ProtocolMessage.RedirectUri = new UriBuilder
                 {
                     Scheme = "https",
@@ -202,10 +249,24 @@ public static class KAuthenticationSetup
                     Port = request.Host.Port ?? -1,
                     Path = request.PathBase + oidc.CallbackPath,
                 }.ToString();
+            }
 
-                return Task.CompletedTask;
-            };
-        }
+            return Task.CompletedTask;
+        };
+
+        // ⚠️ **必须与下面拼进 post_logout_redirect_uri 的路径是同一个值。**
+        //    handler 默认监听 /signout-callback-oidc；只设下面那处等于告诉 IdP
+        //    「登出后回到 /signout-callback」，而**本方根本没有人监听那个地址**。
+        //    后果是「点了登出回不到应用」：IdP 确实登出了、也确实跳回来了，
+        //    但这个路径既没有端点、也没被 handler 接住，于是落进默认拒绝策略被再次
+        //    302 去登录——用户看到的是**点登出反而弹出登录页**。
+        //    ⚠️ 整条链上没有任何错误日志，两处路径同源是唯一的防线。
+        oidc.SignedOutCallbackPath = options.SignOutCallbackPath;
+
+        // 登出回调处理完之后回到哪。⚠️ 不设的话 handler 停在回调路径上返回一页空白，
+        //    看起来像「登出卡死」。也不能指望从 state 里恢复跳转目标——
+        //    规范不强制上游回传 state，实测确有 IdP 不回传。
+        oidc.SignedOutRedirectUri = "/";
 
         oidc.Events.OnRedirectToIdentityProviderForSignOut = context =>
         {
