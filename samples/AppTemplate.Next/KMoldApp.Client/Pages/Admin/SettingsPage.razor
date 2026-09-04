@@ -1,0 +1,26 @@
+@page "/admin/settings"
+@using Kimi.AppKit.Core.Abstractions
+@using Kimi.AppKit.Crud
+@using KMoldApp.Shared.Constants
+@using KMoldApp.Shared.Entities
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = AppPolicies.AdminOnly)]
+@inject ICrudDataSource<SettingDto> DataSource
+
+@* 系统设置管理。
+
+   ⚠️ 本页跑在 WASM 里，数据源是 KHttpCrudDataSource——对接服务端的
+   MapCrudEndpoints<Setting>()。全站统一 InteractiveWebAssembly，
+   **不混用渲染模式**：混合渲染下 MudBlazor 的 Provider 会在两个模式下
+   抢同一个 section ID 并直接抛
+   「There is already a subscriber to the content with the given section ID」。
+
+   ⚠️ 整页只有一个组件——列表、搜索、新增、编辑、删除全部来自 KEntityCrudPage，
+   字段由类型反射得出。旧模板三个管理页手写了 592 行，
+   其中差异几乎全部来自「字段不同」，而字段本来就能从类型推导。 *@
+
+<PageTitle>系统设置</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-4">系统设置</MudText>
+
+<KEntityCrudPage T="SettingDto" DataSource="DataSource" SearchPlaceholder="按名称搜索…" />

@@ -50,24 +50,31 @@ public class KMoldDbContext(
     /// 旧模板在这里又配了一遍 <c>Properties&lt;Enum&gt;().HaveConversion&lt;string&gt;()</c>，
     /// 与包里那份重复。
     /// </remarks>
-    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-    {
+    /// <inheritdoc />
+    /// <remarks>
+    /// ⚠️ 必须调 <c>base</c>：基类在那里挂 <c>ApplyAppKitConventions()</c>，
+    /// 也就是 <c>DateTimeOffset</c> 的 UTC 归一。漏掉它，带本地偏移的时间写进
+    /// PostgreSQL 会抛 <c>ArgumentException: only offset 0 (UTC) is supported</c>，
+    /// 而 SQL Server 照单全收——同一段代码换 provider 才崩。
+    ///
+    /// 【⚠️ 刻意**不设**全局 string 长度 / decimal 精度约定】
+    /// 旧模板在这里写了 <c>Properties&lt;string&gt;().HaveMaxLength(100)</c> 一族约定。
+    /// 那会连**框架自己的表**一起套住——审计表 <c>Trail</c> 的 <c>OldValues</c> /
+    /// <c>NewValues</c> 存的是整行变更的 JSON，长度不可预估，被限制成
+    /// <c>varchar(100)</c> 之后**每一次带审计的写操作都会失败**：
+    /// PG 报 <c>22001: value too long</c>，SQL Server 报「数据将被截断」。
+    /// 更糟的是错误指向审计表，而不是用户正在保存的那条业务数据。
+    ///
+    /// AppKit 生态里两个已投产的消费方（<c>Kimi.KMold.Auth</c> / <c>Kimi.KMold.Files</c>）
+    /// 的 <c>ConfigureConventions</c> 里**都只有 <c>ApplyAppKitConventions()</c>**，
+    /// 没有任何全局长度约定——字段长度由各实体自己用 <c>[StringLength]</c> 或
+    /// Fluent 声明，那才是它该在的位置。
+    ///
+    /// ⚠️ 枚举转字符串也不在这里配：那件事连同 CHECK 约束一起由
+    /// <c>ApplyEnumStringConstraints</c> 负责（见 <see cref="OnModelCreating"/>）。
+    /// </remarks>
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
         base.ConfigureConventions(configurationBuilder);
-
-        // 以下是**应用策略**，不是框架能力——不同应用的默认长度与精度本就不同，
-        // 所以留在这里而不是进包。
-        configurationBuilder.Properties<DateTime>().HavePrecision(TimePrecision);
-        configurationBuilder.Properties<DateTime?>().HavePrecision(TimePrecision);
-        configurationBuilder.Properties<DateTimeOffset>().HavePrecision(TimePrecision);
-        configurationBuilder.Properties<DateTimeOffset?>().HavePrecision(TimePrecision);
-        configurationBuilder.Properties<TimeOnly>().HavePrecision(TimePrecision);
-        configurationBuilder.Properties<TimeOnly?>().HavePrecision(TimePrecision);
-
-        configurationBuilder.Properties<decimal>().HavePrecision(DecimalPrecision, DecimalScale);
-        configurationBuilder.Properties<decimal?>().HavePrecision(DecimalPrecision, DecimalScale);
-
-        configurationBuilder.Properties<string>().HaveMaxLength(DefaultStringLength).AreUnicode(true);
-    }
 
     /// <inheritdoc />
     /// <remarks>
@@ -95,8 +102,4 @@ public class KMoldDbContext(
         modelBuilder.ApplySoftDeleteFilter();
     }
 
-    private const int TimePrecision = 3;
-    private const int DecimalPrecision = 18;
-    private const int DecimalScale = 3;
-    private const int DefaultStringLength = 100;
 }

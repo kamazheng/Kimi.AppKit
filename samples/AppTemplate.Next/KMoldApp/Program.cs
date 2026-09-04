@@ -7,7 +7,9 @@ using Kimi.AppKit.Web.Excel;
 using Kimi.AppKit.Web.HealthChecks;
 using Kimi.AppKit.Web.Identity;
 using KMoldApp.Data;
+using Kimi.AppKit.Crud.Http;
 using KMoldApp.Data.Entities;
+using KMoldApp.Shared.Entities;
 using KMoldApp.Infrastructure;
 using Kimi.AppKit.Web.Authentication;
 using Kimi.AppKit.Web.Authorization;
@@ -55,8 +57,8 @@ builder.Services.AddDefaultDenyAuthorization(options =>
     // ⚠️ 只 AddPolicy，**不要在这里重设 FallbackPolicy**：包里的那份带着
     //    /_framework 放行（见 AuthorizationSetup.BlazorFrameworkPath），覆盖掉它
     //    会让 WASM 起不动，且症状指不到授权。
-    options.AddPolicy(AppPolicies.AdminOnly,
-        AuthorizationSetup.RequireAnyRole(AppRoles.Root, AppRoles.Admin));
+    // 策略定义在 KMoldApp.Shared，与客户端共用同一份——两端各写一遍必然漂移。
+    options.AddAppPolicies();
 });
 
 builder.Services.AddControllers();
@@ -119,6 +121,11 @@ builder.Services.AddAppHealthChecks<KMoldDbContext>();
 // ⚠️ 漏了它会在启动时抛，且包的错误信息直接给出修法——这类「装配不全」
 //    就该在启动期炸掉，而不是等用户点导出时才 500。
 builder.Services.AddAppKitExcel();
+
+// ⚠️ 与客户端的 AddHttpCrudDataSource<SettingDto>() **成对使用**：
+//    服务端在预渲染 WASM 页面时也要实例化它的注入属性，即使 prerender:false。
+//    漏了这份注册整页 500，且错误信息指向组件属性注入、不指向这里。
+builder.Services.AddPrerenderCrudDataSource<SettingDto>();
 
 builder.Services.AddKCrud<KMoldDbContext>()
     .AddEntity<Setting>()

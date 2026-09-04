@@ -24,12 +24,14 @@
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Design\Kimi.AppKit.Design.csproj" />
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Components\Kimi.AppKit.Components.csproj" />
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Crud\Kimi.AppKit.Crud.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(KimiAppKitLocalDev)' != 'true'">
     <PackageReference Include="Kimi.AppKit.Core" />
     <PackageReference Include="Kimi.AppKit.Design" />
     <PackageReference Include="Kimi.AppKit.Components" />
+    <PackageReference Include="Kimi.AppKit.Crud" />
   </ItemGroup>
 
 </Project>

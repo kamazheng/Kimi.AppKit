@@ -1,0 +1,23 @@
+@* 路由表。
+
+   ⚠️ **全站统一 InteractiveWebAssembly，不要混用渲染模式。**
+   曾为了让管理页直连 EF 而把它做成服务端渲染页，代价是一连串结构性问题：
+   Routes 放客户端时 AppAssembly 是 Client 程序集、服务端页面不会被发现（NotFound）；
+   移到服务端后布局变成静态 SSR，MudBlazor 的对话框「点了没反应且零报错」；
+   两个渲染模式各放一份 Provider 又会抢同一个 section ID 直接抛异常。
+   根子是包当时缺客户端 CRUD 数据源——补上 KHttpCrudDataSource 后这些全部消失。 *@
+<Router AppAssembly="typeof(Program).Assembly"
+        NotFoundPage="typeof(Pages.NotFound)">
+    <Found Context="routeData">
+        @* ⚠️ 用 AuthorizeRouteView 而不是 RouteView：页面上的 [Authorize] 才会生效。
+           未登录访问受保护页面时走 NotAuthorized 分支跳登录页——
+           这是**组件级**鉴权，与端点级的 FallbackPolicy 是两回事。 *@
+        <AuthorizeRouteView RouteData="routeData"
+                            DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <NotAuthorizedView />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>
