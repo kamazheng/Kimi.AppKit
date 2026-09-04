@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Security.Claims;
 
 namespace KMoldApp.Shared.Constants;
 
@@ -47,4 +48,29 @@ public static class AppRoles
         .Where(f => f.IsLiteral && !f.IsInitOnly && f.FieldType == typeof(string))
         .Select(f => (string)f.GetRawConstantValue()!)
         .ToArray();
+
+    /// <summary>
+    /// 给 identity 补齐尚未持有的全部角色 claim。
+    /// </summary>
+    /// <param name="identity">要补齐的身份。</param>
+    /// <param name="roleClaimType">角色 claim 的类型名，通常是 <c>"role"</c>。</param>
+    /// <remarks>
+    /// ⚠️ **这是开发期的权限绕过，不是业务功能。** 它让当前用户直接拥有所有角色。
+    /// 服务端与 WASM 客户端共用这一份注入逻辑，防止两处手写实现各自漂移
+    /// （那会导致「前端看得见的菜单后端却 403」这种最难查的不一致）。
+    ///
+    /// ⚠️ 调用方**必须**先确认绕过已被显式启用且不在生产环境，
+    /// 见服务端的 <c>RoleBypassOptions</c>。
+    /// </remarks>
+    public static void InjectMissing(ClaimsIdentity identity, string roleClaimType)
+    {
+        ArgumentNullException.ThrowIfNull(identity);
+
+        var existing = identity.FindAll(roleClaimType).Select(c => c.Value).ToHashSet(StringComparer.Ordinal);
+        foreach (var role in All)
+        {
+            if (!existing.Contains(role))
+                identity.AddClaim(new Claim(roleClaimType, role));
+        }
+    }
 }

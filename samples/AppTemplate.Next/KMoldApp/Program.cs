@@ -5,6 +5,7 @@ using Kimi.AppKit.Data.Providers;
 using Kimi.AppKit.Web.HealthChecks;
 using Kimi.AppKit.Web.Identity;
 using KMoldApp.Data;
+using KMoldApp.Infrastructure;
 using Kimi.AppKit.Web.Authentication;
 using Kimi.AppKit.Web.Authorization;
 using KMoldApp.Client.Pages;
@@ -52,7 +53,16 @@ builder.Services.AddDefaultDenyAuthorization(options =>
         AuthorizationSetup.RequireAnyRole(AppRoles.Root, AppRoles.Admin));
 });
 
+builder.Services.AddControllers();
 builder.Services.AddCascadingAuthenticationState();
+
+// 开发期权限绕过。⚠️ 默认关闭，要用必须在 appsettings 里显式开
+// （Auth:RoleBypass:Enabled）；生产环境即使配了也不生效。
+// 前身是「非生产环境默认开启」，那让权限相关的 bug 在 Staging 根本测不出来。
+var roleBypass = new RoleBypassOptions();
+builder.Configuration.GetSection(RoleBypassOptions.SectionName).Bind(roleBypass);
+builder.Services.AddSingleton(new RoleBypassGate(roleBypass.Enabled, builder.Environment.IsProduction()));
+builder.Services.AddTransient<IClaimsTransformation, RoleBypassClaimsTransformation>();
 
 // 审计字段的「谁干的」来自这里。
 // ⚠️ HttpContextCurrentUser 依赖 IHttpContextAccessor，**必须一并注册**——
@@ -146,6 +156,8 @@ app.MapGet("/authentication/login", (string? returnUrl, IOptions<KOidcOptions> o
                 "尚未配置 OpenIDConnect:Issuer / ClientId，单点登录不可用。",
                 statusCode: StatusCodes.Status503ServiceUnavailable))
     .AllowAnonymous();
+
+app.MapControllers();
 
 // 健康检查：/health/live（进程存活）与 /health/ready（含数据库连通性）。
 // ⚠️ 两个端点在包里已带 AllowAnonymous——探针不可能先登录。
