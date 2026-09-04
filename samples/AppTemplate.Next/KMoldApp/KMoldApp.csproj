@@ -10,12 +10,18 @@
   <ItemGroup>
     <ProjectReference Include="..\KMoldApp.Client\KMoldApp.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+    <!-- ⚠️ 两个 provider 都引：运行期按 Database:Provider 配置切换。
+         Kimi.AppKit.Data 刻意不引用任何具体 provider（那会把不需要的驱动强加给消费方），
+         所以由应用这一层引入。 -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
   </ItemGroup>
 
   <!-- 仓库内开发用 ProjectReference；生成出去的项目用 PackageReference。
        开关见 Directory.Build.props。 -->
   <ItemGroup>
     <ProjectReference Include="..\KMoldApp.Shared\KMoldApp.Shared.csproj" />
+    <ProjectReference Include="..\KMoldApp.Data\KMoldApp.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">

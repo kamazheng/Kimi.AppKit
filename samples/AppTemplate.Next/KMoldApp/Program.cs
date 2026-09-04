@@ -1,4 +1,10 @@
 using Kimi.AppKit.Components;
+using Kimi.AppKit.Core.Abstractions;
+using Kimi.AppKit.Data;
+using Kimi.AppKit.Data.Providers;
+using Kimi.AppKit.Web.HealthChecks;
+using Kimi.AppKit.Web.Identity;
+using KMoldApp.Data;
 using Kimi.AppKit.Web.Authentication;
 using Kimi.AppKit.Web.Authorization;
 using KMoldApp.Client.Pages;
@@ -47,6 +53,45 @@ builder.Services.AddDefaultDenyAuthorization(options =>
 });
 
 builder.Services.AddCascadingAuthenticationState();
+
+// 审计字段的「谁干的」来自这里。
+// ⚠️ HttpContextCurrentUser 依赖 IHttpContextAccessor，**必须一并注册**——
+//    漏了它启动就失败（启动期 DI 校验抓的），而错误信息指向 IKCurrentUser 不是这一行。
+// ⚠️ 后台任务（Hangfire/托管服务）里没有 HttpContext，拿到的永远是哨兵值；
+//    那类场景应另注册一个固定系统身份的实现，别让审计表把任务写的记录记成匿名。
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IKCurrentUser, HttpContextCurrentUser>();
+builder.Services.AddSingleton(TimeProvider.System);
+
+// ⚠️ 用 AddDbContextFactory 而不是 AddDbContext。自 EF Core 5 起（dotnet/efcore#25164）
+//    它**同时**把 DbContext 注册成 scoped，构造注入一处都不用改；额外得到的
+//    IDbContextFactory 是 Kimi.AppKit.Data 里 CRUD 数据源的必需依赖——它们刻意不接受
+//    scoped 上下文，因为 Blazor 会并发渲染同一棵树里的组件，抢同一个 DbContext 会抛
+//    "A second operation was started on this context instance"。
+// ⚠️ lifetime 显式给 Scoped：默认是 Singleton，那会让 scoped 的拦截器被单例长期持有
+//    （captive dependency）。
+builder.Services.AddDbContextFactory<KMoldDbContext>((sp, options) =>
+{
+    var provider = DatabaseProviderSetup.Resolve(builder.Configuration[DatabaseProviderSetup.ConfigKey]);
+    options.Apply(provider, builder.Configuration.GetConnectionString("DefaultConnection"));
+
+    // ⚠️ 只在开发环境开。EnableSensitiveDataLogging 会把**参数值原文**写进日志——
+    //    登录、改密、导入这类请求的明文凭据与个人信息会直接落到日志文件里，
+    //    而日志的访问控制通常远松于数据库。
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+    }
+}, ServiceLifetime.Scoped);
+
+// 事务的唯一入口。⚠️ 不要在业务代码里裸调 BeginTransactionAsync：
+// 一旦为生产可靠性开启 EnableRetryOnFailure，裸事务会抛
+// "The configured execution strategy does not support user-initiated transactions"，
+// 而重试通常只在生产开，开发和测试环境从不触发。
+builder.Services.AddScoped(sp => new UnitOfWork(sp.GetRequiredService<KMoldDbContext>()));
+
+builder.Services.AddAppHealthChecks<KMoldDbContext>();
 
 var app = builder.Build();
 
@@ -101,5 +146,9 @@ app.MapGet("/authentication/login", (string? returnUrl, IOptions<KOidcOptions> o
                 "尚未配置 OpenIDConnect:Issuer / ClientId，单点登录不可用。",
                 statusCode: StatusCodes.Status503ServiceUnavailable))
     .AllowAnonymous();
+
+// 健康检查：/health/live（进程存活）与 /health/ready（含数据库连通性）。
+// ⚠️ 两个端点在包里已带 AllowAnonymous——探针不可能先登录。
+app.MapAppHealthChecks();
 
 app.Run();

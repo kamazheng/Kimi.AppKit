@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KMoldApp.Shared\KMoldApp.Shared.csproj" />
+  </ItemGroup>
+
+  <!-- ⚠️ 两个 provider 都引：ProviderSetup.Apply 要同时接线 UseNpgsql 与 UseSqlServer。
+       Kimi.AppKit.Data 刻意不引用任何具体 provider（会把不需要的驱动强加给消费方），
+       所以这一层引入。 -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Data\Kimi.AppKit.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(KimiAppKitLocalDev)' != 'true'">
+    <PackageReference Include="Kimi.AppKit.Data" />
+  </ItemGroup>
+
+</Project>
