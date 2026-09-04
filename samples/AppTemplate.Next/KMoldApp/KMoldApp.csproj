@@ -15,6 +15,7 @@
          所以由应用这一层引入。 -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="Hangfire.PostgreSql" />
   </ItemGroup>
 
   <!-- 仓库内开发用 ProjectReference；生成出去的项目用 PackageReference。
@@ -27,11 +28,13 @@
   <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Web\Kimi.AppKit.Web.csproj" />
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Crud\Kimi.AppKit.Crud.csproj" />
+    <ProjectReference Include="..\..\..\src\Kimi.AppKit.Observability\Kimi.AppKit.Observability.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(KimiAppKitLocalDev)' != 'true'">
     <PackageReference Include="Kimi.AppKit.Web" />
     <PackageReference Include="Kimi.AppKit.Crud" />
+    <PackageReference Include="Kimi.AppKit.Observability" />
   </ItemGroup>
 
 </Project>

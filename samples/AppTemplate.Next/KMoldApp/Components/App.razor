@@ -2,20 +2,9 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="/" />
-    <ResourcePreloader />
-
-    @* 设计令牌（配色变量 + 自托管 IBM Plex 字体的 @@font-face）。
-       必须在 MudBlazor 与 app.css 之前：字体要先声明，且 app.css 引用这里定义的 CSS 变量。 *@
-    <link rel="stylesheet" href="@Assets["_content/Kimi.AppKit.Design/css/kmold-tokens.css"]" />
-    <link rel="stylesheet" href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" />
-
-    <link rel="stylesheet" href="@Assets["app.css"]" />
-    <link rel="stylesheet" href="@Assets["KMoldApp.styles.css"]" />
+    @* 样式与 meta 见 Shared/AppHead.razor——认证页外壳共用同一份。 *@
+    <AppHead />
     <ImportMap />
-    <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet @rendermode="InteractiveWebAssembly" />
 </head>
 

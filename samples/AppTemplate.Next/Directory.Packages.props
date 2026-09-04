@@ -45,6 +45,13 @@
         <PackageVersion Include="Kimi.AppKit.Design" Version="$(KimiAppKitVersion)" />
         <PackageVersion Include="Kimi.AppKit.Components" Version="$(KimiAppKitVersion)" />
         <PackageVersion Include="Kimi.AppKit.Crud" Version="$(KimiAppKitVersion)" />
+        <PackageVersion Include="Kimi.AppKit.Observability" Version="$(KimiAppKitVersion)" />
+    </ItemGroup>
+
+    <!-- PG 存储。Kimi.AppKit.Web 刻意不引用它（那会把 PG 驱动强加给只用 SQL Server 的
+         消费方），由本层引入并经 AddAppKitHangfire 的 configurePostgres 接线。 -->
+    <ItemGroup>
+        <PackageVersion Include="Hangfire.PostgreSql" Version="1.21.1" />
     </ItemGroup>
 
     <!-- ── UI ──────────────────────────────────────────────────────────

@@ -1,36 +1,43 @@
-﻿@page "/Error"
+@layout PlainLayout
 @using System.Diagnostics
 
-<PageTitle>Error</PageTitle>
+@* 未处理异常的落地页，由 UseExceptionHandler("/Error") 重新执行到这里。
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+   ⚠️ **没有 @@page**：它由端点渲染，不进路由表。带 @@page 的服务端页面在本站
+   （全局 InteractiveWebAssembly）会先显示、几秒后被 WASM 接管清空，且零报错——
+   偏偏错误页最不该在用户面前变成一片空白。理由详见 Account/AuthLayout.razor 顶部。
 
-@if (ShowRequestId)
+   ⚠️ 页面上只给追踪号，**不给异常消息、堆栈或路径**。那些进日志，不进界面。 *@
+
+<PageTitle>出错了</PageTitle>
+
+<h1>这一步没能完成</h1>
+
+<p>
+    服务端处理请求时出错了。可以稍后重试；如果一直这样，请把下面的追踪号告诉管理员。
+</p>
+
+@if (!string.IsNullOrEmpty(RequestId))
 {
-    <p>
-        <strong>Request ID:</strong> <code>@RequestId</code>
-    </p>
+    <div class="k-alert">
+        <span>
+            追踪号：<code>@RequestId</code>
+            <br />
+            管理员凭它能在日志里定位到这一次请求。
+        </span>
+    </div>
 }
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+<p><a class="k-btn" href="/">返回首页</a></p>
 
-@code{
-    [CascadingParameter]
-    private HttpContext? HttpContext { get; set; }
+@code {
+    /// <summary>供用户报障时引用的追踪号。</summary>
+    [Parameter] public string? RequestId { get; set; }
 
-    private string? RequestId { get; set; }
-    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-
+    /// <remarks>
+    /// ⚠️ 优先取 <see cref="Activity"/> 的 Id：接了 OpenTelemetry 时它就是 trace id，
+    /// 用户报上来的号能直接在采集端搜到。取不到才退回 <c>TraceIdentifier</c>（仅本机日志可查）。
+    /// </remarks>
     protected override void OnInitialized() =>
-        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+        RequestId ??= Activity.Current?.Id;
 }

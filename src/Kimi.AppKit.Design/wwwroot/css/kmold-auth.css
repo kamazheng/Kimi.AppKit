@@ -1,0 +1,267 @@
+/* ==========================================================================
+   认证外壳（.k-auth）
+   --------------------------------------------------------------------------
+   用法：<div class="k-auth k-darkmode-scope"> …
+
+   ⚠️ **两个类名要一起写。** 暗色覆盖定义在 kmold-tokens.css 里、作用域是
+      `.k-darkmode-scope`；只写 .k-auth 时这一屏在系统暗色下仍是亮色卡片，
+      而它周围的深蓝底不受影响——不报错，只是刺眼。
+      暗色为什么不能挂 :root，见 kmold-tokens.css 里那段说明。
+
+   ⚠️ 输入框 / 按钮 / 提示条的样式在 **kmold-forms.css**，不在本文件。认证页两份都要引。
+
+   ⚠️ 为什么认证页不用 MudBlazor 的表单组件：
+      登录/改密等页面必须走**静态 SSR**（要在响应里种认证 cookie，交互式电路做不到），
+      而静态 SSR 的表单回填依赖 <input name="..."> —— Blazor 的 InputText 会自动生成
+      name，MudTextField 不会（它不是 InputBase）。用 MudTextField 的结果是
+      表单提交后所有字段为空，且**不报错**。
+      故认证链路一律用原生 Input* 组件，样式由 kmold-forms.css 的 .k-* 提供。
+
+   ⚠️ 认证页刻意不套任何站点导航：其它应用把用户重定向过来做单点登录时，
+      看到一个陌生系统的侧边栏只会让人怀疑自己被钓鱼。这一屏只该有三件事：
+      我是谁（品牌）、谁在要求登录（应用名）、怎么证明身份（表单）。
+   ========================================================================== */
+
+.k-auth {
+    /* ⚠️ 字体必须在这里自己声明，不能指望外面。
+       前身的认证页是靠布局里那个 <MudThemeProvider> 生效的——MudBlazor 的
+       `body { font-family: var(--mud-typography-default-family) }` 要有它才有值。
+       而认证页的整个立意就是**不引 MudBlazor 控件**，于是一旦哪天把 ThemeProvider
+       摘掉（或像本模板这样从一开始就不挂），变量解析为空，浏览器回落到 Times，
+       整屏排版走样却**不报任何错**、字体文件也照常显示 loaded。
+       外壳自带字体，这层依赖就不存在了。 */
+    font-family: var(--k-font);
+
+    width: 100%;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    /* ⚠️ 这一屏的垂直预算很紧：外部身份源每多一个按钮 +49px，
+       页脚那句「核对地址栏」是防钓鱼提示，被挤出首屏就等于失效。
+       加间距前先量一遍整页高度。 */
+    padding: 1.75rem 1.25rem 2rem;
+    box-sizing: border-box;
+
+    /* 制图方格纸：细格 8px、粗格 40px，压到几乎看不见的对比度。
+       取自模具设计图，是这批用户每天在看的东西；对比度再高一点就会与卡片抢注意力。 */
+    background-color: var(--k-blueprint);
+    background-image:
+        radial-gradient(ellipse 90% 70% at 50% 0%, rgba(255, 255, 255, .09), transparent 70%),
+        repeating-linear-gradient(to right, rgba(255, 255, 255, .05) 0 1px, transparent 1px 40px),
+        repeating-linear-gradient(to bottom, rgba(255, 255, 255, .05) 0 1px, transparent 1px 40px),
+        repeating-linear-gradient(to right, rgba(255, 255, 255, .022) 0 1px, transparent 1px 8px),
+        repeating-linear-gradient(to bottom, rgba(255, 255, 255, .022) 0 1px, transparent 1px 8px);
+}
+
+.k-auth__col {
+    width: 100%;
+    max-width: 27rem;
+}
+
+.k-auth__col--wide {
+    max-width: 34rem;
+}
+
+/* — 品牌区 — */
+
+.k-auth__brand {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.k-auth__logo {
+    max-height: 2.5rem;
+    max-width: 8rem;
+    object-fit: contain;
+}
+
+/* 未上传 Logo 时的内置字标：黄铜方框里放企业名首字。
+   ⚠️ 不要用三道横线做占位——那和汉堡菜单图标长得一模一样，
+   用户会去点它，点不动就以为界面坏了。方框加字母不会被误认成控件。 */
+.k-auth__mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border: 1px solid var(--k-brass);
+    border-radius: var(--k-radius);
+    color: var(--k-brass);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.k-auth__names {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.k-auth__company {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: .01em;
+}
+
+.k-auth__product {
+    font-size: .8125rem;
+    color: rgba(255, 255, 255, .62);
+    letter-spacing: .08em;
+}
+
+/* — 卡片与游标刻度轨 — */
+
+.k-auth__card {
+    position: relative;
+    background: var(--k-paper);
+    border-radius: var(--k-radius-lg);
+    box-shadow: var(--k-shadow-card);
+    padding: 1.75rem 2rem 1.5rem 3rem;
+}
+
+/* 签名元素：卡片左缘的一条细线。
+   它不是纯装饰——被填充的比例就是多步认证流程（登录 → 二次验证 → 完成）的进度，
+   由 --k-progress 驱动。单步页面进度为 0，整条线保持静默。
+
+   ⚠️ 不要加回横向刻度。试过 9px / 14px / 48px 三种周期：前两者糊成一条灰带，
+      48px 一道虽能读出是刻度，但十几道横线堆在登录卡左侧仍旧拥挤。
+      现在改用单线渐变——上端清晰、下端隐没，靠明暗而非数量表达精度。 */
+.k-rail {
+    position: absolute;
+    inset: 1.5rem auto 1.5rem 1.5rem;
+    width: 1px;
+
+    /* 用 background 而非 border：border 只能单色，做不出这段自上而下的衰减。
+       ⚠️ 顶端必须是黄铜色而非中性灰。深色模式下卡片是一大片 #16202B，
+       整屏只剩蓝与灰，冷得发闷；黄铜是品牌色（logo 与环境徽标同源），
+       这一点暖色是卡片上唯一的色彩对比，去掉它整张卡就塌回单调。 */
+    background: linear-gradient(to bottom,
+        color-mix(in srgb, var(--k-brass) 90%, transparent) 0%,
+        color-mix(in srgb, var(--k-brass) 30%, transparent) 14%,
+        color-mix(in srgb, var(--k-ink-3) 28%, transparent) 45%,
+        color-mix(in srgb, var(--k-ink-3) 5%, transparent) 100%);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--k-brass) 28%, transparent);
+}
+
+/* 顶端的光点。它不跟随 --k-progress——单步页面进度为 0，
+   若把发光完全绑在进度上，登录页（最常被看到的那一屏）就永远是死的。 */
+.k-rail::before {
+    content: "";
+    position: absolute;
+    inset: -2px auto auto -2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--k-brass);
+    box-shadow: 0 0 8px 2px color-mix(in srgb, var(--k-brass) 70%, transparent);
+}
+
+.k-rail__fill {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: calc(var(--k-progress, 0) * 100%);
+
+    /* 已完成的那段是连续实色，与底轨「顶端一点黄铜后迅速衰减」形成区分。 */
+    background: var(--k-brass);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--k-brass) 55%, transparent);
+}
+
+/* — 卡片内的标题层次 — */
+
+.k-auth__step {
+    font-family: var(--k-mono);
+    font-size: .6875rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--k-brass);
+    margin-bottom: .5rem;
+}
+
+.k-auth__title {
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin: 0 0 .375rem;
+    color: var(--k-ink);
+}
+
+.k-auth__lede {
+    font-size: .875rem;
+    line-height: 1.6;
+    color: var(--k-ink-2);
+    margin: 0 0 1.5rem;
+}
+
+.k-auth__lede:last-child {
+    margin-bottom: 0;
+}
+
+/* 「谁在要求登录」——单点登录里最该说清、却几乎总被省略的一句。 */
+.k-auth__client {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    padding: .25rem .5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--k-hair);
+    border-left: 2px solid var(--k-draft);
+    border-radius: var(--k-radius);
+    background: var(--k-draft-soft);
+    font-size: .8125rem;
+    color: var(--k-ink-2);
+}
+
+.k-auth__client b {
+    font-weight: 600;
+    color: var(--k-ink);
+}
+
+/* — 页脚：地址栏核对 + 环境警示 — */
+
+.k-auth__foot {
+    margin-top: .875rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .75rem;
+    font-size: .75rem;
+    color: rgba(255, 255, 255, .5);
+}
+
+.k-auth__host {
+    font-family: var(--k-mono);
+    color: rgba(255, 255, 255, .72);
+}
+
+.k-auth__note {
+    width: 100%;
+    color: rgba(255, 255, 255, .38);
+}
+
+/* ⚠️ 这里**刻意没有** .k-envchip 的定义。它在 kmold-tokens.css 里已有一份，
+   配套组件是 Kimi.AppKit.Components 的 <KEnvChip />。
+   抽包前这两处各写了一份**视觉不同**的实现（药丸描边 vs 方角实底），
+   而两个文件必然同时加载——后引入的那份无条件胜出，
+   于是其中一处的设计意图静默失效，谁都不会发现。环境徽标只保留一处定义。 */
+
+@media (max-width: 30rem) {
+    .k-auth {
+        padding: 1.5rem 1rem 2rem;
+    }
+
+    .k-auth__card {
+        padding: 1.5rem 1.25rem 1.375rem 2.25rem;
+    }
+
+    .k-rail {
+        inset: 1rem auto 1rem 1rem;
+    }
+}

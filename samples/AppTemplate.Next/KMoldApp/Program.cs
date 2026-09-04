@@ -1,9 +1,16 @@
 using Kimi.AppKit.Components;
+using Kimi.AppKit.Web.Localization;
+using Kimi.AppKit.Web.BackgroundJobs;
+using Kimi.AppKit.Web.Email;
+using Kimi.AppKit.Observability;
+using Hangfire.PostgreSql;
+using Hangfire;
 using Kimi.AppKit.Core.Abstractions;
 using Kimi.AppKit.Data;
 using Kimi.AppKit.Data.Providers;
 using Kimi.AppKit.Web.Crud;
 using Kimi.AppKit.Web.Excel;
+using Kimi.AppKit.Web.Hosting;
 using Kimi.AppKit.Web.HealthChecks;
 using Kimi.AppKit.Web.Identity;
 using KMoldApp.Data;
@@ -61,6 +68,16 @@ builder.Services.AddDefaultDenyAuthorization(options =>
     options.AddAppPolicies();
 });
 
+// 脱域现场的密码登录（ROPC）所需的两样。
+// ⚠️ 网络准入的白名单**空 = 拒绝**（Auth:NetworkGate:AllowedSubnets）。方向是刻意的：
+//    忘了配等于更严。本地调试要放行回环得显式开 AllowLoopback。
+builder.Services.AddAppKitNetworkGate(builder.Configuration);
+builder.Services.AddAppKitOidcTokenService();
+
+// <KEnvChip /> 的依赖。⚠️ 漏了它那个组件渲染时抛——而它恰恰是「这不是生产环境」
+// 的可见标识，渲染不出来时一个配错环境变量的实例看起来和正式站一模一样。
+builder.Services.AddAppKitEnvironment();
+
 builder.Services.AddControllers();
 builder.Services.AddCascadingAuthenticationState();
 
@@ -114,6 +131,25 @@ builder.Services.AddScoped(sp => new UnitOfWork(sp.GetRequiredService<KMoldDbCon
 
 builder.Services.AddAppHealthChecks<KMoldDbContext>();
 
+// 可观测性单独成包：OTel 是十个 NuGet 依赖，不该强加给只想要健康检查的消费方。
+// ⚠️ 端点走 OTel 标准环境变量（OTEL_EXPORTER_OTLP_ENDPOINT），未配置则跳过注册——
+//    本地开发不必先架一套采集端。
+builder.AddAppKitObservability();
+
+// 邮件走 MailKit。⚠️ 不用 System.Net.Mail.SmtpClient——微软官方明示「不应用于新开发」，
+//    它的 TLS 与认证方式跟不上（Office 365 已要求 OAuth2）。
+builder.Services.AddAppKitEmail(builder.Configuration);
+
+// 后台任务。⚠️ Kimi.AppKit.Web 刻意不引用 Hangfire.PostgreSql（那会把 PG 驱动强加给
+//    只用 SQL Server 的消费方），所以 PG 存储由本层经 configurePostgres 接线。
+var hangfireConnection = builder.Configuration.GetConnectionString("DefaultConnection")!;
+var hangfireProvider = DatabaseProviderSetup.Resolve(builder.Configuration[DatabaseProviderSetup.ConfigKey]);
+builder.Services.AddAppKitHangfire(
+    hangfireProvider,
+    hangfireConnection,
+    configurePostgres: c => c.UsePostgreSqlStorage(o => o.UseNpgsqlConnection(hangfireConnection)));
+builder.Services.AddHangfireServer();
+
 // ⚠️ 这是**开放面白名单**：没登记的实体既解析不出数据源、也映射不出端点。
 //    前身把「读写任意表」压缩成一个通用端点，于是「这个系统对外开放了哪些表」
 //    在代码里没有任何一处在说明，权限判断因此无处可挂。
@@ -155,6 +191,10 @@ app.UseWhen(
     branch => branch.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true));
 app.UseHttpsRedirection();
 
+// ⚠️ 必须排在静态文件中间件**之前**。官方约束是「在任何可能读取请求 culture 的
+//    中间件之前」，并点名 UseStaticFiles 作为例子。放错是静默的——管线照常工作。
+app.UseAppKitRequestLocalization(defaultCulture: "en", supportedCultures: ["en", "zh-CN"]);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -193,6 +233,12 @@ app.MapGet("/authentication/login", (string? returnUrl, IOptions<KOidcOptions> o
                 "尚未配置 OpenIDConnect:Issuer / ClientId，单点登录不可用。",
                 statusCode: StatusCodes.Status503ServiceUnavailable))
     .AllowAnonymous();
+
+// 脱域现场的密码登录（ROPC）。页面在 Components/Account/PasswordLoginPage.razor。
+app.MapPasswordLogin();
+
+// 未处理异常的落地页，配合上面的 UseExceptionHandler("/Error")。
+app.MapErrorPage();
 
 // 登出：清 Cookie 会话。
 // ⚠️ 必须是服务端端点——会话是服务端 Cookie，WASM 端清不掉它。

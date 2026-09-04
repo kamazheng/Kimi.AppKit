@@ -1,0 +1,19 @@
+@* 两套外壳共用的 <head> 内容。
+
+   ⚠️ 本应用有**两个**文档根：App.razor（走路由的交互式主站）与
+   Account/AuthLayout.razor（认证页，由端点直接渲染、不进路由表）。
+   样式链接若各写一份，往后加一条 CSS 就会漏掉认证页——
+   而认证页恰恰是最不常被本地打开的那一屏，漏了通常要等交付后才被发现。
+   顺序有讲究：令牌必须在 MudBlazor 与 app.css 之前，
+   字体的 @@font-face 要先声明，且 app.css 引用令牌里定义的 CSS 变量。 *@
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<base href="/" />
+<ResourcePreloader />
+
+<link rel="stylesheet" href="@Assets["_content/Kimi.AppKit.Design/css/kmold-tokens.css"]" />
+<link rel="stylesheet" href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" />
+<link rel="stylesheet" href="@Assets["app.css"]" />
+<link rel="stylesheet" href="@Assets["KMoldApp.styles.css"]" />
+<link rel="icon" type="image/png" href="favicon.png" />
