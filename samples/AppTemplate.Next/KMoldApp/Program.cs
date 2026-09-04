@@ -36,26 +36,12 @@ builder.Services.AddAppKitAuthentication(builder.Configuration, o =>
 //    必须匿名的端点（健康检查、首屏引导）显式调 .AllowAnonymous()。
 builder.Services.AddDefaultDenyAuthorization(options =>
 {
-    // ⚠️ _framework 下的资源必须无条件放行，否则 WASM 根本启动不了。
-    //    光靠 MapStaticAssets().AllowAnonymous() 不够：Blazor 会为 WASM 的资源清单
-    //    **单独创建**一组 _framework/resource-collection*.js 端点，它们既不归
-    //    MapStaticAssets 管，也不在 MapRazorComponents 的约定范围内——
-    //    实测 1318 个端点里恰好只有这 6 个（指纹化/非指纹化 × 普通/gz）没有匿名标记。
-    //    被拦下的表现极难追：浏览器拿到 302 后的登录页 HTML，拿它算 SHA-256 与
-    //    import map 里声明的 integrity 对不上，控制台只说
-    //    "Failed to find a valid digest in the 'integrity' attribute ... has been blocked"，
-    //    完全指不到授权。
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAssertion(ctx =>
-            ctx.Resource is HttpContext http
-            && http.Request.Path.StartsWithSegments("/_framework")
-                ? true
-                : ctx.User.Identity?.IsAuthenticated == true)
-        .Build();
-
     // ⚠️ 角色判断走**策略**，不要用自定义授权特性。策略名与角色名都来自 KMoldApp.Shared
     //    的常量——两端共用同一份定义，手写字面量写错不会有编译错误，只在有人真的
     //    访问那个端点时抛 "The AuthorizationPolicy named ... was not found"。
+    // ⚠️ 只 AddPolicy，**不要在这里重设 FallbackPolicy**：包里的那份带着
+    //    /_framework 放行（见 AuthorizationSetup.BlazorFrameworkPath），覆盖掉它
+    //    会让 WASM 起不动，且症状指不到授权。
     options.AddPolicy(AppPolicies.AdminOnly,
         AuthorizationSetup.RequireAnyRole(AppRoles.Root, AppRoles.Admin));
 });

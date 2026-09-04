@@ -1,10 +1,11 @@
 using Kimi.AppKit.Web;
 using Kimi.AppKit.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 using Xunit;
 
 namespace Kimi.AppKit.Tests.Web;
@@ -13,18 +14,58 @@ namespace Kimi.AppKit.Tests.Web;
 public class AuthorizationDefaultDenyTests
 {
     [Fact]
-    public void 未显式授权的端点默认要求登录而不是裸奔()
+    public async Task 未显式授权的端点默认要求登录而不是裸奔()
     {
         // 前身没有设置 FallbackPolicy（默认 null = 允许匿名），
         // 通用查询端点的读操作因此忘了加 [Authorize] 而变成匿名可读全库。
+        // ⚠️ 断言的是**行为**，不是 policy 里挂了哪个 requirement 类型——
+        //    后者是实现细节，换一种等价写法就会误报失败。
+        Assert.False(await EvaluateFallbackAsync(Anonymous, "/api/data"));
+        Assert.True(await EvaluateFallbackAsync(Authenticated, "/api/data"));
+    }
+
+    [Theory]
+    [InlineData("/_framework/blazor.web.js")]
+    [InlineData("/_framework/resource-collection.js")]
+    [InlineData("/_framework/MyApp.Client.wasm")]
+    public async Task Blazor框架资源对匿名放行(string path)
+    {
+        // ⚠️ 浏览器在任何人登录之前就要下载这些——登录页自己就是一个 WASM 页面，
+        //    拦住它们等于让应用永远走不到登录那一步。
+        //    而且光给 MapStaticAssets() 加 AllowAnonymous 覆盖不到 resource-collection：
+        //    那组端点由 Blazor 单独创建，不在它的约定范围内。
+        Assert.True(await EvaluateFallbackAsync(Anonymous, path));
+    }
+
+    [Fact]
+    public async Task 前缀相同但不是框架路径的不放行()
+    {
+        // StartsWithSegments 按**路径段**比较，"/_frameworkX" 不该被当成 "/_framework"。
+        Assert.False(await EvaluateFallbackAsync(Anonymous, "/_frameworkX/secret"));
+    }
+
+    private static ClaimsPrincipal Anonymous => new(new ClaimsIdentity());
+
+    private static ClaimsPrincipal Authenticated =>
+        new(new ClaimsIdentity(authenticationType: "Test"));
+
+    private static async Task<bool> EvaluateFallbackAsync(ClaimsPrincipal user, string path)
+    {
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddDefaultDenyAuthorization();
+        var provider = services.BuildServiceProvider();
 
-        var options = services.BuildServiceProvider().GetRequiredService<IOptions<AuthorizationOptions>>().Value;
+        var policy = provider.GetRequiredService<IOptions<AuthorizationOptions>>().Value.FallbackPolicy;
+        Assert.NotNull(policy);
 
-        Assert.NotNull(options.FallbackPolicy);
-        Assert.Contains(options.FallbackPolicy!.Requirements, r => r is DenyAnonymousAuthorizationRequirement);
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Path = path;
+
+        var result = await provider.GetRequiredService<IAuthorizationService>()
+            .AuthorizeAsync(user, httpContext, policy!);
+
+        return result.Succeeded;
     }
 
     [Fact]
