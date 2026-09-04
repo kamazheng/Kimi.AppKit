@@ -104,44 +104,13 @@ public static class PasswordLoginEndpoint
         if (token?.IdToken is null)
             return Redirect("/password-login", returnUrl, "工号或密码不正确。");
 
-        var principal = BuildPrincipal(token.IdToken);
-
-        var properties = new AuthenticationProperties { IsPersistent = true };
-        // 令牌存进认证票据，供后续调 API 时取用。
-        properties.StoreTokens(
-        [
-            new AuthenticationToken { Name = "id_token", Value = token.IdToken },
-            new AuthenticationToken { Name = "access_token", Value = token.AccessToken ?? string.Empty },
-        ]);
-
-        await http.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties)
-            .ConfigureAwait(false);
+        // 签发会话与扫码登录共用一份（见 CookieSignIn）——两条通道的 claim 口径必须一致。
+        await CookieSignIn.SignInAsync(http, token).ConfigureAwait(false);
 
         // ⚠️ 回跳地址必须过 KReturnUrl.Sanitize，否则是开放重定向漏洞。
         //    ⚠️ 同时把登录相关路径列进 blockedPrefixes：跳回登录页会让用户看到
         //    「登录成功了却还在登录页」，与登录失败无法区分。
         return Results.Redirect(KReturnUrl.Sanitize(returnUrl, BlockedReturnPrefixes));
-    }
-
-    /// <remarks>
-    /// ⚠️ 角色 claim 用短名 <c>"role"</c>。IdP 侧配了 <c>MapInboundClaims = false</c>，
-    /// 令牌里就是短名；这里若按 <see cref="ClaimTypes.Role"/> 建身份，
-    /// 授权策略会一个角色都匹配不到——**令牌里明明有角色，页面却一路 403**。
-    /// </remarks>
-    private static ClaimsPrincipal BuildPrincipal(string idToken)
-    {
-        var jwt = new JsonWebTokenHandler().ReadJsonWebToken(idToken);
-        var claims = jwt.Claims.Select(c => new Claim(c.Type, c.Value)).ToList();
-
-        // ⚠️ AuthenticationType 用包里的常量而不是 Cookie 方案名：这条身份是怎么来的
-        //    （ROPC 而非授权码）会一路带进审计，事后追查「谁在哪条通道登进来的」靠它。
-        var identity = new ClaimsIdentity(
-            claims,
-            authenticationType: KAuthenticationSchemes.PasswordLogin,
-            nameType: JwtRegisteredClaimNames.Name,
-            roleType: "role");
-
-        return new ClaimsPrincipal(identity);
     }
 
     private static IResult Redirect(string path, string? returnUrl, string error)

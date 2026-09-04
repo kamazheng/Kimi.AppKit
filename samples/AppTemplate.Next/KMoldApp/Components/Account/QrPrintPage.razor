@@ -1,0 +1,114 @@
+@layout AuthLayout
+
+@* 可打印的登录二维码卡片。
+
+   【它是什么】域内电脑上用本人账号密码换一张加密卡片打印出来，
+   现场脱域电脑用扫码枪扫入即可登录。
+
+   ⚠️ **这张纸片等价于一张写着密码的便条**——密文里装着账号和密码，
+   这是「ROPC + 二维码」方案的固有性质，不是能在这一层修掉的缺陷。
+   所以卡片必须有有效期（KQrLoginOptions.Lifetime），页面上也必须写明「勿外传」。
+
+   ⚠️ **重写而非照搬**：旧模板的同名文件是 89 行 C# 拼 HTML 字符串。
+   拼字符串本身就是 XSS 的温床——那份代码两个变量都手工转义过，
+   但下一个人加第三个变量时没有任何东西会提醒他。Razor 默认转义，这层风险直接消失。 *@
+
+<PageTitle>登录二维码</PageTitle>
+
+<div class="k-auth__col">
+    <div class="k-auth__brand">
+        <span class="k-auth__mark">K</span>
+        <span class="k-auth__names">
+            <span class="k-auth__company">KMoldApp</span>
+            <span class="k-auth__product">TOOLING MES</span>
+        </span>
+    </div>
+
+    <div class="k-auth__card">
+        <div class="k-rail"><div class="k-rail__fill"></div></div>
+
+        <p class="k-auth__step">现场通道</p>
+        <h1 class="k-auth__title">@(Payload is null ? "打印登录二维码" : "你的登录二维码")</h1>
+
+        @if (Payload is null)
+        {
+            <p class="k-auth__lede">
+                验证一次账号密码，换一张可打印的卡片。带到没有域账号的现场电脑上扫码即可登录。
+            </p>
+
+            @if (!string.IsNullOrEmpty(Error))
+            {
+                <div class="k-alert k-alert--error" role="alert"><span>@Error</span></div>
+            }
+
+            <form class="k-form" method="post" action="/authentication/qr-print">
+                <AntiforgeryToken />
+                <div class="k-field">
+                    <label class="k-label" for="username">工号</label>
+                    <input class="k-input" id="username" name="username" type="text"
+                           autocomplete="username" autofocus required />
+                </div>
+                <div class="k-field">
+                    <label class="k-label" for="password">密码</label>
+                    <input class="k-input" id="password" name="password" type="password"
+                           autocomplete="current-password" required />
+                </div>
+                <button class="k-btn k-btn--primary k-btn--block" type="submit">生成二维码</button>
+            </form>
+        }
+        else
+        {
+            <div class="k-alert k-alert--warn">
+                <span>这张卡片 @LifetimeHint 内有效，且 <b>等同于你的密码</b>。请随身保管，不要转发或拍照外传。</span>
+            </div>
+
+            <div class="k-qr">
+                <div id="qr" class="k-qr__code"></div>
+                <p class="k-qr__name">@UserName</p>
+                <p class="k-qr__hint">对准扫码枪即可在现场电脑登录</p>
+            </div>
+
+            <div class="k-stack no-print">
+                <button class="k-btn k-btn--primary k-btn--block" type="button" onclick="window.print()">打印</button>
+                <a class="k-btn k-btn--block" href="/qr-print">重新生成</a>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Payload is not null)
+{
+    <script src="@Assets["lib/qrcode.min.js"]"></script>
+
+    @* ⚠️ 密文经 JSON 序列化后内联，得到的是一个安全的 JS 字符串字面量。
+       ⚠️ 渲染成**单张位图**（data URL），不要用内联 SVG 的数百个 <rect>——
+          实测那样会让浏览器的打印预览在栅格化时卡死转圈。 *@
+    <script>
+        (function () {
+            var el = document.getElementById('qr');
+            if (!el || typeof qrcode !== 'function') {
+                if (el) el.textContent = '二维码库没能加载，请刷新页面。';
+                return;
+            }
+            var qr = qrcode(0, 'M');
+            qr.addData(@((MarkupString)System.Text.Json.JsonSerializer.Serialize(Payload)));
+            qr.make();
+            el.innerHTML = '<img alt="登录二维码" style="width:100%;height:100%;image-rendering:pixelated" src="'
+                + qr.createDataURL(8) + '">';
+        })();
+    </script>
+}
+
+@code {
+    /// <summary>加密后的登录密文。为 null 时渲染的是生成表单。</summary>
+    [Parameter] public string? Payload { get; set; }
+
+    /// <summary>卡片上显示的账号。</summary>
+    [Parameter] public string? UserName { get; set; }
+
+    /// <summary>有效期的自然语言说法，如「8 小时」。</summary>
+    [Parameter] public string? LifetimeHint { get; set; }
+
+    /// <summary>失败原因（分类消息）。</summary>
+    [Parameter] public string? Error { get; set; }
+}

@@ -76,6 +76,7 @@ builder.Services.AddAppKitOidcTokenService();
 
 // <KEnvChip /> 的依赖。⚠️ 漏了它那个组件渲染时抛——而它恰恰是「这不是生产环境」
 // 的可见标识，渲染不出来时一个配错环境变量的实例看起来和正式站一模一样。
+builder.Services.AddAppKitQrLogin(builder.Configuration);
 builder.Services.AddAppKitEnvironment();
 
 builder.Services.AddControllers();
@@ -250,6 +251,10 @@ app.MapPasswordLogin();
 
 // 未处理异常的落地页，配合上面的 UseExceptionHandler("/Error")。
 app.MapErrorPage();
+
+// 扫码登录：域内打印加密卡片，现场用扫码枪扫入登录。
+// ⚠️ 卡片等价于一张写着密码的便条，缓解全靠有效期 + 网络准入 + 卡面提示三条一起。
+app.MapQrLogin();
 
 // 登出：清 Cookie 会话。
 // ⚠️ 必须是服务端端点——会话是服务端 Cookie，WASM 端清不掉它。

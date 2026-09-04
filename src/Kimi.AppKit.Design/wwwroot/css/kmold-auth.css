@@ -252,6 +252,54 @@
    而两个文件必然同时加载——后引入的那份无条件胜出，
    于是其中一处的设计意图静默失效，谁都不会发现。环境徽标只保留一处定义。 */
 
+/* — 可打印的登录二维码卡片 — */
+
+.k-qr {
+    text-align: center;
+    margin: 1.25rem 0;
+}
+
+/* ⚠️ 尺寸给死不给百分比：这张卡是拿去**打印**的，扫码枪对模块尺寸有下限，
+   跟着视口缩会在窄屏上打出一张扫不动的码。 */
+.k-qr__code {
+    width: 13rem;
+    height: 13rem;
+    margin: 0 auto;
+    padding: .5rem;
+    background: #fff;
+    border: 1px solid var(--k-hair);
+    border-radius: var(--k-radius);
+}
+
+.k-qr__name {
+    margin: .75rem 0 .125rem;
+    font-family: var(--k-mono);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--k-ink);
+}
+
+.k-qr__hint {
+    margin: 0;
+    font-size: .75rem;
+    color: var(--k-ink-3);
+}
+
+@media print {
+    /* 去掉浏览器自动加的日期/标题页眉页脚。⚠️ 作用域限定在认证外壳内，
+       别让它影响工艺单一类的业务打印。 */
+    @page { margin: 0; }
+
+    .k-auth {
+        min-height: auto;
+        padding: 8mm 0;
+        background: none;
+    }
+
+    .k-auth__card { box-shadow: none; }
+    .k-auth__brand, .k-auth__foot, .k-rail, .no-print { display: none; }
+}
+
 @media (max-width: 30rem) {
     .k-auth {
         padding: 1.5rem 1rem 2rem;
