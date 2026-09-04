@@ -99,13 +99,26 @@ public static class KCrudEndpointRouteBuilderExtensions
         CancellationToken cancellationToken)
         => TypedResults.Ok(await source.LoadAsync(query.Query, cancellationToken));
 
-    private static async Task<Results<Ok<TEntity>, NotFound>> GetAsync<TEntity>(
+    /// <remarks>
+    /// ⚠️ 找不到时返回**带 body 的** ProblemDetails，不要用无 body 的
+    /// <c>TypedResults.NotFound()</c>。宿主若装了
+    /// <c>UseStatusCodePagesWithReExecute("/not-found")</c>（Blazor 模板默认就有），
+    /// 无 body 的 404 会被**重新执行成那个 SPA 页面**——API 调用方收到的是一大坨
+    /// <c>text/html</c>，`response.json()` 当场抛 SyntaxError，
+    /// 而错误信息完全指不到「这是个 404」。
+    /// </remarks>
+    private static async Task<Results<Ok<TEntity>, ProblemHttpResult>> GetAsync<TEntity>(
         string id,
         ICrudDataSource<TEntity> source,
         CancellationToken cancellationToken)
     {
         var item = await source.GetAsync(id, cancellationToken);
-        return item is null ? TypedResults.NotFound() : TypedResults.Ok(item);
+        return item is null
+            ? TypedResults.Problem(
+                detail: $"未找到 {typeof(TEntity).Name}（id={id}）。",
+                statusCode: StatusCodes.Status404NotFound,
+                title: "记录不存在")
+            : TypedResults.Ok(item);
     }
 
     private static async Task<Results<FileContentHttpResult, NoContent>> ExportAsync<TEntity>(
@@ -131,7 +144,7 @@ public static class KCrudEndpointRouteBuilderExtensions
     // ── 写 ──────────────────────────────────────────────────────────────
 
     /// <summary>新增或更新。请求体手动读，原因见映射处的注释。</summary>
-    private static async Task<Results<Ok<TEntity>, ValidationProblem, BadRequest<string>>> UpsertAsync<TEntity>(
+    private static async Task<Results<Ok<TEntity>, ValidationProblem, ProblemHttpResult>> UpsertAsync<TEntity>(
         HttpContext context,
         ICrudDataSource<TEntity> source,
         CancellationToken cancellationToken)
@@ -145,10 +158,22 @@ public static class KCrudEndpointRouteBuilderExtensions
         catch (System.Text.Json.JsonException ex)
         {
             // 反序列化失败是**客户端**的问题，返回 400 而不是让它冒到全局异常处理器变成 500。
-            return TypedResults.BadRequest($"请求体不是合法 JSON：{ex.Message}");
+            // ⚠️ 走 ProblemDetails 而不是 BadRequest(string)：后者返回的是一个裸 JSON
+            //    字符串，与本 API 其余错误（ValidationProblem / Problem）格式不一致，
+            //    调用方得为同一个端点写两套解析。
+            return TypedResults.Problem(
+                detail: $"请求体不是合法 JSON：{ex.Message}",
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "请求格式错误");
         }
 
-        if (item is null) return TypedResults.BadRequest("请求体为空。");
+        if (item is null)
+        {
+            return TypedResults.Problem(
+                detail: "请求体为空。",
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "请求格式错误");
+        }
 
         var result = await source.UpsertAsync(item, cancellationToken);
         return result.Succeeded

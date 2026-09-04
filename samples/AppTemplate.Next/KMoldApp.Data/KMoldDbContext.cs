@@ -45,18 +45,6 @@ public class KMoldDbContext(
     /// PostgreSQL 会抛 <c>ArgumentException: only offset 0 (UTC) is supported</c>，
     /// 而 SQL Server 照单全收——同一段代码换 provider 才崩。
     ///
-    /// ⚠️ 这里**不做枚举转字符串**：那件事连同 CHECK 约束一起由
-    /// <c>ApplyEnumStringConstraints</c> 负责（见 <see cref="OnModelCreating"/>）。
-    /// 旧模板在这里又配了一遍 <c>Properties&lt;Enum&gt;().HaveConversion&lt;string&gt;()</c>，
-    /// 与包里那份重复。
-    /// </remarks>
-    /// <inheritdoc />
-    /// <remarks>
-    /// ⚠️ 必须调 <c>base</c>：基类在那里挂 <c>ApplyAppKitConventions()</c>，
-    /// 也就是 <c>DateTimeOffset</c> 的 UTC 归一。漏掉它，带本地偏移的时间写进
-    /// PostgreSQL 会抛 <c>ArgumentException: only offset 0 (UTC) is supported</c>，
-    /// 而 SQL Server 照单全收——同一段代码换 provider 才崩。
-    ///
     /// 【⚠️ 刻意**不设**全局 string 长度 / decimal 精度约定】
     /// 旧模板在这里写了 <c>Properties&lt;string&gt;().HaveMaxLength(100)</c> 一族约定。
     /// 那会连**框架自己的表**一起套住——审计表 <c>Trail</c> 的 <c>OldValues</c> /

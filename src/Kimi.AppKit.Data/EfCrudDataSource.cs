@@ -3,6 +3,7 @@ using System.Reflection;
 using Kimi.AppKit.Core.Abstractions;
 using Kimi.AppKit.Core.Contracts;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Kimi.AppKit.Data;
 
@@ -64,8 +65,12 @@ public class EfCrudDataSource<TContext, TEntity>(IDbContextFactory<TContext> con
     /// <inheritdoc />
     public virtual async Task<TEntity?> GetAsync(object id, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(id);
+
         await using var db = await ContextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        return await db.Set<TEntity>().FindAsync([id], cancellationToken).ConfigureAwait(false);
+
+        if (!TryConvertKey(db, id, out var key)) return null;
+        return await db.Set<TEntity>().FindAsync([key], cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -109,9 +114,13 @@ public class EfCrudDataSource<TContext, TEntity>(IDbContextFactory<TContext> con
     /// <inheritdoc />
     public virtual async Task<KResult> DeleteAsync(object id, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(id);
+
         await using var db = await ContextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
-        var entity = await db.Set<TEntity>().FindAsync([id], cancellationToken).ConfigureAwait(false);
+        if (!TryConvertKey(db, id, out var key)) return KResult.Fail("记录不存在，可能已被删除。");
+
+        var entity = await db.Set<TEntity>().FindAsync([key], cancellationToken).ConfigureAwait(false);
         if (entity is null) return KResult.Fail("记录不存在，可能已被删除。");
 
         // ⚠️ 一律走 Remove()。审计上下文会把 Deleted 状态改写成软删除；
@@ -126,6 +135,47 @@ public class EfCrudDataSource<TContext, TEntity>(IDbContextFactory<TContext> con
         catch (DbUpdateConcurrencyException)
         {
             return KResult.Fail("这条记录已被其他人修改，请刷新后重试。");
+        }
+    }
+
+    /// <summary>
+    /// 把外部传入的主键值转换成实体主键的 CLR 类型。
+    /// </summary>
+    /// <remarks>
+    /// 【⚠️ 为什么必须转】主键从 HTTP 路由段过来时**永远是 string**，而实体主键多为
+    /// <c>int</c>/<c>long</c>/<c>Guid</c>。直接把 string 交给 <c>FindAsync</c>，
+    /// EF Core 会抛 <c>ArgumentException: The key value at position 0 ... was of type
+    /// 'string', which does not match the property type of 'int'</c>。
+    ///
+    /// 那是一个**未被捕获**的异常，会冒到全局异常处理器变成 500，
+    /// 开发环境下更会把完整堆栈（含绝对文件路径与 HTTP 头）甩到客户端界面上。
+    /// 而这本该是一次平平无奇的「记录不存在」——用户随便输个 id 就能触发。
+    ///
+    /// ⚠️ 转换失败时返回 <c>false</c> 而不是抛：<c>/api/crud/setting/abc</c>
+    /// 语义上等同于「找不到」，不是服务器错误。
+    /// </remarks>
+    private static bool TryConvertKey(DbContext db, object id, out object key)
+    {
+        key = id;
+
+        var primaryKey = db.Model.FindEntityType(typeof(TEntity))?.FindPrimaryKey();
+        if (primaryKey is null || primaryKey.Properties.Count != 1) return true;
+
+        var keyType = Nullable.GetUnderlyingType(primaryKey.Properties[0].ClrType)
+                      ?? primaryKey.Properties[0].ClrType;
+
+        if (keyType.IsInstanceOfType(id)) return true;
+
+        try
+        {
+            key = keyType == typeof(Guid)
+                ? Guid.Parse(id.ToString()!)
+                : Convert.ChangeType(id, keyType, CultureInfo.InvariantCulture);
+            return true;
+        }
+        catch (Exception ex) when (ex is FormatException or InvalidCastException or OverflowException)
+        {
+            return false;
         }
     }
 

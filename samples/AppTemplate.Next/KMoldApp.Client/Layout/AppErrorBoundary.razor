@@ -1,0 +1,73 @@
+@inherits ErrorBoundaryBase
+@using Kimi.AppKit.Components.Buttons
+@inject IKNotify Notify
+@inject IDialogService DialogService
+@inject NavigationManager Nav
+
+@* 应用级错误边界。
+
+   ⚠️ **没有它的后果**：任何冒泡到渲染树的异常会被 Blazor 原样显示——
+   开发环境下是完整堆栈（含**绝对文件路径**与 HTTP 头）铺满整个界面，
+   生产环境下是一句无信息量的 "An unhandled error has occurred"。
+   两种都不可接受：前者泄露内部结构，后者让用户不知道该做什么。
+
+   ⚠️ **异常呈现必须走 ApiErrorPresenter**，不要在这里自己 catch 后弹提示。
+   包里那层收口保证「同一种异常在任何触发路径下得到同一种提示」：
+   403 → 权限对话框、401 → 跳登录、其余 → 错误详情对话框。
+   各处自己写 catch 的结果是同一个 403 在这个页面弹吐司、那个页面弹对话框，
+   还容易漏处理 401——忘了跳登录，用户会以为系统卡死了。 *@
+
+@if (_showInline)
+{
+    @* 页面初始化期的异常无法弹窗（页面已经崩了），只能内联兜底。 *@
+    <MudAlert Severity="Severity.Error" Class="ma-4">
+        <MudText Typo="Typo.subtitle2">页面加载失败</MudText>
+        <MudText Typo="Typo.body2" Class="mt-1">请刷新重试；若持续出现请联系管理员。</MudText>
+        <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mt-2"
+                   OnClick="Retry">重试</MudButton>
+    </MudAlert>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    private bool _handling;
+    private bool _showInline;
+
+    protected override async Task OnErrorAsync(Exception exception)
+    {
+        // ⚠️ 防重入：呈现过程本身若再抛，会形成无限递归。
+        if (_handling) return;
+        _handling = true;
+
+        try
+        {
+            // 页面初始化期崩溃时弹窗没有意义——承载弹窗的渲染树已经不完整了。
+            if (IsFromInitialization(exception))
+            {
+                _showInline = true;
+                return;
+            }
+
+            await ApiErrorPresenter.PresentAsync(exception, Notify, DialogService, Nav);
+            Recover();
+        }
+        finally
+        {
+            _handling = false;
+        }
+    }
+
+    private void Retry()
+    {
+        _showInline = false;
+        Recover();
+        Nav.NavigateTo(Nav.Uri, forceLoad: true);
+    }
+
+    private static bool IsFromInitialization(Exception exception) =>
+        new System.Diagnostics.StackTrace(exception).ToString()
+            .Contains("OnInitialized", StringComparison.Ordinal);
+}

@@ -144,7 +144,15 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+// ⚠️ **只对非 API 路径启用 SPA 状态码页。**
+//    它会把 404/403 这类响应「重新执行」成 /not-found 页面，对浏览器导航是对的，
+//    但对 API 是灾难：调用方拿到一大坨 text/html，response.json() 当场抛
+//    SyntaxError，而错误信息完全指不到「这其实是个 404」。
+//    ⚠️ 顺序也重要：UseWhen 必须在这里而不是更靠后——状态码页要包住后续整条管线
+//    才能捕获到它们产生的状态码。
+app.UseWhen(
+    context => !context.Request.Path.StartsWithSegments("/api"),
+    branch => branch.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true));
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

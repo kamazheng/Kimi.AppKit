@@ -29,7 +29,12 @@
     @* pt-16 让内容避开 fixed 定位的 AppBar——没有它首屏内容会被标题栏压住。 *@
     <MudMainContent Class="pt-16 pa-4">
         <MudContainer MaxWidth="MaxWidth.Large">
-            @Body
+            @* ⚠️ 错误边界包住 @Body：没有它，任何冒泡异常会把完整堆栈
+               （含绝对文件路径与 HTTP 头）铺满整个界面。异常呈现走包里的
+               ApiErrorPresenter，保证 403/401/其余在任何触发路径下表现一致。 *@
+            <AppErrorBoundary>
+                @Body
+            </AppErrorBoundary>
         </MudContainer>
     </MudMainContent>
 </MudLayout>
