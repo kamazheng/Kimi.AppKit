@@ -1,0 +1,28 @@
+<Project>
+
+    <!--
+      X2 新骨架的公共构建属性。
+
+      ⚠️ 必须**自包含**，不要 Import 仓库根那份。
+         MSBuild 找到第一个 Directory.Build.props 就停止向上查找，所以在 Kimi.AppKit
+         仓库里它遮蔽了根那份；而将来 `dotnet new` 生成出来的项目根本不在这个仓库里，
+         Import 会直接失败。AppTemplate 那边曾靠 Import 拿 TargetFramework，
+         生成的项目因此**静默**退回 SDK 默认框架。
+    -->
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <!--
+          警告即错误。告警一旦允许存在，数量只会单向增长：几十条噪音里没人看得见
+          新冒出来的那条真问题。
+          ⚠️ 需要临时豁免时在**具体工程**里加 NoWarn 并写明理由，不要在这里整体关掉。
+        -->
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    </PropertyGroup>
+
+</Project>

@@ -1,0 +1,26 @@
+<Project>
+
+    <!--
+      中央包版本管理（CPM）。本目录下所有 <PackageReference> 一律**不写 Version**，
+      版本只在这里定义一次。
+
+      ⚠️ 必须**自包含**，理由同 Directory.Build.props：NuGet 同样是「找到最近的一个
+         就停」。没有本文件时，本目录会去用仓库根那份——那份是给 src/ 下的包工程用的，
+         不含样例需要的包，表现为 NU1008 而不是「缺了某个版本号」。
+
+      ⚠️ 版本对齐 10.0.11 而非模板生成时的 10.0.8：那是本仓库已验证过的 ASP.NET Core
+         版本线（见 AppTemplate/Directory.Packages.props），混用两条线会在 WASM 侧
+         出现方法签名不符，且只有浏览器里才炸。
+    -->
+
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.11" />
+    </ItemGroup>
+
+</Project>
