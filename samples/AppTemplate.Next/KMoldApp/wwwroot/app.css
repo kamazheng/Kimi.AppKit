@@ -75,3 +75,59 @@ h1:focus {
 .mud-drawer .mud-nav-link.mud-nav-link-disabled .mud-icon-root {
     color: rgba(255, 255, 255, .38) !important;
 }
+
+/* ── 抽屉顶部的品牌区 ─────────────────────────────────────────────
+   ⚠️ 品牌与导航同处深色抽屉，是一整块。放顶栏会和汉堡按钮抢位置
+      （两个视觉重量相当的元素并排会互相打架）。 */
+.k-drawer-brand {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: 1rem 1rem .875rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .10);
+}
+
+/* ⚠️ Logo 由客户在身份服务里上传，尺寸不受本应用控制——不限尺寸会把抽屉撑变形，
+   而本地用兜底字标测试时永远发现不了。contain 而非 cover：cover 会裁掉细长字标的两头。 */
+.k-drawer-logo {
+    max-height: 2rem;
+    max-width: 6.5rem;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.k-drawer-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    border: 1px solid var(--k-brass, #C4841D);
+    border-radius: var(--k-radius, 3px);
+    color: var(--k-brass, #C4841D);
+    font-size: .9375rem;
+    font-weight: 600;
+}
+
+.k-drawer-names {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    min-width: 0;
+}
+
+.k-drawer-product {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* 企业名压淡：它回答「这是谁家的系统」，一眼可辨即可，不与产品名争。 */
+.k-drawer-company {
+    font-size: .75rem;
+    color: rgba(255, 255, 255, .62);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

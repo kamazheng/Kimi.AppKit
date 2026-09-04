@@ -2,6 +2,9 @@
 @using KMoldApp.Shared.Auth
 @using Kimi.AppKit.Core.Contracts
 @inject IAppBranding BrandingSource
+@inject NavigationManager Nav
+@using Microsoft.AspNetCore.Components.Routing
+@implements IDisposable
 @inherits LayoutComponentBase
 
 @* ⚠️ 主题与 Provider 必须在布局里、且处于交互式渲染上下文。
@@ -16,31 +19,13 @@
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
                        OnClick="@(() => _drawerOpen = !_drawerOpen)" />
-        @* 企业标识。**企业名与 Logo 来自身份服务**（客户只在 Auth 里设一次），
-           产品名恒取本地常量——那是本应用自己的名字，不该跟着身份服务的产品名走。
+        @* 顶栏放**当前页面标题**，不放品牌——品牌在抽屉顶部（见下方 MudDrawer）。
+           ⚠️ 品牌与汉堡按钮挤在一起时，两个视觉重量相当的元素会互相打架；
+           而品牌与导航本就是一体的（都在回答「这是什么系统、能去哪」），
+           放进抽屉后顶栏才腾得出位置给页面上下文。
+           这是 Ant Design Pro / Azure Portal / GitHub 的排法。 *@
+        <MudText Typo="Typo.h6" Class="text-truncate">@PageTitle</MudText>
 
-           ⚠️ **单行横排，不要竖排两行。** 竖排是登录页那种独立品牌区的排法；
-           顶栏是一条紧凑的横条，塞进两行文字会把它撑高一截，且让企业名
-           在视觉重量上压过产品名——而用户每天在这里找的是产品名。
-           ⚠️ 企业名用分隔点接在产品名后面并压淡：它回答「这是谁家的系统」，
-           只需一眼可辨，不需要与产品名争。窄屏整块隐藏。 *@
-        @* ⚠️ 间距用内联 style 而不是 MudBlazor 的 ga-*/gap-* 工具类：那些类名随版本变过，
-           不生效时 Logo 会和文字**贴在一起**且不报错。 *@
-        <div class="d-flex align-center" style="gap:.625rem; min-width:0">
-            @if (_branding.LogoUrl is { } logo)
-            {
-                <img src="@logo" alt="@_branding.CompanyName" class="k-appbar-logo" />
-            }
-            else
-            {
-                @* 未上传 Logo 时的字标。⚠️ 不要用三道横线占位——那和汉堡菜单一模一样。 *@
-                <span class="k-appbar-mark" aria-hidden="true">@Initial</span>
-            }
-
-            <MudText Typo="Typo.h6" Class="text-truncate">@AppBrand.ProductName</MudText>
-
-            <span class="k-appbar-company d-none d-md-flex">@_branding.CompanyName</span>
-        </div>
         <MudSpacer />
         <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
                        Color="Color.Inherit" OnClick="@(() => _isDarkMode = !_isDarkMode)"
@@ -51,6 +36,27 @@
     @* ClipMode.Always：抽屉从 AppBar 下方开始，不盖住标题栏。
        缺了它抽屉会顶到页面最上沿，把 AppBar 的汉堡按钮与标题挤到右侧。 *@
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        @* 品牌区。**企业名与 Logo 来自身份服务**（客户只在 Auth 里设一次），
+           产品名恒取本地常量——那是本应用自己的名字，不该跟着身份服务的产品名走。
+           ⚠️ 放在抽屉里而不是顶栏：品牌与导航同属「这是什么系统、能去哪」，
+           视觉上也同处深色区，是一整块；挤到顶栏会和汉堡按钮抢位置。 *@
+        <div class="k-drawer-brand">
+            @if (_branding.LogoUrl is { } logo)
+            {
+                <img src="@logo" alt="@_branding.CompanyName" class="k-drawer-logo" />
+            }
+            else
+            {
+                @* 未上传 Logo 时的字标。⚠️ 不要用三道横线占位——那和汉堡菜单一模一样。 *@
+                <span class="k-drawer-mark" aria-hidden="true">@Initial</span>
+            }
+
+            <div class="k-drawer-names">
+                <span class="k-drawer-product">@AppBrand.ProductName</span>
+                <span class="k-drawer-company">@_branding.CompanyName</span>
+            </div>
+        </div>
+
         <NavMenu />
     </MudDrawer>
 
@@ -76,11 +82,41 @@
 @code {
     private KBranding _branding = KBranding.Fallback;
 
+    /// <summary>
+    /// 顶栏显示的当前页面标题。
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ 刻意**不去读 &lt;PageTitle&gt;**：那个组件把值写进 document.title，
+    /// 没有公开的读取口径，硬读要走 JS 互操作，且时机上早于组件渲染完成——
+    /// 拿到的经常是上一页的标题。这里按路由映射，来源单一且同步可得。
+    /// ⚠️ 新增页面要在这里登记，否则顶栏是空的。宁可空着也不要回落成产品名——
+    /// 那会让用户以为自己在首页。
+    /// </remarks>
+    private string PageTitle => Nav.ToBaseRelativePath(Nav.Uri).Split('?')[0].TrimEnd('/') switch
+    {
+        "" => "首页",
+        "admin/settings" => "系统设置",
+        "profile" => "我的账号",
+        _ => string.Empty,
+    };
+
     private string Initial =>
         string.IsNullOrWhiteSpace(_branding.CompanyName) ? "?" : _branding.CompanyName[..1].ToUpperInvariant();
 
     // ⚠️ 服务端预渲染与 WASM 接管各跑一次，两次用的是各自容器里的 IAppBranding 实现。
-    protected override async Task OnInitializedAsync() => _branding = await BrandingSource.GetAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        // ⚠️ **必须订阅路由变化。** 布局组件在页面间导航时**不会重新渲染**，
+        //    不订阅的话顶栏标题会一直停在进入应用时的那一页——
+        //    点了导航、内容变了、标题没变，看起来像页面没切过去。
+        Nav.LocationChanged += OnLocationChanged;
+
+        _branding = await BrandingSource.GetAsync();
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => StateHasChanged();
+
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
 
     private bool _isDarkMode;
     private bool _drawerOpen = true;
