@@ -105,8 +105,8 @@ main {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
+    width: 1.75rem;
+    height: 1.75rem;
     flex-shrink: 0;
     border: 1px solid var(--k-brass, #C4841D);
     border-radius: var(--k-radius, 3px);
@@ -120,8 +120,27 @@ main {
       不限的话一张大图会把顶栏撑破并盖住导航，而本地用兜底字标测试时永远发现不了。
    ⚠️ object-fit: contain 而不是 cover：cover 会把细长的企业字标裁掉两头。 */
 .k-appbar-logo {
-    max-height: 2rem;
-    max-width: 9rem;
+    max-height: 1.625rem;
+    max-width: 7rem;
     object-fit: contain;
     display: block;
+}
+
+/* 顶栏里的企业名。接在产品名之后，用分隔点引出。
+   ⚠️ 压淡且不加粗是刻意的：它回答「这是谁家的系统」，一眼可辨即可，
+      与产品名同等权重会让用户每天要在两个名字之间找自己要看的那个。 */
+.k-appbar-company {
+    align-items: center;
+    font-size: .8125rem;
+    opacity: .68;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 18rem;
+}
+
+.k-appbar-company::before {
+    content: "·";
+    margin-right: .5rem;
+    opacity: .6;
 }

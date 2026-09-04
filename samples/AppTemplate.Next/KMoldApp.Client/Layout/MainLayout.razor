@@ -18,12 +18,15 @@
                        OnClick="@(() => _drawerOpen = !_drawerOpen)" />
         @* 企业标识。**企业名与 Logo 来自身份服务**（客户只在 Auth 里设一次），
            产品名恒取本地常量——那是本应用自己的名字，不该跟着身份服务的产品名走。
-           ⚠️ 公司名不能省：一屏上只有产品名时，被单点登录重定向过来的用户
-           无从判断这是谁家的系统。认证页已经放了公司名，控制台不放就是两屏对不上。
-           ⚠️ 窄屏隐藏公司名而不是缩小字号——挤成两行小字比只留产品名更难读。 *@
+
+           ⚠️ **单行横排，不要竖排两行。** 竖排是登录页那种独立品牌区的排法；
+           顶栏是一条紧凑的横条，塞进两行文字会把它撑高一截，且让企业名
+           在视觉重量上压过产品名——而用户每天在这里找的是产品名。
+           ⚠️ 企业名用分隔点接在产品名后面并压淡：它回答「这是谁家的系统」，
+           只需一眼可辨，不需要与产品名争。窄屏整块隐藏。 *@
         @* ⚠️ 间距用内联 style 而不是 MudBlazor 的 ga-*/gap-* 工具类：那些类名随版本变过，
-           不生效时字标会和文字**贴在一起**且不报错。 *@
-        <div class="d-flex align-center" style="gap:.75rem">
+           不生效时 Logo 会和文字**贴在一起**且不报错。 *@
+        <div class="d-flex align-center" style="gap:.625rem; min-width:0">
             @if (_branding.LogoUrl is { } logo)
             {
                 <img src="@logo" alt="@_branding.CompanyName" class="k-appbar-logo" />
@@ -33,12 +36,10 @@
                 @* 未上传 Logo 时的字标。⚠️ 不要用三道横线占位——那和汉堡菜单一模一样。 *@
                 <span class="k-appbar-mark" aria-hidden="true">@Initial</span>
             }
-            <div class="d-flex flex-column" style="line-height:1.15">
-                <MudText Typo="Typo.subtitle1" Class="font-weight-bold">@AppBrand.ProductName</MudText>
-                <MudText Typo="Typo.caption" Class="d-none d-sm-flex" Style="opacity:.72">
-                    @_branding.CompanyName
-                </MudText>
-            </div>
+
+            <MudText Typo="Typo.h6" Class="text-truncate">@AppBrand.ProductName</MudText>
+
+            <span class="k-appbar-company d-none d-md-flex">@_branding.CompanyName</span>
         </div>
         <MudSpacer />
         <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"

@@ -59,3 +59,19 @@ h1:focus {
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
+
+/* 深色抽屉里的禁用导航项（无权限时由 RoleNavLink 渲染成禁用态）。
+
+   ⚠️ **必须覆盖 MudBlazor 的默认禁用色。** 它是为浅色背景设计的浅灰，
+      落在深蓝抽屉上对比度低到几乎看不见——用户看到的是一个若隐若现的影子，
+      既读不出文字、也不知道那是可申请权限的功能。而禁用态的全部意义正是
+      「让人知道有这个功能、该找谁开权限」，看不见就等于把它隐藏了。
+   ⚠️ 写在全局样式而不是 NavMenu.razor.css：RoleNavLink 是子组件，
+      它渲染的元素不带 NavMenu 的 scope 属性，::deep 匹配不到且不报错。 */
+.mud-drawer .mud-nav-link.mud-nav-link-disabled {
+    color: rgba(255, 255, 255, .48) !important;
+}
+
+.mud-drawer .mud-nav-link.mud-nav-link-disabled .mud-icon-root {
+    color: rgba(255, 255, 255, .38) !important;
+}
