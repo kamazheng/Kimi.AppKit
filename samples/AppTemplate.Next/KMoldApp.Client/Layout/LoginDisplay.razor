@@ -1,7 +1,11 @@
 @using Microsoft.AspNetCore.Components.Authorization
+@using KMoldApp.Shared.Constants
 @inject NavigationManager Nav
 
-@* 登录状态与出入口。放在 AppBar 右侧。 *@
+@* 登录状态与出入口。放在 AppBar 右侧。
+
+   ⚠️ 账号相关的入口都收在这个头像菜单里，**不进左侧导航**：
+   左侧导航是「业务去哪」，账号是「我是谁」，混在一起会让业务菜单越加越长。 *@
 <AuthorizeView>
     <Authorized>
         <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit"
@@ -9,6 +13,18 @@
             <MudMenuItem Disabled="true">
                 <MudText Typo="Typo.body2">@context.User.Identity?.Name</MudText>
             </MudMenuItem>
+            <MudDivider />
+
+            <MudMenuItem Icon="@Icons.Material.Filled.Person" Href="profile">我的账号</MudMenuItem>
+
+            @* 运维入口。⚠️ 这两个页面都会暴露内部信息（API 形状、任务参数），
+               所以只给管理员看，且服务端各自还有一道授权——界面隐藏不算授权。 *@
+            <AuthorizeView Roles="@($"{AppRoles.Root},{AppRoles.Admin}")" Context="admin">
+                <MudDivider />
+                <MudMenuItem Icon="@Icons.Material.Filled.Api" OnClick="OpenApiDocs">接口文档</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.Schedule" OnClick="OpenJobs">后台任务</MudMenuItem>
+            </AuthorizeView>
+
             <MudDivider />
             <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Logout">登出</MudMenuItem>
         </MudMenu>
@@ -23,13 +39,18 @@
 </AuthorizeView>
 
 @code {
-    // ⚠️ 登录与登出都**必须整页导航**（forceLoad）。
-    //    /login 与 /authentication/logout 是服务端 minimal API 端点、不是 Blazor 路由，
+    // ⚠️ 以下每一项都**必须整页导航**（forceLoad）。
+    //    它们都不是 Blazor 路由：/login 与 /authentication/logout 是 minimal API 端点，
+    //    /scalar/v1 与 /hangfire 是各自中间件挂的页面。
     //    而 Blazor 的 Router 会拦截同源导航去路由表里找——找不到就显示 NotFound，
-    //    **请求根本没发到服务端**。表现是「点了登录停在一个空白的 /login」。
+    //    **请求根本没发到服务端**。表现是「点了没反应」或停在一个空白页。
     //    ⚠️ 登出还有一层：会话是服务端 Cookie，WASM 端清不掉它。只在客户端改认证态的话，
     //    界面显示已登出、下一次请求却仍带着有效 Cookie。
     private void Login() => Nav.NavigateTo("/login", forceLoad: true);
 
     private void Logout() => Nav.NavigateTo("/authentication/logout", forceLoad: true);
+
+    private void OpenApiDocs() => Nav.NavigateTo("/scalar/v1", forceLoad: true);
+
+    private void OpenJobs() => Nav.NavigateTo("/hangfire", forceLoad: true);
 }

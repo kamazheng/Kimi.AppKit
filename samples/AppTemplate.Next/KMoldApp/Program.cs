@@ -79,6 +79,14 @@ builder.Services.AddAppKitOidcTokenService();
 builder.Services.AddAppKitQrLogin(builder.Configuration);
 builder.Services.AddAppKitEnvironment();
 
+// 企业标识（登录页与二维码卡片上的公司名/产品名/Logo）。
+// ⚠️ 刻意做成配置而非落库：本模板生成的是某一个客户自己的应用，品牌在 dotnet new
+//    那一刻就定了。Auth 那套 433 行的可管理品牌是「一套部署服务多个客户」才需要的。
+builder.Services.Configure<BrandingOptions>(builder.Configuration.GetSection(BrandingOptions.SectionName));
+
+// API 文档（/openapi/v1.json + /scalar/v1）。默认只在开发环境开放。
+builder.Services.AddAppOpenApi(builder.Configuration);
+
 builder.Services.AddControllers();
 builder.Services.AddCascadingAuthenticationState();
 
@@ -290,6 +298,10 @@ app.MapGet("/authentication/logout", async (HttpContext http, IOptions<KOidcOpti
 //    属于系统配置，普通登录用户不该能读写。
 app.MapCrudEndpoints<Setting>().RequireAuthorization(AppPolicies.AdminOnly);
 app.MapCrudEndpoints<EmailTemplate>().RequireAuthorization(AppPolicies.AdminOnly);
+
+// API 文档与后台任务面板。⚠️ 两者都会暴露内部信息，授权见各自的 Setup 类。
+app.MapAppOpenApi();
+app.MapAppHangfireDashboard();
 
 app.MapControllers();
 

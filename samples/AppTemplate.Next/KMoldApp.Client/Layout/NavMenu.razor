@@ -2,16 +2,13 @@
 
 @* MudBlazor 导航。放在 MudDrawer 里，由 MainLayout 控制开合。 *@
 <MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="counter" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    <MudNavLink Href="weather" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">首页</MudNavLink>
 
-    @* 需要登录才能看的页面。 *@
-    <AuthorizeView>
-        <Authorized>
-            <MudNavLink Href="profile" Icon="@Icons.Material.Filled.Person">我的账号</MudNavLink>
-        </Authorized>
-    </AuthorizeView>
+    @* 业务页面加在此处。 *@
+
+    @* ⚠️ 账号相关的入口**不放这里**，全部收在右上角头像菜单（LoginDisplay）里。
+       左侧导航回答「业务去哪」，头像菜单回答「我是谁」；
+       混在一起会让业务菜单被账号项越挤越长。 *@
 
     @* 需要管理员角色。⚠️ 无权限时**禁用并说明缺哪个角色**，不隐藏。 *@
     <RoleNavLink Roles="@($"{AppRoles.Root},{AppRoles.Admin}")"

@@ -25,6 +25,13 @@
     <ProjectReference Include="..\KMoldApp.Data\KMoldApp.Data.csproj" />
   </ItemGroup>
 
+  <!-- API 文档。⚠️ 不在 KimiAppKitLocalDev 条件组里——它们与包的来源无关，
+       放进条件组会让仓库内开发时根本引不到。 -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(KimiAppKitLocalDev)' == 'true'">
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Web\Kimi.AppKit.Web.csproj" />
     <ProjectReference Include="..\..\..\src\Kimi.AppKit.Crud\Kimi.AppKit.Crud.csproj" />

@@ -1,0 +1,24 @@
+@using KMoldApp.Infrastructure
+@using Microsoft.Extensions.Options
+@inject IOptions<BrandingOptions> Branding
+
+@* 认证页顶部的企业标识。登录页与二维码卡片共用——各写一份必然漂移。 *@
+
+<div class="k-auth__brand">
+    @if (!string.IsNullOrWhiteSpace(Branding.Value.LogoPath))
+    {
+        <img class="k-auth__logo" src="@Branding.Value.LogoPath" alt="@Branding.Value.CompanyName" />
+    }
+    else
+    {
+        @* 未配 Logo 时的内置字标。
+           ⚠️ 不要换成三道横线——那和汉堡菜单图标一模一样，用户会去点它，
+           点不动就以为界面坏了。方框加字母不会被误认成控件。 *@
+        <span class="k-auth__mark" aria-hidden="true">@Branding.Value.Initial</span>
+    }
+
+    <span class="k-auth__names">
+        <span class="k-auth__company">@Branding.Value.CompanyName</span>
+        <span class="k-auth__product">@Branding.Value.ProductName</span>
+    </span>
+</div>
