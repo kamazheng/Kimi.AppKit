@@ -1,0 +1,29 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Nav
+
+@* 登录状态与出入口。放在 AppBar 右侧。 *@
+<AuthorizeView>
+    <Authorized>
+        <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit"
+                 AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+            <MudMenuItem Disabled="true">
+                <MudText Typo="Typo.body2">@context.User.Identity?.Name</MudText>
+            </MudMenuItem>
+            <MudDivider />
+            <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Logout">登出</MudMenuItem>
+        </MudMenu>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton Variant="Variant.Text" Color="Color.Inherit"
+                   StartIcon="@Icons.Material.Filled.Login"
+                   OnClick="@(() => Nav.NavigateTo("/login"))">
+            登录
+        </MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    // ⚠️ 登出必须整页导航（forceLoad）。会话是服务端 Cookie，WASM 端清不掉它——
+    //    只在客户端改认证态的话，界面显示已登出、下一次请求却仍带着有效 Cookie。
+    private void Logout() => Nav.NavigateTo("/authentication/logout", forceLoad: true);
+}

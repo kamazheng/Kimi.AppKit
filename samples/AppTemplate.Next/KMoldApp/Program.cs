@@ -12,7 +12,9 @@ using KMoldApp.Client.Pages;
 using KMoldApp.Components;
 using KMoldApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Options;
 using MudBlazor.Services;
 
@@ -55,6 +57,9 @@ builder.Services.AddDefaultDenyAuthorization(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddCascadingAuthenticationState();
+
+// 把服务端已认证的身份送给 WASM 端（另一个进程，拿不到 HttpContext）。
+builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
 
 // 开发期权限绕过。⚠️ 默认关闭，要用必须在 appsettings 里显式开
 // （Auth:RoleBypass:Enabled）；生产环境即使配了也不生效。
@@ -156,6 +161,21 @@ app.MapGet("/authentication/login", (string? returnUrl, IOptions<KOidcOptions> o
                 "尚未配置 OpenIDConnect:Issuer / ClientId，单点登录不可用。",
                 statusCode: StatusCodes.Status503ServiceUnavailable))
     .AllowAnonymous();
+
+// 登出：清 Cookie 会话。
+// ⚠️ 必须是服务端端点——会话是服务端 Cookie，WASM 端清不掉它。
+//    客户端只在自己那边改认证态的话，界面显示已登出、下一次请求却仍带着有效 Cookie。
+// ⚠️ 配了 OIDC 时还要通知 IdP 结束会话（单点登出），否则用户点了登出、
+//    下次点登录会**无感知地自动登回来**——因为 IdP 那边的会话还在。
+app.MapGet("/authentication/logout", async (HttpContext http, IOptions<KOidcOptions> oidc) =>
+{
+    await http.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+    if (oidc.Value.IsConfigured)
+        return Results.SignOut(new AuthenticationProperties { RedirectUri = "/" }, [KAuthenticationSchemes.Oidc]);
+
+    return Results.Redirect("/");
+}).AllowAnonymous();
 
 app.MapControllers();
 

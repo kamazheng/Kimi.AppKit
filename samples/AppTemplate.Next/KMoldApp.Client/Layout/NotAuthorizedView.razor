@@ -1,0 +1,12 @@
+@* 未通过页面级授权时显示。区分「没登录」与「登录了但没权限」——
+   两者的处置完全不同：前者该去登录，后者去了也没用。 *@
+<AuthorizeView>
+    <Authorized>
+        <MudAlert Severity="Severity.Error" Class="ma-4">
+            没有访问该页面的权限。如需开通，请联系管理员。
+        </MudAlert>
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>

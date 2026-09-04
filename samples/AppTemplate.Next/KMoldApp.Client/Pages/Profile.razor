@@ -1,0 +1,22 @@
+@page "/profile"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+
+@* 受保护页面：用来验证「未登录访问 → 跳登录页」这条路径。 *@
+
+<PageTitle>我的账号</PageTitle>
+
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h5" Class="mb-4">我的账号</MudText>
+        <AuthorizeView>
+            <Authorized>
+                <MudText><b>登录名：</b>@context.User.Identity?.Name</MudText>
+                <MudText Class="mt-2"><b>角色：</b>
+                    @string.Join("、", context.User.FindAll("role").Select(c => c.Value).DefaultIfEmpty("（无）"))
+                </MudText>
+            </Authorized>
+        </AuthorizeView>
+    </MudCardContent>
+</MudCard>

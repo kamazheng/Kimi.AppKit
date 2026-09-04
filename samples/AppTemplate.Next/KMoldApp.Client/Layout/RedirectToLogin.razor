@@ -1,0 +1,13 @@
+@inject NavigationManager Nav
+
+@* 未登录时跳登录页，并带上原地址以便登录后跳回。 *@
+
+@code {
+    protected override void OnInitialized()
+    {
+        // ⚠️ 用相对地址做 returnUrl，**不要用绝对 URL**。绝对 URL 会让开放重定向
+        //    防护更难做——包里的 KReturnUrl 只放行同源相对路径。
+        var returnUrl = Nav.ToBaseRelativePath(Nav.Uri);
+        Nav.NavigateTo($"/login?returnUrl={Uri.EscapeDataString("/" + returnUrl)}", forceLoad: false);
+    }
+}
