@@ -1,6 +1,4 @@
-using Kimi.AppKit.Core.Contracts;
-
-namespace KMoldApp.Shared.Auth;
+namespace Kimi.AppKit.Core.Contracts;
 
 /// <summary>
 /// 企业标识的读取口径。**两端各有一个实现**。
@@ -15,7 +13,7 @@ namespace KMoldApp.Shared.Auth;
 /// - 服务端实现：直接向身份服务拉（KBrandingClient），并把值持久化给客户端
 /// - 客户端实现：读服务端随首屏送来的持久化状态，不再发一次跨域请求
 /// </remarks>
-public interface IAppBranding
+public interface IKBrandingSource
 {
     /// <summary>取企业标识。永不抛，拿不到就回兜底值。</summary>
     ValueTask<KBranding> GetAsync(CancellationToken cancellationToken = default);

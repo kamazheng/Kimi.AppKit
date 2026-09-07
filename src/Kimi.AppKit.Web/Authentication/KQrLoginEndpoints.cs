@@ -1,13 +1,20 @@
+using Kimi.AppKit.Web.Branding;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Kimi.AppKit.Components.Auth;
+using Kimi.AppKit.Core.Contracts;
 using Kimi.AppKit.Web.Authentication;
 using Kimi.AppKit.Web.Authorization;
-using KMoldApp.Components.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace KMoldApp.Infrastructure;
+namespace Kimi.AppKit.Web.Authentication;
 
 /// <summary>
 /// 扫码登录：打印一张加密卡片，现场用扫码枪扫入登录。
@@ -20,12 +27,12 @@ namespace KMoldApp.Infrastructure;
 /// 这是 ROPC + 二维码方案的固有性质，缓解手段只有三条，缺一不可：
 /// 有效期（<c>Auth:QrLogin:Lifetime</c>）、网络准入、卡片上写明勿外传。
 /// </remarks>
-public static class QrLoginEndpoints
+public static class KQrLoginEndpoints
 {
     private static readonly string[] BlockedReturnPrefixes = ["/login", "/password-login", "/qr-print", "/authentication"];
 
     /// <summary>映射扫码登录与卡片打印端点。</summary>
-    public static IEndpointRouteBuilder MapQrLogin(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapAppKitQrLogin(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
@@ -36,8 +43,13 @@ public static class QrLoginEndpoints
         return endpoints;
     }
 
-    private static IResult RenderPrintPage(string? error) =>
-        new RazorComponentResult<QrPrintPage>(new { Error = error });
+    private static async Task<IResult> RenderPrintPage(
+        HttpContext http, KBrandingClient branding, string? error) =>
+        new RazorComponentResult<KQrPrintPage>(new
+        {
+            Branding = await branding.GetAsync(http.RequestAborted).ConfigureAwait(false),
+            Error = error,
+        });
 
     /// <summary>验一次密码（证明是本人），然后签发卡片。</summary>
     /// <remarks>
@@ -53,6 +65,7 @@ public static class QrLoginEndpoints
         KNetworkGate networkGate,
         IKOidcTokenService tokenService,
         KQrLogin qrLogin,
+        KBrandingClient branding,
         IOptionsMonitor<KQrLoginOptions> qrOptions,
         ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
@@ -75,8 +88,9 @@ public static class QrLoginEndpoints
         //    进 URL 就会被浏览器历史、代理日志与 Referer 头一路带走。
         var payload = qrLogin.Protect(username, password);
 
-        return new RazorComponentResult<QrPrintPage>(new
+        return new RazorComponentResult<KQrPrintPage>(new
         {
+            Branding = await branding.GetAsync(cancellationToken).ConfigureAwait(false),
             Payload = payload,
             UserName = username,
             LifetimeHint = Describe(qrOptions.CurrentValue.Lifetime),
@@ -111,7 +125,7 @@ public static class QrLoginEndpoints
         if (token?.IdToken is null)
             return Redirect(returnUrl, "二维码对应的账号已无法登录，请重新打印。");
 
-        await CookieSignIn.SignInAsync(http, token).ConfigureAwait(false);
+        await KCookieSignIn.SignInAsync(http, token).ConfigureAwait(false);
 
         return Results.Redirect(KReturnUrl.Sanitize(returnUrl, BlockedReturnPrefixes));
     }
@@ -137,7 +151,7 @@ public static class QrLoginEndpoints
         }
         catch (HttpRequestException ex)
         {
-            loggerFactory.CreateLogger(typeof(QrLoginEndpoints))
+            loggerFactory.CreateLogger(typeof(KQrLoginEndpoints))
                 .LogWarning(ex, "扫码登录换取令牌失败，IdP 拒绝了请求。");
             return null;
         }

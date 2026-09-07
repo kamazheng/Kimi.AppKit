@@ -1,3 +1,4 @@
+using Kimi.AppKit.Core.Contracts;
 using System.Net;
 using Kimi.AppKit.Web.Authorization;
 using Microsoft.AspNetCore.Http;

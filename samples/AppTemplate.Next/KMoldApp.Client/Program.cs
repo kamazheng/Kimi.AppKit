@@ -1,6 +1,5 @@
 using Kimi.AppKit.Components;
 using Kimi.AppKit.Crud.Http;
-using KMoldApp.Client.Infrastructure;
 using KMoldApp.Shared.Constants;
 using KMoldApp.Shared.Entities;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -19,7 +18,7 @@ builder.Services.AddAppKitDialogs();
 //    并让整页白屏。策略定义在 Shared，两端共用一份，避免漂移。
 builder.Services.AddAuthorizationCore(options => options.AddAppPolicies());
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider, Kimi.AppKit.Components.Auth.KPersistentAuthenticationStateProvider>();
 
 // ⚠️ BaseAddress 必须指向应用根：KHttpCrudDataSource 用相对路径拼端点。
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
@@ -29,6 +28,6 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.H
 builder.Services.AddHttpCrudDataSource<SettingDto>("api/crud/setting");
 
 // 企业标识：读服务端随首屏送来的持久化状态，客户端不打身份服务（跨域 + 多一次往返）。
-builder.Services.AddScoped<KMoldApp.Shared.Auth.IAppBranding, KMoldApp.Client.Infrastructure.ClientBranding>();
+builder.Services.AddScoped<Kimi.AppKit.Core.Contracts.IKBrandingSource, Kimi.AppKit.Components.Auth.KClientBranding>();
 
 await builder.Build().RunAsync();

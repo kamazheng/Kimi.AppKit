@@ -1,7 +1,7 @@
 @using KMoldApp.Shared.Constants
-@using KMoldApp.Shared.Auth
+@using Kimi.AppKit.Components.Auth
 @using Kimi.AppKit.Core.Contracts
-@inject IAppBranding BrandingSource
+@inject IKBrandingSource BrandingSource
 @inject NavigationManager Nav
 @using Microsoft.AspNetCore.Components.Routing
 @implements IDisposable
@@ -103,7 +103,7 @@
     private string Initial =>
         string.IsNullOrWhiteSpace(_branding.CompanyName) ? "?" : _branding.CompanyName[..1].ToUpperInvariant();
 
-    // ⚠️ 服务端预渲染与 WASM 接管各跑一次，两次用的是各自容器里的 IAppBranding 实现。
+    // ⚠️ 服务端预渲染与 WASM 接管各跑一次，两次用的是各自容器里的 IKBrandingSource 实现。
     protected override async Task OnInitializedAsync()
     {
         // ⚠️ **必须订阅路由变化。** 布局组件在页面间导航时**不会重新渲染**，

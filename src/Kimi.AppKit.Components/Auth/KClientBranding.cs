@@ -1,8 +1,7 @@
 using Kimi.AppKit.Core.Contracts;
-using KMoldApp.Shared.Auth;
 using Microsoft.AspNetCore.Components;
 
-namespace KMoldApp.Client.Infrastructure;
+namespace Kimi.AppKit.Components.Auth;
 
 /// <summary>WASM 端的企业标识：读服务端随首屏送来的持久化状态。</summary>
 /// <remarks>
@@ -10,7 +9,7 @@ namespace KMoldApp.Client.Infrastructure;
 /// ⚠️ 读不到时回落兜底值而不是空白——读不到是正常情况
 /// （身份服务当时不可达，或本页是客户端路由跳转过来的、没有新的持久化状态）。
 /// </remarks>
-public sealed class ClientBranding(PersistentComponentState state) : IAppBranding
+public sealed class KClientBranding(PersistentComponentState state) : IKBrandingSource
 {
     private KBranding? _value;
 

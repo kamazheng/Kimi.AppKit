@@ -1,0 +1,37 @@
+@using Kimi.AppKit.Core.Contracts
+@using Microsoft.Extensions.Options
+@inject IOptions<KAuthPageOptions> Options
+
+@* 认证页顶部的企业标识。登录页与二维码卡片共用——各写一份必然漂移。
+
+   ⚠️ **企业名与 Logo 由调用方传入**，不在这里自己去拉。
+   本组件在 Razor 类库里，而拉取要走 KBrandingClient（Kimi.AppKit.Web，服务端包）——
+   组件依赖它会造成依赖倒置：本库还要能被 WASM 客户端引用，那里没有 ASP.NET Core。
+   ⚠️ 产品名走 options：它是**本应用自己的名字**，与企业名不同源。 *@
+
+<div class="k-auth__brand">
+    @if (Branding.LogoUrl is { } logo)
+    {
+        <img class="k-auth__logo" src="@logo" alt="@Branding.CompanyName" />
+    }
+    else
+    {
+        @* 未上传 Logo 时的内置字标。
+           ⚠️ 不要换成三道横线——那和汉堡菜单图标一模一样，用户会去点它，
+           点不动就以为界面坏了。方框加字母不会被误认成控件。 *@
+        <span class="k-auth__mark" aria-hidden="true">@Initial</span>
+    }
+
+    <span class="k-auth__names">
+        <span class="k-auth__company">@Branding.CompanyName</span>
+        <span class="k-auth__product">@Options.Value.ProductName</span>
+    </span>
+</div>
+
+@code {
+    /// <summary>企业标识。由端点从身份服务取好后传入。</summary>
+    [Parameter] public KBranding Branding { get; set; } = KBranding.Fallback;
+
+    private string Initial =>
+        string.IsNullOrWhiteSpace(Branding.CompanyName) ? "?" : Branding.CompanyName[..1].ToUpperInvariant();
+}

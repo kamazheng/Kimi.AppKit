@@ -1,25 +1,10 @@
 using System.Net;
+using Kimi.AppKit.Core.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Kimi.AppKit.Web.Authorization;
-
-/// <summary>网络准入的判定结果。</summary>
-public enum KNetworkGateResult
-{
-    /// <summary>来源在白名单网段内。</summary>
-    Allowed,
-
-    /// <summary>白名单为空——**拒绝**。见 <see cref="KNetworkGateOptions.AllowedSubnets"/>。</summary>
-    DeniedNotConfigured,
-
-    /// <summary>取不到来源 IP。</summary>
-    DeniedUnknownAddress,
-
-    /// <summary>来源 IP 不在任何白名单网段内。</summary>
-    DeniedOutOfRange,
-}
 
 /// <summary>
 /// 判断请求来源是否落在允许的网段内。

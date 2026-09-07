@@ -1,3 +1,4 @@
+using Kimi.AppKit.Core.Contracts;
 using Kimi.AppKit.Components;
 using Kimi.AppKit.Web.Localization;
 using Kimi.AppKit.Web.BackgroundJobs;
@@ -17,13 +18,14 @@ using KMoldApp.Data;
 using Kimi.AppKit.Crud.Http;
 using KMoldApp.Data.Entities;
 using KMoldApp.Shared.Entities;
-using KMoldApp.Infrastructure;
+using Kimi.AppKit.Components.Auth;
 using Kimi.AppKit.Web.Authentication;
-using Kimi.AppKit.Web.Authorization;
 using Kimi.AppKit.Web.Branding;
+using Kimi.AppKit.Web.ErrorHandling;
+using Kimi.AppKit.Web.OpenApi;
+using Kimi.AppKit.Web.Authorization;
 using KMoldApp.Client.Pages;
 using KMoldApp.Components;
-using KMoldApp.Shared.Auth;
 using KMoldApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -81,28 +83,38 @@ builder.Services.AddAppKitOidcTokenService();
 builder.Services.AddAppKitQrLogin(builder.Configuration);
 builder.Services.AddAppKitEnvironment();
 
+// 认证页（登录 / 二维码打印 / 错误页）的宿主参数。页面本身在 Kimi.AppKit.Components 里。
+// ⚠️ AppStylesheet 必须配：组件 scoped 样式包（{程序集名}.styles.css）的名字随程序集走，
+//    包里猜不出来。漏配时页面照常渲染，只是所有 *.razor.css 的样式全部丢失且不报错。
+builder.Services.Configure<KAuthPageOptions>(o =>
+{
+    o.AppStylesheet = "KMoldApp.styles.css";
+    o.ProductName = AppBrand.ProductName;
+});
+
 // 企业标识（企业名与 Logo）**向身份服务要**，不各自配——
 // 一套部署里客户只该设一次，各服务各配一份必然出现两个名字并存。
 // ⚠️ 产品名不走这条路，它恒取本地配置：那是本应用自己的名字。
 builder.Services.AddAppKitBranding();
-builder.Services.AddScoped<IAppBranding, ServerBranding>();
+builder.Services.AddScoped<IKBrandingSource, KServerBranding>();
 
 // API 文档（/openapi/v1.json + /scalar/v1）。默认只在开发环境开放。
-builder.Services.AddAppOpenApi(builder.Configuration);
+builder.Services.AddAppKitOpenApi(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddCascadingAuthenticationState();
 
 // 把服务端已认证的身份送给 WASM 端（另一个进程，拿不到 HttpContext）。
-builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider, KPersistingAuthenticationStateProvider>();
 
 // 开发期权限绕过。⚠️ 默认关闭，要用必须在 appsettings 里显式开
 // （Auth:RoleBypass:Enabled）；生产环境即使配了也不生效。
 // 前身是「非生产环境默认开启」，那让权限相关的 bug 在 Staging 根本测不出来。
-var roleBypass = new RoleBypassOptions();
-builder.Configuration.GetSection(RoleBypassOptions.SectionName).Bind(roleBypass);
-builder.Services.AddSingleton(new RoleBypassGate(roleBypass.Enabled, builder.Environment.IsProduction()));
-builder.Services.AddTransient<IClaimsTransformation, RoleBypassClaimsTransformation>();
+builder.Services.AddAppKitRoleBypass(
+    builder.Configuration,
+    builder.Environment.IsProduction(),
+    // ⚠️ 注入哪些角色由本应用决定——角色名是业务身份，包里不该替我们定义权限模型。
+    identity => AppRoles.InjectMissing(identity, "role"));
 
 // 审计字段的「谁干的」来自这里。
 // ⚠️ HttpContextCurrentUser 依赖 IHttpContextAccessor，**必须一并注册**——
@@ -272,14 +284,14 @@ app.MapGet("/authentication/login", (string? returnUrl, IOptions<KOidcOptions> o
     .AllowAnonymous();
 
 // 脱域现场的密码登录（ROPC）。页面在 Components/Account/PasswordLoginPage.razor。
-app.MapPasswordLogin();
+app.MapAppKitPasswordLogin();
 
 // 未处理异常的落地页，配合上面的 UseExceptionHandler("/Error")。
-app.MapErrorPage();
+app.MapAppKitErrorPage();
 
 // 扫码登录：域内打印加密卡片，现场用扫码枪扫入登录。
 // ⚠️ 卡片等价于一张写着密码的便条，缓解全靠有效期 + 网络准入 + 卡面提示三条一起。
-app.MapQrLogin();
+app.MapAppKitQrLogin();
 
 // 登出：清 Cookie 会话。
 // ⚠️ 必须是服务端端点——会话是服务端 Cookie，WASM 端清不掉它。
@@ -303,8 +315,8 @@ app.MapCrudEndpoints<Setting>().RequireAuthorization(AppPolicies.AdminOnly);
 app.MapCrudEndpoints<EmailTemplate>().RequireAuthorization(AppPolicies.AdminOnly);
 
 // API 文档与后台任务面板。⚠️ 两者都会暴露内部信息，授权见各自的 Setup 类。
-app.MapAppOpenApi();
-app.MapAppHangfireDashboard();
+app.MapAppKitOpenApi(AppPolicies.AdminOnly);
+app.MapAppKitHangfireDashboard(AppPolicies.AdminOnly);
 
 app.MapControllers();
 

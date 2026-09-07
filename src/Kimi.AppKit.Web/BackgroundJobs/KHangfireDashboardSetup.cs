@@ -1,8 +1,13 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Kimi.AppKit.Core.Contracts;
 using Hangfire;
 using Hangfire.Dashboard;
-using KMoldApp.Shared.Constants;
 
-namespace KMoldApp.Infrastructure;
+namespace Kimi.AppKit.Web.BackgroundJobs;
 
 /// <summary>
 /// Hangfire 后台任务面板（<c>/hangfire</c>）。
@@ -15,23 +20,28 @@ namespace KMoldApp.Infrastructure;
 /// 面板能看到任务参数（常含业务标识）、能手动触发、能删队列。
 /// 两种错法都很常见，所以这里必须显式接上应用自己的授权。
 ///
-/// ⚠️ 授权走 <see cref="AppPolicies.AdminOnly"/> 而不是「已登录即可」：
+/// ⚠️ 授权走 调用方传入的授权策略 而不是「已登录即可」：
 /// 触发和删除后台任务是运维动作，不是普通用户能力。
 /// </remarks>
-public static class HangfireDashboardSetup
+public static class KHangfireDashboardSetup
 {
     /// <summary>面板路径。菜单项与此处必须同源。</summary>
     public const string Path = "/hangfire";
 
     /// <summary>映射后台任务面板。</summary>
-    public static WebApplication MapAppHangfireDashboard(this WebApplication app)
+    /// <param name="app">应用。</param>
+    /// <param name="policy">
+    /// 访问面板所需的授权策略名。⚠️ 由消费方传入——触发和删除后台任务是运维动作，
+    /// 但「谁算运维」是业务决策，包里不该替客户定。
+    /// </param>
+    public static WebApplication MapAppKitHangfireDashboard(this WebApplication app, string policy)
     {
         app.MapHangfireDashboard(Path, new DashboardOptions
         {
             Authorization = [],   // 授权交给下面的端点策略，不用 Hangfire 自己那套
             DisplayStorageConnectionString = false,   // ⚠️ 别把连接串显示在页面上
             DashboardTitle = "后台任务",
-        }).RequireAuthorization(AppPolicies.AdminOnly);
+        }).RequireAuthorization(policy);
 
         return app;
     }

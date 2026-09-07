@@ -276,3 +276,36 @@ textarea.k-input {
     font-family: var(--k-mono);
     font-size: .8125rem;
 }
+
+/* ── 由端点直接渲染的极简页外壳（错误页等），配套 KPlainLayout ─────────── */
+/* 由端点直接渲染的服务端页面（错误页等）的外壳，见 Kimi.AppKit.Components 的 KPlainLayout。
+   ⚠️ 这一屏不加载 MudBlazor 主题，字体与颜色只能自己声明——
+   靠 MudThemeProvider 的话变量解析为空，浏览器回落到 Times，不报任何错。 */
+.k-plain {
+    margin: 0;
+    min-height: 100dvh;
+    padding: 3rem 1.25rem;
+    box-sizing: border-box;
+    background: var(--k-mist);
+    color: var(--k-ink);
+    font-family: var(--k-font);
+    line-height: 1.6;
+}
+
+.k-plain__col {
+    max-width: 34rem;
+    margin: 0 auto;
+}
+
+.k-plain h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin: 0 0 .75rem;
+}
+
+.k-plain code {
+    font-family: var(--k-mono);
+    font-size: .8125rem;
+}
+

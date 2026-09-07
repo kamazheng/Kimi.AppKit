@@ -17,8 +17,21 @@
         <PackageReference Include="Hangfire.Console" />
         <PackageReference Include="MailKit" />
         <PackageReference Include="NPOI" />
+
+        <!-- API 文档：内置 OpenAPI 生成 + Scalar 提供 UI。
+             ⚠️ 不要引 Swashbuckle——.NET 9 起官方模板已移除它。 -->
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <PackageReference Include="Scalar.AspNetCore" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Kimi.AppKit.Data\Kimi.AppKit.Data.csproj" />
+
+        <!-- 认证页端点要用 RazorComponentResult<KPasswordLoginPage> 渲染包里的组件，
+             故需引用组件库。
+             ⚠️ 方向只能是 Web → Components，反过来会造成依赖倒置：
+                Components 是 Razor 类库、要能被 WASM 客户端引用，而那里没有 ASP.NET Core。
+             ⚠️ 代价是本包间接带上 MudBlazor。可以接受——本包本来就已经引了
+                Hangfire / MailKit / NPOI / OIDC，它是服务端全家桶而非最小内核。 -->
+        <ProjectReference Include="..\Kimi.AppKit.Components\Kimi.AppKit.Components.csproj" />
     </ItemGroup>
 </Project>

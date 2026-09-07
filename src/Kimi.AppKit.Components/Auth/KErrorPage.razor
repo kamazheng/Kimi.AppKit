@@ -1,11 +1,11 @@
-@layout PlainLayout
+@layout KPlainLayout
 @using System.Diagnostics
 
 @* 未处理异常的落地页，由 UseExceptionHandler("/Error") 重新执行到这里。
 
    ⚠️ **没有 @@page**：它由端点渲染，不进路由表。带 @@page 的服务端页面在本站
    （全局 InteractiveWebAssembly）会先显示、几秒后被 WASM 接管清空，且零报错——
-   偏偏错误页最不该在用户面前变成一片空白。理由详见 Account/AuthLayout.razor 顶部。
+   偏偏错误页最不该在用户面前变成一片空白。理由详见 KAuthLayout.razor 顶部。
 
    ⚠️ 页面上只给追踪号，**不给异常消息、堆栈或路径**。那些进日志，不进界面。 *@
 

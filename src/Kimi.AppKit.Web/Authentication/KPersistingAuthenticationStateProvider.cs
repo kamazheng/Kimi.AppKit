@@ -1,11 +1,16 @@
-using KMoldApp.Shared.Auth;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Kimi.AppKit.Core.Contracts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace KMoldApp.Infrastructure;
+namespace Kimi.AppKit.Web.Authentication;
 
 /// <summary>
 /// 服务端认证态提供者：把已认证身份经 <see cref="PersistentComponentState"/> 送给 WASM 端。
@@ -14,19 +19,19 @@ namespace KMoldApp.Infrastructure;
 /// 【为什么需要它】WASM 是另一个进程，拿不到服务端的 <c>HttpContext</c>。
 /// 没有它的话客户端首屏永远是匿名，要么闪一下登录态、要么直接被弹回登录页。
 /// </remarks>
-internal sealed class PersistingAuthenticationStateProvider
+public sealed class KPersistingAuthenticationStateProvider
     : AuthenticationStateProvider, IHostEnvironmentAuthenticationStateProvider, IDisposable
 {
     private readonly PersistentComponentState _state;
     private readonly PersistingComponentStateSubscription _subscription;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<PersistingAuthenticationStateProvider> _logger;
+    private readonly ILogger<KPersistingAuthenticationStateProvider> _logger;
     private Task<AuthenticationState>? _authenticationStateTask;
 
-    public PersistingAuthenticationStateProvider(
+    public KPersistingAuthenticationStateProvider(
         PersistentComponentState state,
         IHttpContextAccessor httpContextAccessor,
-        ILogger<PersistingAuthenticationStateProvider> logger)
+        ILogger<KPersistingAuthenticationStateProvider> logger)
     {
         _state = state;
         _httpContextAccessor = httpContextAccessor;
@@ -87,7 +92,7 @@ internal sealed class PersistingAuthenticationStateProvider
                               : await httpContext.GetTokenAsync("id_token").ConfigureAwait(false))
                           ?? string.Empty;
 
-            _state.PersistAsJson(nameof(UserInfo), UserInfo.FromClaimsPrincipal(principal, idToken));
+            _state.PersistAsJson(nameof(KUserInfo), KUserInfo.FromClaimsPrincipal(principal, idToken));
         }
         catch (Exception ex)
         {

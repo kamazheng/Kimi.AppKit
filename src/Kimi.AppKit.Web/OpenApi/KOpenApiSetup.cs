@@ -1,3 +1,11 @@
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Kimi.AppKit.Core.Contracts;
 using Kimi.AppKit.Web.Authentication;
 using Microsoft.Extensions.Options;
 
@@ -5,7 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
-namespace KMoldApp.Infrastructure;
+namespace Kimi.AppKit.Web.OpenApi;
 
 /// <summary>
 /// 生成 OpenAPI 文档并挂交互式 API 参考页。
@@ -18,20 +26,20 @@ namespace KMoldApp.Infrastructure;
 /// UI 由 Scalar 提供（.NET 10 官方教程用的就是它）。不要再把 Swashbuckle 引回来。
 ///
 /// 【安全】文档会**完整暴露 API 形状**。默认只在开发环境开放；
-/// 生产要开必须显式置 <see cref="OpenApiOptions.Enabled"/>，且此时强制要求登录——
+/// 生产要开必须显式置 <see cref="KOpenApiOptions.Enabled"/>，且此时强制要求登录——
 /// 给接入方看可以，给公网匿名看不行。
 /// </remarks>
-public static class OpenApiSetup
+public static class KOpenApiSetup
 {
     private const string DocumentName = "v1";
     private const string BearerScheme = "Bearer";
     private const string OAuth2Scheme = "OAuth2";
 
     /// <summary>注册 OpenAPI 文档生成。</summary>
-    public static IServiceCollection AddAppOpenApi(
+    public static IServiceCollection AddAppKitOpenApi(
         this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<OpenApiOptions>(configuration.GetSection(OpenApiOptions.SectionName));
+        services.Configure<KOpenApiOptions>(configuration.GetSection(KOpenApiOptions.SectionName));
 
         services.AddOpenApi(DocumentName, openApi =>
             openApi.AddDocumentTransformer((document, _, _) =>
@@ -51,9 +59,15 @@ public static class OpenApiSetup
     }
 
     /// <summary>映射文档与 UI。</summary>
-    public static WebApplication MapAppOpenApi(this WebApplication app)
+    /// <param name="app">应用。</param>
+    /// <param name="productionPolicy">
+    /// 生产环境开放文档时所需的授权策略名。为 null 则只要求已登录。
+    /// ⚠️ 文档页的可见性 ≠ 接口的权限：这里管的只是「谁能看到这一页」，
+    /// 每个接口自己的权限由它自己挂。
+    /// </param>
+    public static WebApplication MapAppKitOpenApi(this WebApplication app, string? productionPolicy = null)
     {
-        var options = app.Services.GetRequiredService<IOptions<OpenApiOptions>>().Value;
+        var options = app.Services.GetRequiredService<IOptions<KOpenApiOptions>>().Value;
 
         // 未显式配置时按环境决定：开发开放、生产关闭。
         if (!(options.Enabled ?? app.Environment.IsDevelopment())) return app;
@@ -93,8 +107,16 @@ public static class OpenApiSetup
         //    页面归页面、接口归接口，混在一起会让人误以为接口权限比实际更严。
         if (!app.Environment.IsDevelopment())
         {
-            document.RequireAuthorization();
-            reference.RequireAuthorization();
+            if (productionPolicy is { Length: > 0 })
+            {
+                document.RequireAuthorization(productionPolicy);
+                reference.RequireAuthorization(productionPolicy);
+            }
+            else
+            {
+                document.RequireAuthorization();
+                reference.RequireAuthorization();
+            }
         }
         else
         {
@@ -155,7 +177,7 @@ public static class OpenApiSetup
 }
 
 /// <summary>API 文档页的开关。</summary>
-public sealed class OpenApiOptions
+public sealed class KOpenApiOptions
 {
     public const string SectionName = "OpenApi";
 

@@ -1,7 +1,13 @@
+using Kimi.AppKit.Web.Branding;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Kimi.AppKit.Components.Auth;
 using Kimi.AppKit.Core.Contracts;
 using Kimi.AppKit.Web.Authentication;
 using Kimi.AppKit.Web.Authorization;
-using KMoldApp.Components.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,7 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 
-namespace KMoldApp.Infrastructure;
+namespace Kimi.AppKit.Web.Authentication;
 
 /// <summary>
 /// 脱域现场的密码登录端点。
@@ -25,12 +31,12 @@ namespace KMoldApp.Infrastructure;
 /// ⚠️ **端点做成服务端 minimal API 而不是 Blazor 组件**：登录要在**响应**里种 Cookie，
 /// 交互式组件只能改自己的渲染树，改不了 HTTP 响应头。
 /// </remarks>
-public static class PasswordLoginEndpoint
+public static class KPasswordLoginEndpoint
 {
     private static readonly string[] BlockedReturnPrefixes = ["/login", "/password-login", "/authentication"];
 
     /// <summary>映射密码登录端点。</summary>
-    public static IEndpointRouteBuilder MapPasswordLogin(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapAppKitPasswordLogin(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
@@ -45,11 +51,18 @@ public static class PasswordLoginEndpoint
         return endpoints;
     }
 
-    private static IResult RenderAsync(
-        HttpContext http, KNetworkGate networkGate, string? returnUrl, string? error) =>
-        new RazorComponentResult<PasswordLoginPage>(new
+    /// <remarks>
+    /// ⚠️ 企业标识在这里取好后**作为参数**传给组件。组件自己不去拉——
+    /// 它在 Razor 类库里，而拉取要走服务端的 KBrandingClient，
+    /// 让组件依赖它会造成依赖倒置（组件库还要能被 WASM 引用）。
+    /// </remarks>
+    private static async Task<IResult> RenderAsync(
+        HttpContext http, KNetworkGate networkGate, KBrandingClient branding,
+        string? returnUrl, string? error) =>
+        new RazorComponentResult<KPasswordLoginPage>(new
         {
             Gate = networkGate.Evaluate(http),
+            Branding = await branding.GetAsync(http.RequestAborted).ConfigureAwait(false),
             ReturnUrl = returnUrl,
             Error = error,
             Host = http.Request.Host.Value,
@@ -94,7 +107,7 @@ public static class PasswordLoginEndpoint
             //    凭据错误走的正是这条路——不捕获的话每次输错密码都是一个 500。
             // ⚠️ 异常消息里带着 IdP 的 error_description（可能区分「用户不存在」
             //    与「密码错误」），**只能进日志，绝不能回显**。
-            loggerFactory.CreateLogger(typeof(PasswordLoginEndpoint))
+            loggerFactory.CreateLogger(typeof(KPasswordLoginEndpoint))
                 .LogWarning(ex, "密码登录失败，IdP 拒绝了令牌请求。");
             token = null;
         }
@@ -104,8 +117,8 @@ public static class PasswordLoginEndpoint
         if (token?.IdToken is null)
             return Redirect("/password-login", returnUrl, "工号或密码不正确。");
 
-        // 签发会话与扫码登录共用一份（见 CookieSignIn）——两条通道的 claim 口径必须一致。
-        await CookieSignIn.SignInAsync(http, token).ConfigureAwait(false);
+        // 签发会话与扫码登录共用一份（见 KCookieSignIn）——两条通道的 claim 口径必须一致。
+        await KCookieSignIn.SignInAsync(http, token).ConfigureAwait(false);
 
         // ⚠️ 回跳地址必须过 KReturnUrl.Sanitize，否则是开放重定向漏洞。
         //    ⚠️ 同时把登录相关路径列进 blockedPrefixes：跳回登录页会让用户看到

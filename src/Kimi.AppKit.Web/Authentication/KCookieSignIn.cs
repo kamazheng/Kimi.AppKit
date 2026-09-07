@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Kimi.AppKit.Core.Contracts;
 using Kimi.AppKit.Web.Authentication;
 using Microsoft.AspNetCore.Authentication;
@@ -5,7 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 
-namespace KMoldApp.Infrastructure;
+namespace Kimi.AppKit.Web.Authentication;
 
 /// <summary>把 IdP 换来的令牌落成本站 Cookie 会话。</summary>
 /// <remarks>
@@ -14,7 +19,7 @@ namespace KMoldApp.Infrastructure;
 /// 结果是**其中一条登录通道的用户悄悄失去角色**——两条通道都能登进来，
 /// 只是从其中一条进来的人到处 403。
 /// </remarks>
-internal static class CookieSignIn
+public static class KCookieSignIn
 {
     /// <summary>按令牌签发 Cookie 会话。</summary>
     public static Task SignInAsync(HttpContext http, KTokenResponse token)

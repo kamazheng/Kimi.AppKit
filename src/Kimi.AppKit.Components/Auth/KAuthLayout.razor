@@ -1,4 +1,6 @@
 @inherits LayoutComponentBase
+@using Microsoft.Extensions.Options
+@inject IOptions<KAuthPageOptions> Options
 
 @* 认证页外壳。**它自己就是一份完整文档**（含 html/head/body），
    因为认证页不进路由表、由端点用 RazorComponentResult 直接渲染，外面没有 App.razor 兜着。
@@ -6,31 +8,46 @@
    ⚠️ 为什么不走路由——这里的失效形态很容易判错，**实测**结论是：
    服务端项目里带 @@page 的组件**能被 SSR 出来**（MapRazorComponents 按端点路由发现它，
    那是与 <Router> 组件不同的另一套机制），所以首屏看着完全正常；
-   但本站是全局 InteractiveWebAssembly，几秒后 WASM 接管，
-   Router 在浏览器里按 AppAssembly（= Client 程序集）查这个地址查不到，
+   但若消费方是全局 InteractiveWebAssembly，几秒后 WASM 接管，
+   Router 在浏览器里按 AppAssembly 查这个地址查不到，
    **整页内容被清空，且 console 零错误**。
    也就是说「服务端页面 + 全局 WASM」不是打不开，而是**先显示、后变空白**。
    认证页必须留在服务端（要在响应里种 Cookie、要读 HttpContext），
    所以只能整个绕开 Routes，由端点直接渲染。
-   官方带认证的模板是靠「整站不用全局渲染模式、逐页标 @@rendermode」绕开这一点；
-   我们不跟那条路，因为控制台外壳用的是 MudBlazor 的 MudLayout/MudDrawer，
-   静态 SSR 下抽屉**点了没反应且零报错**。
 
    ⚠️ 刻意不引 blazor.web.js：这一屏没有任何交互式组件，引了只是让登录页多下载一份运行时。
    ⚠️ 也刻意不套站点导航——别的应用把用户重定向来做单点登录时，
    一个陌生系统的侧边栏只会让人怀疑自己在被钓鱼。 *@
 
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="@Options.Value.Language">
 
 <head>
-    <AppHead />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    @* ⚠️ 这里刻意没有 <ResourcePreloader />：它属于服务端 Endpoints 程序集，
+       Razor 类库引用不到。而认证页只有三个样式表，预加载的收益本来就微乎其微。 *@
 
-    @* 只有认证页需要这两份，故不放进 AppHead：主站用的是 MudBlazor 的控件，
-       把 .k-input / .k-btn 也发给它等于让每个页面都多下载一份用不到的 CSS。 *@
+    @* ⚠️ 设计令牌必须排在其余样式之前：字体的 @@font-face 要先声明，
+       且后面的样式都引用这里定义的 CSS 变量。 *@
+    <link rel="stylesheet" href="@Assets["_content/Kimi.AppKit.Design/css/kmold-tokens.css"]" />
     <link rel="stylesheet" href="@Assets["_content/Kimi.AppKit.Design/css/kmold-auth.css"]" />
     <link rel="stylesheet" href="@Assets["_content/Kimi.AppKit.Design/css/kmold-forms.css"]" />
 
+    @if (Options.Value.AppCss is { Length: > 0 } appCss)
+    {
+        <link rel="stylesheet" href="@Assets[appCss]" />
+    }
+
+    @* ⚠️ 消费方的组件 scoped 样式包。漏配时页面照常渲染，
+       只是所有 *.razor.css 里的样式**全部丢失且不报错**。 *@
+    @if (Options.Value.AppStylesheet is { Length: > 0 } appStyles)
+    {
+        <link rel="stylesheet" href="@Assets[appStyles]" />
+    }
+
+    <link rel="icon" type="image/png" href="@Options.Value.FaviconPath" />
     <HeadOutlet />
 </head>
 

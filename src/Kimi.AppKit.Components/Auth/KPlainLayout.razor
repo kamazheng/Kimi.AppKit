@@ -3,7 +3,7 @@
 @* 无导航的极简文档外壳，给**由端点直接渲染**的服务端页面用（错误页等）。
 
    ⚠️ 与 Account/AuthLayout 的区别只是不带认证页那套蓝图外壳。两者都自带 html/head，
-   因为它们外面没有 App.razor——这类页面刻意不进路由表，理由见 AuthLayout 顶部
+   因为它们外面没有 App.razor——这类页面刻意不进路由表，理由见 KAuthLayout 顶部
    （服务端页面在全局 WASM 下会先显示、后被清空，且零报错）。
 
    ⚠️ 错误页尤其不能依赖 Blazor 运行时：它要在「应用已经出问题」的时候还能显示。
@@ -13,7 +13,10 @@
 <html lang="zh-CN">
 
 <head>
-    <AppHead />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="@Assets["_content/Kimi.AppKit.Design/css/kmold-tokens.css"]" />
     <link rel="stylesheet" href="@Assets["_content/Kimi.AppKit.Design/css/kmold-forms.css"]" />
     <HeadOutlet />
 </head>

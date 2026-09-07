@@ -1,4 +1,5 @@
-@layout AuthLayout
+@layout KAuthLayout
+@using Kimi.AppKit.Core.Contracts
 
 @* 可打印的登录二维码卡片。
 
@@ -16,7 +17,7 @@
 <PageTitle>登录二维码</PageTitle>
 
 <div class="k-auth__col">
-    <AuthBrand />
+    <KAuthBrand Branding="Branding" />
 
     <div class="k-auth__card">
         <div class="k-rail"><div class="k-rail__fill"></div></div>
@@ -94,6 +95,9 @@
 }
 
 @code {
+    /// <summary>企业标识。由端点从身份服务取好后传入——组件不自己去拉（依赖倒置）。</summary>
+    [Parameter] public KBranding Branding { get; set; } = KBranding.Fallback;
+
     /// <summary>加密后的登录密文。为 null 时渲染的是生成表单。</summary>
     [Parameter] public string? Payload { get; set; }
 

@@ -1,8 +1,14 @@
-using KMoldApp.Components.Pages;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Kimi.AppKit.Components.Auth;
+using Kimi.AppKit.Core.Contracts;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace KMoldApp.Infrastructure;
+namespace Kimi.AppKit.Web.ErrorHandling;
 
 /// <summary>未处理异常的落地页。</summary>
 /// <remarks>
@@ -10,10 +16,10 @@ namespace KMoldApp.Infrastructure;
 /// 服务端页面会先 SSR 出来、再被 WASM 接管清空（零报错）。
 /// 详见 <c>Components/Account/AuthLayout.razor</c> 顶部。
 /// </remarks>
-public static class ErrorPageEndpoint
+public static class KErrorPageEndpoint
 {
     /// <summary>映射错误页。路径与 <c>UseExceptionHandler("/Error")</c> 一致。</summary>
-    public static IEndpointRouteBuilder MapErrorPage(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapAppKitErrorPage(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
@@ -25,7 +31,7 @@ public static class ErrorPageEndpoint
     }
 
     private static IResult Render(HttpContext http) =>
-        new RazorComponentResult<Error>(new
+        new RazorComponentResult<KErrorPage>(new
         {
             // 追踪号优先取 Activity，退回 TraceIdentifier。⚠️ 只给号，不给异常内容。
             RequestId = System.Diagnostics.Activity.Current?.Id ?? http.TraceIdentifier,

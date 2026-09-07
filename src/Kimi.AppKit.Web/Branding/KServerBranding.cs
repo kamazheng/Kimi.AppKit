@@ -1,10 +1,14 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Kimi.AppKit.Core.Contracts;
 using Kimi.AppKit.Web.Branding;
-using KMoldApp.Shared.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace KMoldApp.Infrastructure;
+namespace Kimi.AppKit.Web.Branding;
 
 /// <summary>
 /// 服务端的企业标识：向身份服务拉取，并把结果随首屏送给 WASM 端。
@@ -17,9 +21,9 @@ namespace KMoldApp.Infrastructure;
 /// 那个只管持久化的类**没有任何组件依赖它**，于是 DI 里注册了却从未被解析，
 /// <c>RegisterOnPersisting</c> 一次都没跑——表现是登录页品牌正确、顶栏永远是兜底值，
 /// 而两边代码看起来都对、也没有任何报错。
-/// 合并之后它由顶栏注入 <see cref="IAppBranding"/> 时一并激活。
+/// 合并之后它由顶栏注入 <see cref="IKBrandingSource"/> 时一并激活。
 /// </remarks>
-public sealed class ServerBranding : IAppBranding, IDisposable
+public sealed class KServerBranding : IKBrandingSource, IDisposable
 {
     private readonly KBrandingClient _client;
     private readonly PersistentComponentState _state;
@@ -27,7 +31,7 @@ public sealed class ServerBranding : IAppBranding, IDisposable
 
     private KBranding? _value;
 
-    public ServerBranding(KBrandingClient client, PersistentComponentState state)
+    public KServerBranding(KBrandingClient client, PersistentComponentState state)
     {
         _client = client;
         _state = state;

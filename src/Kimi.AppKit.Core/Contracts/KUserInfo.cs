@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace KMoldApp.Shared.Auth;
+namespace Kimi.AppKit.Core.Contracts;
 
 /// <summary>
 /// 服务端预渲染时序列化、由 WASM 端还原的用户身份。
@@ -20,7 +20,7 @@ namespace KMoldApp.Shared.Auth;
 /// JWT 里的角色是短名而非 WS-* 长 URI。凡从 token 重建 <see cref="ClaimsIdentity"/>
 /// 都必须显式传这个值，否则**令牌里明明有角色、页面却一路 403**，且不报错。
 /// </remarks>
-public sealed class UserInfo
+public sealed class KUserInfo
 {
     /// <summary>用户名 claim 的类型名。</summary>
     public const string NameClaimType = "name";
@@ -53,7 +53,7 @@ public sealed class UserInfo
     /// 后果是**客户端认证态整个丢失、用户被弹回登录页**，而日志里只有一句
     /// 「Could not find required 'displayname' claim」——看不出它会导致登不上。
     /// </remarks>
-    public static UserInfo FromClaimsPrincipal(ClaimsPrincipal principal, string idToken)
+    public static KUserInfo FromClaimsPrincipal(ClaimsPrincipal principal, string idToken)
     {
         ArgumentNullException.ThrowIfNull(principal);
 
@@ -61,7 +61,7 @@ public sealed class UserInfo
                    ?? principal.Identity?.Name
                    ?? string.Empty;
 
-        return new UserInfo
+        return new KUserInfo
         {
             Name = name,
             DisplayName = principal.FindFirst(DisplayNameClaimType)?.Value ?? name,
@@ -74,7 +74,7 @@ public sealed class UserInfo
     public ClaimsPrincipal ToClaimsPrincipal() =>
         new(new ClaimsIdentity(
             Claims.Select(c => new Claim(c.Type, c.Value)),
-            authenticationType: nameof(UserInfo),
+            authenticationType: nameof(KUserInfo),
             nameType: NameClaimType,
             roleType: RoleClaimType));
 }
