@@ -11,7 +11,7 @@
        混在一起会让业务菜单被账号项越挤越长。 *@
 
     @* 需要管理员角色。⚠️ 无权限时**禁用并说明缺哪个角色**，不隐藏。 *@
-    <RoleNavLink Roles="@($"{AppRoles.Root},{AppRoles.Admin}")"
+    <KRoleNavLink Roles="@($"{AppRoles.Root},{AppRoles.Admin}")"
                  Href="admin/settings" Title="系统设置"
                  Icon="@Icons.Material.Filled.Settings" />
 </MudNavMenu>

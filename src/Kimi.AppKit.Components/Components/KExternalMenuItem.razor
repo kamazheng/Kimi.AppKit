@@ -1,0 +1,22 @@
+@inject NavigationManager Nav
+
+@* 指向**非 Blazor 路由**地址的菜单项（Scalar 文档页、Hangfire 面板、服务端端点等）。
+
+   ⚠️ 存在的唯一理由是那个 forceLoad 的坑：Blazor 的 Router 会拦截同源导航、
+   去路由表里找目标地址——找不到就显示 NotFound，**请求根本没发到服务端**。
+   表现是「点了没反应」或停在一个空白页，而 console 一条错误都没有。
+   用 MudMenuItem 的 Href 也一样会被拦。
+   把它做成组件，是为了让消费方不必每次都记得这件事。 *@
+
+<MudMenuItem Icon="@Icon" OnClick="Open">@ChildContent</MudMenuItem>
+
+@code {
+    /// <summary>目标地址。可以是站内非路由地址，也可以是外站。</summary>
+    [Parameter, EditorRequired] public string Href { get; set; } = string.Empty;
+
+    [Parameter] public string? Icon { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private void Open() => Nav.NavigateTo(Href, forceLoad: true);
+}

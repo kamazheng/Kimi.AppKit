@@ -49,39 +49,24 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 builder.Services.AddAppKitDialogs();
 
-// 认证装配来自 Kimi.AppKit.Web。登录页路径是本应用的策略，因此从这里传。
-// ⚠️ 未配 OpenIDConnect:Issuer / ClientId 时会跳过 OIDC 与 JwtBearer 注册并在控制台
-//    打印提示，应用照常启动——本地起一个空壳来看界面不需要先架一台 IdP。
-builder.Services.AddAppKitAuthentication(builder.Configuration, o =>
+// 整套基建：认证、网络准入、令牌服务、扫码、运行环境、企业标识、
+// 认证态两端传递、API 文档、Excel、开发期角色绕过。
+// ⚠️ 收进包的都是「漏一个就炸、且错误信息指向别处」的纯装配；
+//    安全边界（默认拒绝、开放哪些表）仍显式写在下面——见 KAppServices 的注释。
+builder.AddAppKitApp(o =>
 {
     o.LoginPath = "/login";
+
+    // ⚠️ 注入哪些角色由本应用决定——角色名是业务身份，包里不该替我们定义权限模型。
+    o.InjectBypassRoles = identity => AppRoles.InjectMissing(identity, "role");
 });
 
-// ⚠️ 默认拒绝：没显式标注的端点一律要求登录。安全默认值应当是「忘了标注就拦下」，
+// ⚠️ **默认拒绝**：没显式标注的端点一律要求登录。安全默认值应当是「忘了标注就拦下」，
 //    而不是裸 AddAuthorization() 那样「忘了标注就裸奔」。
-//    必须匿名的端点（健康检查、首屏引导）显式调 .AllowAnonymous()。
-builder.Services.AddDefaultDenyAuthorization(options =>
-{
-    // ⚠️ 角色判断走**策略**，不要用自定义授权特性。策略名与角色名都来自 KMoldApp.Shared
-    //    的常量——两端共用同一份定义，手写字面量写错不会有编译错误，只在有人真的
-    //    访问那个端点时抛 "The AuthorizationPolicy named ... was not found"。
-    // ⚠️ 只 AddPolicy，**不要在这里重设 FallbackPolicy**：包里的那份带着
-    //    /_framework 放行（见 AuthorizationSetup.BlazorFrameworkPath），覆盖掉它
-    //    会让 WASM 起不动，且症状指不到授权。
-    // 策略定义在 KMoldApp.Shared，与客户端共用同一份——两端各写一遍必然漂移。
-    options.AddAppPolicies();
-});
-
-// 脱域现场的密码登录（ROPC）所需的两样。
-// ⚠️ 网络准入的白名单**空 = 拒绝**（Auth:NetworkGate:AllowedSubnets）。方向是刻意的：
-//    忘了配等于更严。本地调试要放行回环得显式开 AllowLoopback。
-builder.Services.AddAppKitNetworkGate(builder.Configuration);
-builder.Services.AddAppKitOidcTokenService();
-
-// <KEnvChip /> 的依赖。⚠️ 漏了它那个组件渲染时抛——而它恰恰是「这不是生产环境」
-// 的可见标识，渲染不出来时一个配错环境变量的实例看起来和正式站一模一样。
-builder.Services.AddAppKitQrLogin(builder.Configuration);
-builder.Services.AddAppKitEnvironment();
+// ⚠️ 只 AddPolicy，**不要在这里重设 FallbackPolicy**：包里的那份带着
+//    /_framework 放行，覆盖掉它会让 WASM 起不动，且症状指不到授权。
+// 策略定义在 KMoldApp.Shared，与客户端共用同一份——两端各写一遍必然漂移。
+builder.Services.AddDefaultDenyAuthorization(options => options.AddAppPolicies());
 
 // 认证页（登录 / 二维码打印 / 错误页）的宿主参数。页面本身在 Kimi.AppKit.Components 里。
 // ⚠️ AppStylesheet 必须配：组件 scoped 样式包（{程序集名}.styles.css）的名字随程序集走，
@@ -91,15 +76,6 @@ builder.Services.Configure<KAuthPageOptions>(o =>
     o.AppStylesheet = "KMoldApp.styles.css";
     o.ProductName = AppBrand.ProductName;
 });
-
-// 企业标识（企业名与 Logo）**向身份服务要**，不各自配——
-// 一套部署里客户只该设一次，各服务各配一份必然出现两个名字并存。
-// ⚠️ 产品名不走这条路，它恒取本地配置：那是本应用自己的名字。
-builder.Services.AddAppKitBranding();
-builder.Services.AddScoped<IKBrandingSource, KServerBranding>();
-
-// API 文档（/openapi/v1.json + /scalar/v1）。默认只在开发环境开放。
-builder.Services.AddAppKitOpenApi(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddCascadingAuthenticationState();
@@ -193,147 +169,39 @@ builder.Services.AddKCrud<KMoldDbContext>()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// ⚠️ 需要 WASM 调试时必须在 MapAppKitApp **之前**调它。
+//    包里刻意不含这一行——它来自 WebAssembly.Server 包，
+//    强加给所有消费方等于让纯 API 服务也背上 WASM 依赖。
+if (app.Environment.IsDevelopment()) app.UseWebAssemblyDebugging();
+
+// 整条标准管线（中间件顺序、静态资产授权、登录/登出/现场密码/扫码端点、
+// 健康检查、API 文档、任务面板、API 未命中兜底）一次装好。
+// ⚠️ 顺序不是本应用该拥有的决策——它没有业务含义，只有对错，
+//    而这条管线上有五处「写错就静默出 bug」的约束。详见 KAppPipeline 的注释。
+app.MapAppKitApp(o =>
 {
-    app.UseWebAssemblyDebugging();
-}
-else
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-// ⚠️ **只对非 API 路径启用 SPA 状态码页。**
-//    它会把 404/403 这类响应「重新执行」成 /not-found 页面，对浏览器导航是对的，
-//    但对 API 是灾难：调用方拿到一大坨 text/html，response.json() 当场抛
-//    SyntaxError，而错误信息完全指不到「这其实是个 404」。
-//    ⚠️ 顺序也重要：UseWhen 必须在这里而不是更靠后——状态码页要包住后续整条管线
-//    才能捕获到它们产生的状态码。
-app.UseWhen(
-    context => !context.Request.Path.StartsWithSegments("/api"),
-    branch => branch.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true));
-app.UseHttpsRedirection();
+    o.LoginPath = "/login";
 
-// ⚠️ **必须显式调用，且必须排在状态码页之后。** 不写这一行时框架会把路由中间件
-//    自动插到**管线最前面**，于是 UseStatusCodePagesWithReExecute 重新执行请求时
-//    **不再经过路由匹配**，端点为 null，落进「默认拒绝」的兜底策略——
-//    未登录用户因此被 302 到 IdP。
-//    ⚠️ 症状离根因极远：浏览器请求一个已失效的 /_framework/*.pdb（发布后缓存了旧
-//    index.html 就会发生），本该拿到 404 自愈，实际收到跨域重定向，
-//    控制台只报 CORS 被拦，接着 mono 加载失败、WASM 起不来，
-//    最后表现为页面底部弹出 Blazor 那条黄色「未处理错误」条。
-//    整条链上没有任何一处提到「授权」或「中间件顺序」。
-app.UseRouting();
+    // ⚠️ 「谁算运维」是业务决策，包里不该替我们定。
+    //    留空的话后台任务面板**不会映射**——宁可没有入口，也不要一个谁都能进的面板。
+    o.OpsPolicy = AppPolicies.AdminOnly;
+});
 
-// ⚠️ 必须排在静态文件中间件**之前**。官方约束是「在任何可能读取请求 culture 的
-//    中间件之前」，并点名 UseStaticFiles 作为例子。放错是静默的——管线照常工作。
-app.UseAppKitRequestLocalization(defaultCulture: "en", supportedCultures: ["en", "zh-CN"]);
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseAntiforgery();
-
-// ⚠️ 必须 AllowAnonymous。MapStaticAssets 是**端点路由**，会被上面的 FallbackPolicy
-//    （默认拒绝）管到；而它取代的 UseStaticFiles 是**中间件**，压根不走端点授权——
-//    这个差异是从 UseStaticFiles 迁到 MapStaticAssets 时最容易漏的一步。
-//    漏掉的表现极具迷惑性：页面照常返回 200（服务端预渲染的 HTML 出得来），
-//    但每一个 css/js 请求都被 302 到登录页并收到一份 HTML，
-//    浏览器把 HTML 当 JS 解析，控制台只有一句 "Unexpected token '<'"，
-//    完全指不到「静态资源被授权拦了」这个真正原因。
-app.MapStaticAssets().AllowAnonymous();
-
-// ⚠️ Blazor 端点必须显式 AllowAnonymous，否则会被上面的 FallbackPolicy（默认拒绝）拦住。
+// ⚠️ Blazor 端点必须显式 AllowAnonymous，否则会被默认拒绝策略拦住。
 //    Blazor 的鉴权层是组件级的 AuthorizeRouteView 与页面上的 [Authorize]，不是端点级策略；
 //    端点级一刀切会把**登录页自己**也要求登录，症状是登录后又被弹回登录页的重定向死循环。
-//    这里放行的只是「能不能到达 Blazor 管线」，受保护页面照旧由各自的 [Authorize] 把关。
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(typeof(KMoldApp.Client._Imports).Assembly)
     .AllowAnonymous();
 
-// ⚠️ /login **直接发起挑战，不渲染任何页面。**
-//    这里曾经是一个只放着一个「用企业账号登录」按钮的中间页——只有一种企业登录方式
-//    却要用户多点一次，纯属噪音。Cookie handler 的 LoginPath 指向本地址，
-//    未认证的浏览器导航被拦下时会到这里，然后一跳到 IdP。
-// ⚠️ 未配 IdP 时落到现场密码通道，而不是给一个 503 死路：
-//    没有 IdP 的部署（纯脱域现场）本来就只有那条路可走。
-app.MapGet("/login", (string? returnUrl, IOptions<KOidcOptions> oidc) =>
-        oidc.Value.IsConfigured
-            ? Results.Challenge(
-                new AuthenticationProperties { RedirectUri = returnUrl ?? "/" },
-                [KAuthenticationSchemes.Oidc])
-            : Results.Redirect("/password-login"))
-    .AllowAnonymous();
+app.MapControllers();
 
-// OIDC 登录入口。做成服务端端点而非 Blazor 页面，因为 Challenge 要在**响应**里
-// 发重定向与相关性 cookie，交互式组件做不到这件事。
-// ⚠️ 未配 IdP 时返回 503 而不是发起挑战：那种情况下 DefaultChallengeScheme 会退回
-//    Cookie，而 Cookie 挑战就是重定向到 LoginPath，于是登录页把自己转回自己——
-//    浏览器上表现为 ERR_TOO_MANY_REDIRECTS，日志里什么也看不出来。
-app.MapGet("/authentication/login", (string? returnUrl, IOptions<KOidcOptions> oidc) =>
-        oidc.Value.IsConfigured
-            ? Results.Challenge(
-                new AuthenticationProperties { RedirectUri = returnUrl ?? "/" },
-                [KAuthenticationSchemes.Oidc])
-            : Results.Problem(
-                "尚未配置 OpenIDConnect:Issuer / ClientId，单点登录不可用。",
-                statusCode: StatusCodes.Status503ServiceUnavailable))
-    .AllowAnonymous();
-
-// 脱域现场的密码登录（ROPC）。页面在 Components/Account/PasswordLoginPage.razor。
-app.MapAppKitPasswordLogin();
-
-// 未处理异常的落地页，配合上面的 UseExceptionHandler("/Error")。
-app.MapAppKitErrorPage();
-
-// 扫码登录：域内打印加密卡片，现场用扫码枪扫入登录。
-// ⚠️ 卡片等价于一张写着密码的便条，缓解全靠有效期 + 网络准入 + 卡面提示三条一起。
-app.MapAppKitQrLogin();
-
-// 登出：清 Cookie 会话。
-// ⚠️ 必须是服务端端点——会话是服务端 Cookie，WASM 端清不掉它。
-//    客户端只在自己那边改认证态的话，界面显示已登出、下一次请求却仍带着有效 Cookie。
-// ⚠️ 配了 OIDC 时还要通知 IdP 结束会话（单点登出），否则用户点了登出、
-//    下次点登录会**无感知地自动登回来**——因为 IdP 那边的会话还在。
-app.MapGet("/authentication/logout", async (HttpContext http, IOptions<KOidcOptions> oidc) =>
-{
-    await http.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-    if (oidc.Value.IsConfigured)
-        return Results.SignOut(new AuthenticationProperties { RedirectUri = "/" }, [KAuthenticationSchemes.Oidc]);
-
-    return Results.Redirect("/");
-}).AllowAnonymous();
-
-// 每实体一组 CRUD 端点，读写各自挂授权。
+// 每实体一组 CRUD 端点，各自挂授权。
 // ⚠️ 出厂即 RequireAuthorization()；这里再显式收紧到管理员——设置与邮件模板
 //    属于系统配置，普通登录用户不该能读写。
 app.MapCrudEndpoints<Setting>().RequireAuthorization(AppPolicies.AdminOnly);
 app.MapCrudEndpoints<EmailTemplate>().RequireAuthorization(AppPolicies.AdminOnly);
-
-// API 文档与后台任务面板。⚠️ 两者都会暴露内部信息，授权见各自的 Setup 类。
-app.MapAppKitOpenApi(AppPolicies.AdminOnly);
-app.MapAppKitHangfireDashboard(AppPolicies.AdminOnly);
-
-app.MapControllers();
-
-// ⚠️ 未命中的 /api/* 必须自己接住并回 problem+json。不接的话它没有端点，
-//    落进「默认拒绝」的兜底策略，未登录调用方收到的是 **302 + 一页登录 HTML**，
-//    `response.json()` 当场抛 SyntaxError，错误信息完全指不到「这个地址不存在」。
-//    ⚠️ 挂 AllowAnonymous 是刻意的：地址存不存在不是秘密，
-//    而把「不存在」伪装成「要登录」只会让调用方查错查到别处去。
-app.MapFallback("/api/{**path}", (HttpContext http) =>
-        TypedResults.Problem(
-            title: "接口不存在",
-            detail: $"没有匹配 {http.Request.Path} 的接口。",
-            statusCode: StatusCodes.Status404NotFound))
-    .AllowAnonymous();
-
-// 健康检查：/health/live（进程存活）与 /health/ready（含数据库连通性）。
-// ⚠️ 两个端点在包里已带 AllowAnonymous——探针不可能先登录。
-app.MapAppHealthChecks();
 
 app.Run();

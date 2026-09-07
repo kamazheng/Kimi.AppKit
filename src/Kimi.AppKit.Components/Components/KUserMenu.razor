@@ -1,0 +1,61 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Nav
+
+@* 顶栏右侧的登录状态与账号菜单。
+
+   ⚠️ 账号相关入口都收在这里，**不进左侧导航**：左侧导航回答「业务去哪」，
+   本菜单回答「我是谁」，混在一起会让业务菜单被账号项越挤越长。 *@
+
+<AuthorizeView>
+    <Authorized>
+        <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit"
+                 AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+            @* 账号信息是**标题**不是菜单项。
+               ⚠️ 别用 Disabled 的 MudMenuItem 来放它：那会渲染出一个带边框、
+               看着像输入框的灰块，用户会去点它。 *@
+            <div class="px-4 py-2">
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">已登录</MudText>
+                <MudText Typo="Typo.body1">@context.User.Identity?.Name</MudText>
+            </div>
+            <MudDivider Class="my-1" />
+
+            @ChildContent
+
+            <MudDivider Class="my-1" />
+            <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Logout">@LogoutLabel</MudMenuItem>
+        </MudMenu>
+    </Authorized>
+
+    <NotAuthorized>
+        <MudButton Variant="Variant.Text" Color="Color.Inherit"
+                   StartIcon="@Icons.Material.Filled.Login" OnClick="Login">
+            @LoginLabel
+        </MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    /// <summary>追加的菜单项（我的账号、接口文档、后台任务等）。放在账号信息与登出之间。</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>登录入口地址。默认 <c>/login</c>。</summary>
+    [Parameter] public string LoginPath { get; set; } = "/login";
+
+    /// <summary>登出入口地址。</summary>
+    [Parameter] public string LogoutPath { get; set; } = "/authentication/logout";
+
+    [Parameter] public string LoginLabel { get; set; } = "登录";
+
+    [Parameter] public string LogoutLabel { get; set; } = "登出";
+
+    // ⚠️ 登录与登出都**必须整页导航**（forceLoad）。
+    //    这两个地址是服务端 minimal API 端点，不是 Blazor 路由；
+    //    而 Blazor 的 Router 会拦截同源导航去路由表里找——找不到就显示 NotFound，
+    //    **请求根本没发到服务端**。表现是「点了登录停在一个空白页」。
+    //    ⚠️ 登出还有一层：会话是服务端 Cookie，WASM 端清不掉它。
+    //    只在客户端改认证态的话，界面显示已登出、下一次请求却仍带着有效 Cookie。
+    //    三个消费方都踩过这个坑，所以收进组件里由它保证。
+    private void Login() => Nav.NavigateTo(LoginPath, forceLoad: true);
+
+    private void Logout() => Nav.NavigateTo(LogoutPath, forceLoad: true);
+}
