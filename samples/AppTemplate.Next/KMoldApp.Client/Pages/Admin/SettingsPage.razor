@@ -25,4 +25,14 @@
     <Lede>管理应用的运行期配置项，改动即时生效，无需重新部署。</Lede>
 </KPageHead>
 
-<KEntityCrudPage T="SettingDto" DataSource="DataSource" SearchPlaceholder="按名称搜索…" />
+<KEntityCrudPage T="SettingDto" DataSource="DataSource" SearchPlaceholder="按名称搜索…"
+                  FieldReadOnly="IsFieldReadOnly" />
+
+@code {
+    // ⚠️ 系统内置项由种子代码写入，界面上永远不能把它从"否"改成"是"；
+    // 一旦是系统内置，除了值和说明，其余字段（名称、值类型……）也一律锁定，
+    // 避免手滑改坏预置配置项的结构。
+    private static bool IsFieldReadOnly(SettingDto setting, string propertyName) =>
+        propertyName == nameof(SettingDto.IsSystem) ||
+        (setting.IsSystem && propertyName is not (nameof(SettingDto.Value) or nameof(SettingDto.Description)));
+}

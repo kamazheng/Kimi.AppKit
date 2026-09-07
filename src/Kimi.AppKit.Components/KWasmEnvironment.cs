@@ -11,7 +11,7 @@ namespace Kimi.AppKit.Components;
 /// <remarks>
 /// 【为什么需要这层转接】服务端与 WASM 客户端各有一套互不兼容的宿主环境类型
 /// （<c>IHostEnvironment</c> vs <c>IWebAssemblyHostEnvironment</c>）。
-/// 服务端实现 <c>KHostEnvironment</c> 在 <c>Kimi.AppKit.Web</c> 里；这里是它在客户端的对应物。
+/// 服务端实现 <see cref="KHostEnvironment"/> 与本类同包；这里是它在客户端的对应物。
 ///
 /// ⚠️ **两端都要注册，缺一个就 500。** <c>&lt;KEnvChip /&gt;</c> 这类组件会被
 /// 服务端预渲染一次、WASM 接管后再跑一次，两次用的是**两个不同的容器**。
@@ -33,7 +33,7 @@ public static class KClientEnvironmentServiceCollectionExtensions
     /// </summary>
     /// <remarks>
     /// ⚠️ 用到 <c>&lt;KEnvChip /&gt;</c> 就必须两端都调：服务端调
-    /// <c>Kimi.AppKit.Web.Hosting</c> 的 <c>AddAppKitEnvironment()</c>，
+    /// <see cref="KEnvironmentServiceCollectionExtensions.AddAppKitEnvironment"/>，
     /// 客户端调本方法。两者故意不同名——避免同一个 <c>using</c> 范围内
     /// 因扩展方法同名产生调用歧义。
     /// </remarks>

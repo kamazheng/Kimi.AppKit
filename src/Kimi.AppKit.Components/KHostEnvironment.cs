@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
-namespace Kimi.AppKit.Web.Hosting;
+namespace Kimi.AppKit.Components;
 
 /// <summary>
 /// 服务端的 <see cref="IKEnvironment"/> 实现，转接 <see cref="IHostEnvironment"/>。
@@ -12,6 +12,11 @@ namespace Kimi.AppKit.Web.Hosting;
 /// 【为什么要这层转接】WASM 客户端拿不到 <see cref="IHostEnvironment"/>
 /// （它那边是 <c>IWebAssemblyHostEnvironment</c>，两者没有共同基类），
 /// 而 <c>KEnvChip</c> 这类组件两端都要渲染。抽象在 Core，两端各给一个实现。
+///
+/// ⚠️ 与 <see cref="KWasmEnvironment"/> 同放在 Components 包里（而不是更重的
+/// <c>Kimi.AppKit.Web</c>）：任何只想用 <c>&lt;KEnvChip /&gt;</c> 的服务端 Blazor
+/// 项目（如 Auth、Files）本来就已依赖 Components 包，不该为了一个环境判断接口
+/// 再拖入整套装配管线。
 /// </remarks>
 internal sealed class KHostEnvironment : IKEnvironment
 {
@@ -24,7 +29,7 @@ internal sealed class KHostEnvironment : IKEnvironment
     public bool IsProduction => _environment.IsProduction();
 }
 
-/// <summary>运行环境的注册入口。</summary>
+/// <summary>服务端运行环境的注册入口。</summary>
 public static class KEnvironmentServiceCollectionExtensions
 {
     /// <summary>

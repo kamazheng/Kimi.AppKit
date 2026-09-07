@@ -10,6 +10,8 @@
         <!-- KEnvChip 需要 WASM 端的 IKEnvironment 实现（KWasmEnvironment）。
              ⚠️ 只在客户端触发注册，服务端渲染这个库时该包不产生任何运行时行为。 -->
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+        <!-- KHostEnvironment（服务端 IKEnvironment 实现）需要 IHostEnvironment。 -->
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
