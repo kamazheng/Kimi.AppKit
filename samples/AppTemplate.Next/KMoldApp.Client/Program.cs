@@ -30,4 +30,8 @@ builder.Services.AddHttpCrudDataSource<SettingDto>("api/crud/setting");
 // 企业标识：读服务端随首屏送来的持久化状态，客户端不打身份服务（跨域 + 多一次往返）。
 builder.Services.AddScoped<Kimi.AppKit.Core.Contracts.IKBrandingSource, Kimi.AppKit.Components.Auth.KClientBranding>();
 
+// <KEnvChip /> 在 WASM 接管后会重新渲染一次，用的是这个容器，
+// 服务端那份 AddAppKitEnvironment() 管不到这里。两端都要注册，缺一个就整页崩。
+builder.Services.AddAppKitClientEnvironment();
+
 await builder.Build().RunAsync();

@@ -4,14 +4,14 @@
    全在包里的 KUserMenu，这里只声明**本应用有哪些菜单项**。 *@
 
 <KUserMenu>
-    <MudMenuItem Icon="@Icons.Material.Filled.Person" Href="profile">我的账号</MudMenuItem>
+    <MudMenuItem Icon="@Icons.Material.Outlined.Person" Href="profile">我的账号</MudMenuItem>
 
     @* 运维入口。⚠️ 这两页都会暴露内部信息（API 形状、任务参数），只给管理员看；
        服务端各自还有一道授权——界面隐藏不算授权。
        ⚠️ 用 KExternalMenuItem：它们不是 Blazor 路由，普通菜单项点了不会发请求。 *@
     <AuthorizeView Roles="@($"{AppRoles.Root},{AppRoles.Admin}")" Context="admin">
         <MudDivider Class="my-1" />
-        <KExternalMenuItem Href="/scalar/v1" Icon="@Icons.Material.Filled.Api">接口文档</KExternalMenuItem>
-        <KExternalMenuItem Href="/hangfire" Icon="@Icons.Material.Filled.Schedule">后台任务</KExternalMenuItem>
+        <KExternalMenuItem Href="/scalar/v1" Icon="@Icons.Material.Outlined.Api">接口文档</KExternalMenuItem>
+        <KExternalMenuItem Href="/hangfire" Icon="@Icons.Material.Outlined.Schedule">后台任务</KExternalMenuItem>
     </AuthorizeView>
 </KUserMenu>

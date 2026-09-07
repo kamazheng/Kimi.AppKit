@@ -1,0 +1,42 @@
+@* 控制台页头。所有管理页共用，避免每个页面各写一套标题字号与间距。
+
+   ⚠️ Eyebrow（标题上方的小字）只在它真的承载信息时才给——
+   比如详情页用它显示所属应用的 ClientId、或所属分组。没有信息就别写，
+   为了排版好看而放的装饰性标签会稀释真正有意义的那些。
+
+   样式在 Kimi.AppKit.Design 的 kmold-console.css，随包分发，
+   三个消费方原先（Auth / Files）各自都有一份完全同构的实现，
+   只有代码注释里举的例子不同——典型的「改一处忘一处」候选。 *@
+
+<div class="k-page-head">
+    <div>
+        @if (!string.IsNullOrEmpty(Eyebrow))
+        {
+            <div class="k-page-head__eyebrow">@Eyebrow</div>
+        }
+        <h1 class="k-page-head__title">@Title</h1>
+        @if (Lede is not null)
+        {
+            <p class="k-page-head__lede">@Lede</p>
+        }
+    </div>
+
+    @if (Actions is not null)
+    {
+        <div class="k-page-head__actions">@Actions</div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    [Parameter]
+    public RenderFragment? Lede { get; set; }
+
+    [Parameter]
+    public RenderFragment? Actions { get; set; }
+}

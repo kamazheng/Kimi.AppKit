@@ -117,20 +117,37 @@
 /* ==========================================================================
    非生产环境警示条 —— 安全信号不是装饰：生产配置守卫与异常页脱敏都按环境分支，
    哪个环境在跑必须一眼可见，否则漏设环境变量的实例会被当成正式站交付。
+
+   ⚠️ 这是**唯一**定义。Auth 与 Files 此前各自在自己的 css 里又写了一份视觉不同的版本
+   （描边药丸 vs 这里原来的实底药丸），两份同名类叠加，后加载的那份无条件胜出，
+   于是这里的定义从未真正显示过——那次教训写在 X2-10 复盘里，这次在 Auth/Files
+   自己的 css 里又冒出来了一次。视觉定死成实测中一直生效的那版（描边），
+   两个服务的重复定义已删除，改用 Kimi.AppKit.Components 的 <KEnvChip />。
    ========================================================================== */
 .k-envchip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 2px 10px;
-    border-radius: var(--k-radius, 3px);
-    background: var(--k-brass-soft, #FBF2E0);
-    color: var(--k-brass, #C4841D);
+    padding: .125rem .5rem;
+    border: 1px solid var(--k-brass);
+    border-radius: 999px;
     font-family: var(--k-mono, monospace);
-    font-size: .75rem;
-    font-weight: 600;
-    letter-spacing: .02em;
+    font-size: .6875rem;
+    font-weight: 500;
+    letter-spacing: .08em;
     text-transform: uppercase;
+    color: var(--k-brass);
+}
+
+/* ==========================================================================
+   MudLayout 控制台的深色抽屉导航态 —— 选中态用黄铜左标，不是整块高亮：
+   深蓝底上的大色块会把抽屉切得很碎。
+   ⚠️ 只对 Auth 无害：它的认证外壳是 `.k-shell` 静态 SSR，不含 MudDrawer/MudNavLink，
+   这条规则匹配不到任何元素。Files 与本模板都用 MudLayout，直接生效。
+   ========================================================================== */
+.mud-drawer .mud-nav-link.active {
+    background: rgba(255, 255, 255, .08);
+    box-shadow: inset 3px 0 0 var(--k-brass);
+    color: #fff;
 }
 
 /* ==========================================================================

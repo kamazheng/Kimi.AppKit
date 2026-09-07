@@ -8,7 +8,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit"
+        <MudMenu Icon="@Icons.Material.Outlined.AccountCircle" Color="Color.Inherit"
                  AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
             @* 账号信息是**标题**不是菜单项。
                ⚠️ 别用 Disabled 的 MudMenuItem 来放它：那会渲染出一个带边框、
@@ -22,13 +22,13 @@
             @ChildContent
 
             <MudDivider Class="my-1" />
-            <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Logout">@LogoutLabel</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.Logout" OnClick="Logout">@LogoutLabel</MudMenuItem>
         </MudMenu>
     </Authorized>
 
     <NotAuthorized>
         <MudButton Variant="Variant.Text" Color="Color.Inherit"
-                   StartIcon="@Icons.Material.Filled.Login" OnClick="Login">
+                   StartIcon="@Icons.Material.Outlined.Login" OnClick="Login">
             @LoginLabel
         </MudButton>
     </NotAuthorized>

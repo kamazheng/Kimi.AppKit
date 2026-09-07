@@ -2,7 +2,7 @@
 
 @* MudBlazor 导航。放在 MudDrawer 里，由 MainLayout 控制开合。 *@
 <MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">首页</MudNavLink>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">首页</MudNavLink>
 
     @* 业务页面加在此处。 *@
 
@@ -13,5 +13,5 @@
     @* 需要管理员角色。⚠️ 无权限时**禁用并说明缺哪个角色**，不隐藏。 *@
     <KRoleNavLink Roles="@($"{AppRoles.Root},{AppRoles.Admin}")"
                  Href="admin/settings" Title="系统设置"
-                 Icon="@Icons.Material.Filled.Settings" />
+                 Icon="@Icons.Material.Outlined.Settings" />
 </MudNavMenu>

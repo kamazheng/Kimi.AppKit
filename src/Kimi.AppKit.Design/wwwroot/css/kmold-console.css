@@ -1,0 +1,94 @@
+/* ==========================================================================
+   MudLayout 控制台的通用样式。
+   --------------------------------------------------------------------------
+   ⚠️ 与 kmold-tokens.css 的分工：tokens 是颜色/字体等**变量**，这里是
+   由这些变量组成的**控制台专属规则**（页头、深色导航态……）。
+   认证页（静态 SSR 的 .k-shell）用不上本文件——那套外壳没有"页头"这个概念，
+   见 kmold-auth.css。
+
+   ⚠️ 这份文件收的是 Auth 与 Files 各自维护过的**完全同构**的实现
+   （连 CSS 规则都逐条一致，只有代码注释里举的例子不同）——
+   典型的「改一处忘一处」候选，见 X4/X5 回灌复盘。
+   ========================================================================== */
+
+/* — 页头（配套 Kimi.AppKit.Components 的 <KPageHead />） — */
+
+.k-page-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding-bottom: 1rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--mud-palette-divider, var(--k-hair));
+}
+
+.k-page-head__eyebrow {
+    font-family: var(--k-mono);
+    font-size: .6875rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--k-brass);
+    margin-bottom: .25rem;
+}
+
+.k-page-head__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin: 0;
+    color: var(--mud-palette-text-primary);
+}
+
+.k-page-head__lede {
+    margin: .5rem 0 0;
+    font-size: .875rem;
+    line-height: 1.65;
+    color: var(--mud-palette-text-secondary);
+    max-width: 62ch;
+}
+
+.k-page-head__actions {
+    display: flex;
+    gap: .625rem;
+    flex-wrap: wrap;
+}
+
+/* ⚠️ Blazor 的 FocusOnNavigate 每次导航都会**程序化**聚焦标题，
+   浏览器把这种聚焦也算进 :focus-visible，于是每个页面标题都套着一个黄铜方框。
+   标题不可点击，去掉描边不影响键盘可达性。 */
+.k-page-head__title:focus,
+.k-page-head__title:focus-visible {
+    outline: none;
+}
+
+/* — 深色抽屉导航的紧凑化 —
+   ⚠️ MudBlazor 出厂的 MudNavLink 是 Material Design 标准尺寸
+   （padding 8px 16px、字号 15px、图标 24px），这套尺寸是给内容密度低的
+   移动端列表设计的，放进桌面控制台的窄抽屉里显得偏大、偏松散——
+   Auth 的认证控制台是纯 CSS 手写的 .k-nav（不受 MudBlazor 尺寸约束），
+   实测字号 14px、图标 18px 更贴近专业软件的观感，这里对齐它。
+   ⚠️ 类名来自实测 DOM（MudBlazor 9.x）：<a class="mud-nav-link"> 包一个
+   <svg class="mud-nav-link-icon">，不是想当然的 .mud-icon-root。 */
+.mud-drawer .mud-nav-link {
+    padding: .5rem 1rem;
+    font-size: .875rem;
+}
+
+.mud-drawer .mud-nav-link-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+/* 分组标题画的是真实的权限边界，不是为了排版好看。
+   MudNavGroup 是可折叠的，这里要的只是一条静态分区标签。 */
+.k-navsection {
+    padding: 1.125rem 1.125rem .375rem;
+    font-size: .6875rem;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .34);
+}

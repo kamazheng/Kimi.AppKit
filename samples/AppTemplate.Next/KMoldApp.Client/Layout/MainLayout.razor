@@ -16,26 +16,36 @@
 <KMudProviders />
 
 <MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-                       OnClick="@(() => _drawerOpen = !_drawerOpen)" />
+    @* 顶栏用纸白而非主色：控制台里彩色顶栏会与页面内的主色按钮抢注意力，
+       品牌存在感交给深色抽屉承担。细分隔线代替阴影——与 Files 控制台同一套克制美学，
+       两个服务共用一套 IdP，界面语言不统一会让人觉得像是两个产品拼的。 *@
+    <MudAppBar Elevation="0" Color="Color.Surface" Style="border-bottom:1px solid var(--mud-palette-divider)">
+        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                       aria-label="切换导航" OnClick="@(() => _drawerOpen = !_drawerOpen)" />
         @* 顶栏放**当前页面标题**，不放品牌——品牌在抽屉顶部（见下方 MudDrawer）。
            ⚠️ 品牌与汉堡按钮挤在一起时，两个视觉重量相当的元素会互相打架；
            而品牌与导航本就是一体的（都在回答「这是什么系统、能去哪」），
            放进抽屉后顶栏才腾得出位置给页面上下文。
            这是 Ant Design Pro / Azure Portal / GitHub 的排法。 *@
-        <MudText Typo="Typo.h6" Class="text-truncate">@PageTitle</MudText>
+        <MudText Typo="Typo.h6" Class="text-truncate ml-2">@PageTitle</MudText>
+
+        @* KEnvChip 不带 Class 参数（渲染出的 <span> 没有暴露它），
+           间距用外层容器给，不改组件——组件保持"只管渲不渲染"这一件事。 *@
+        <div class="ml-3"><KEnvChip /></div>
 
         <MudSpacer />
-        <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
+        <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Outlined.LightMode : Icons.Material.Outlined.DarkMode)"
                        Color="Color.Inherit" OnClick="@(() => _isDarkMode = !_isDarkMode)"
                        aria-label="切换亮/暗配色" />
         <LoginDisplay />
     </MudAppBar>
 
-    @* ClipMode.Always：抽屉从 AppBar 下方开始，不盖住标题栏。
-       缺了它抽屉会顶到页面最上沿，把 AppBar 的汉堡按钮与标题挤到右侧。 *@
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+    @* ClipMode.Never：抽屉从页面最顶部开始、贯穿全高，与 Files 控制台一致。
+       ⚠️ 早先用的是 Always（抽屉从 AppBar 下方开始），**实测**副作用是抽屉高度
+       随内容区撑出的高度走，内容矮时（比如首页只有两行字）抽屉在半屏就断了、
+       露出下面的浅灰背景——看起来像没铺满。Never 让抽屉相对视口定位，
+       与内容高度无关，天然贯穿到底。 *@
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Never" Elevation="0">
         @* 品牌区。**企业名与 Logo 来自身份服务**（客户只在 Auth 里设一次），
            产品名恒取本地常量——那是本应用自己的名字，不该跟着身份服务的产品名走。
            ⚠️ 放在抽屉里而不是顶栏：品牌与导航同属「这是什么系统、能去哪」，
@@ -60,9 +70,13 @@
         <NavMenu />
     </MudDrawer>
 
-    @* pt-16 让内容避开 fixed 定位的 AppBar——没有它首屏内容会被标题栏压住。 *@
-    <MudMainContent Class="pt-16 pa-4">
-        <MudContainer MaxWidth="MaxWidth.Large">
+    @* ⚠️ **padding 不能加在 MudMainContent 上**——那会连它自动算出的
+       「避开 AppBar」那段顶部间距一起被 pa-4 覆盖掉（实测：加了 pa-4 后
+       padding-top 变成固定的 16px，正文标题被 AppBar 盖住一截，
+       DOM 里内容都在、肉眼却看不见，也不报错）。
+       四边留白挪到内层 MudContainer 上，与 Files 控制台同一种分工。 *@
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
             @* ⚠️ 错误边界包住 @Body：没有它，任何冒泡异常会把完整堆栈
                （含绝对文件路径与 HTTP 头）铺满整个界面。异常呈现走包里的
                ApiErrorPresenter，保证 403/401/其余在任何触发路径下表现一致。 *@

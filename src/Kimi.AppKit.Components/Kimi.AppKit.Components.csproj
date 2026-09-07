@@ -7,6 +7,9 @@
         <PackageReference Include="MudBlazor" />
         <!-- AuthorizeView 等授权组件不在共享框架里（这是 RCL，不是 Web SDK 项目），须显式引用。 -->
         <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
+        <!-- KEnvChip 需要 WASM 端的 IKEnvironment 实现（KWasmEnvironment）。
+             ⚠️ 只在客户端触发注册，服务端渲染这个库时该包不产生任何运行时行为。 -->
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
