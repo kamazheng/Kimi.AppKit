@@ -67,6 +67,7 @@ paths:
 | 回跳地址防开放重定向 | `KReturnUrl` | 自己校验 returnUrl |
 | CRUD 端点 | `MapCrudEndpoints<T>()` | 手写 controller 做增删改查 |
 | WASM 端取数 | `AddHttpCrudDataSource<T>()` | 自己 `HttpClient` 调 CRUD 端点 |
+| 自定义端点的响应 → 结果 | `response.ToKResultAsync()` | 自写状态码判断。⚠️ `KResult` **不走网线**：服务端返回状态码 + ProblemDetails，客户端本地重建 |
 | 服务端预渲染占位数据源 | `AddPrerenderCrudDataSource<T>()` | 让预渲染真去取数 |
 | 健康检查 | `AddAppHealthChecks<TContext>()` + `MapAppHealthChecks()` | 自写 `/health` |
 | 全局异常 → ProblemDetails | `AddAppKitErrorHandling()` | 自写 `IExceptionHandler` |

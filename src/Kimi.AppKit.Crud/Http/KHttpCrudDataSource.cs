@@ -93,7 +93,7 @@ public sealed class KHttpCrudDataSource<T>(HttpClient httpClient, string? prefix
             .PostAsJsonAsync($"{_root}/", item, JsonOptions, cancellationToken)
             .ConfigureAwait(false);
 
-        return await ToResultAsync(response, cancellationToken).ConfigureAwait(false);
+        return await response.ToKResultAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -105,29 +105,6 @@ public sealed class KHttpCrudDataSource<T>(HttpClient httpClient, string? prefix
             .DeleteAsync($"{_root}/{Uri.EscapeDataString(id.ToString()!)}", cancellationToken)
             .ConfigureAwait(false);
 
-        return await ToResultAsync(response, cancellationToken).ConfigureAwait(false);
-    }
-
-    /// <remarks>
-    /// ⚠️ 失败时把服务端的 <c>ProblemDetails</c> 正文带回来。
-    /// 只返回「操作失败」会让并发冲突、校验不通过、权限不足三种完全不同的情况
-    /// 在界面上长得一模一样，用户和排障的人都无从判断。
-    /// </remarks>
-    private static async Task<KResult> ToResultAsync(
-        HttpResponseMessage response, CancellationToken cancellationToken)
-    {
-        if (response.IsSuccessStatusCode) return KResult.Ok();
-
-        var detail = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-
-        return response.StatusCode switch
-        {
-            HttpStatusCode.Unauthorized => KResult.Fail("未登录或登录已过期。"),
-            HttpStatusCode.Forbidden => KResult.Fail("没有执行该操作的权限。"),
-            HttpStatusCode.Conflict => KResult.Fail("数据已被他人修改，请刷新后重试。"),
-            _ => KResult.Fail(string.IsNullOrWhiteSpace(detail)
-                ? $"操作失败（HTTP {(int)response.StatusCode}）。"
-                : detail),
-        };
+        return await response.ToKResultAsync(cancellationToken).ConfigureAwait(false);
     }
 }
