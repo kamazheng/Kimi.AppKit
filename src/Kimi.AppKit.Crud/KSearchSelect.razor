@@ -1,36 +1,117 @@
-@* 可搜索下拉：异步走 ICrudDataSource<T>.LoadAsync 按输入词分页取一小批候选，
-   不像前身实现那样一次性拉全表——选项集合可能有几千行时，"拉全表在客户端过滤"
-   既浪费带宽也会让下拉框卡顿。*@
-@typeparam T where T : class
+@* 按主键绑定的可搜索下拉：候选从数据源按输入词分页取，**不拉全表**。
 
-<MudAutocomplete T="T" Value="Value" ValueChanged="OnValueChangedAsync" SearchFunc="SearchAsync"
-                  ToStringFunc="ToDisplayText" Label="@Label" Disabled="Disabled"
-                  Clearable="true" ResetValueOnEmptyText="true" MaxItems="MaxItems" />
+   ⚠️ 这个组件存在的理由是一个会随数据增长突然爆发、且**完全不报错**的缺陷：
+   页面常写成在 OnInitializedAsync 里 `LoadAsync(new KQuery { PageSize = 200 })`
+   一次性拉全表填进 MudSelect。第 201 条起就不在下拉里，界面上没有任何提示——
+   用户的结论会是「系统里没这条」，然后去新建一条重复的主数据。
+   演示数据下永远看不出来，正式用起来才炸。
+
+   ⚠️ 候选行支持第二行说明（库位/数量/规格）。只显示一个名字的下拉，
+   在同名或相近命名的记录之间是选不对的，而选错了当场也发现不了。
+
+   ⚠️ 绑定的是**主键**不是实体对象：外键字段本来就存主键，
+   绑实体的话每个调用方都得自己做一次「对象 ↔ 主键」的往返转换。*@
+
+@typeparam TItem where TItem : class
+
+<MudAutocomplete T="TItem"
+                 Value="_selected"
+                 ValueChanged="OnSelectedChangedAsync"
+                 SearchFunc="SearchAsync"
+                 ToStringFunc="@(item => item is null ? string.Empty : PrimaryText(item))"
+                 Label="@Label"
+                 HelperText="@HelperText"
+                 Required="Required"
+                 Disabled="Disabled"
+                 Clearable="!Required"
+                 ResetValueOnEmptyText="true"
+                 CoerceText="true"
+                 MinCharacters="0"
+                 MaxItems="@MaxItems"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense"
+                 Dense="true">
+    <ItemTemplate Context="item">
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.body2">@PrimaryText(item)</MudText>
+            @if (SecondaryText is not null)
+            {
+                @* 第二行是「选得对不对」的依据，不是装饰。 *@
+                <MudText Typo="Typo.caption" Color="Color.Tertiary">@SecondaryText(item)</MudText>
+            }
+        </MudStack>
+    </ItemTemplate>
+    <NoItemsTemplate>
+        <MudText Typo="Typo.caption" Class="pa-2">@NoItemsText</MudText>
+    </NoItemsTemplate>
+</MudAutocomplete>
 
 @code {
-    [Parameter, EditorRequired] public ICrudDataSource<T> DataSource { get; set; } = null!;
+    private TItem? _selected;
+    private int? _resolvedId;
 
-    [Parameter] public T? Value { get; set; }
+    [Parameter, EditorRequired] public ICrudDataSource<TItem> DataSource { get; set; } = null!;
 
-    [Parameter] public EventCallback<T?> ValueChanged { get; set; }
+    /// <summary>选中项的主键。</summary>
+    [Parameter] public int? Value { get; set; }
 
-    /// <summary>把候选项渲染成下拉里的一行文字，如 <c>x => x.Name</c>。</summary>
-    [Parameter, EditorRequired] public Func<T, string> DisplayText { get; set; } = null!;
+    [Parameter] public EventCallback<int?> ValueChanged { get; set; }
+
+    /// <summary>从候选项取主键，如 <c>x =&gt; x.Id</c>。</summary>
+    [Parameter, EditorRequired] public Func<TItem, int> IdOf { get; set; } = null!;
+
+    /// <summary>候选项的主标题，如 <c>x =&gt; x.Name</c>。</summary>
+    [Parameter, EditorRequired] public Func<TItem, string> PrimaryText { get; set; } = null!;
+
+    /// <summary>候选项的第二行说明。为空则只显示一行。</summary>
+    [Parameter] public Func<TItem, string>? SecondaryText { get; set; }
 
     [Parameter] public string? Label { get; set; }
 
+    [Parameter] public string? HelperText { get; set; }
+
+    [Parameter] public bool Required { get; set; }
+
     [Parameter] public bool Disabled { get; set; }
 
+    /// <summary>下拉一次最多显示多少条候选。</summary>
     [Parameter] public int MaxItems { get; set; } = 20;
 
-    private async Task<IEnumerable<T>> SearchAsync(string? search, CancellationToken cancellationToken)
+    /// <summary>没有匹配候选时的提示。⚠️ 必须给出下一步该干什么，不能只说「无数据」。</summary>
+    [Parameter] public string NoItemsText { get; set; } = "没有匹配的记录。换个关键词，或先去主数据里建。";
+
+    /// <summary>附加筛选条件，如「只看某个分类下的记录」。</summary>
+    [Parameter] public IReadOnlyDictionary<string, string?>? Filters { get; set; }
+
+    protected override async Task OnParametersSetAsync()
     {
-        var query = new KQuery { Search = search, PageSize = MaxItems };
+        // 外部把 Value 改成了别的记录（含编辑场景首次带值进来）时，回查一次拿显示文本。
+        // ⚠️ 用 _resolvedId 而不是「_selected 是否为 null」判断：
+        //    清空后 Value 与 _selected 同为空，那时不该再回查。
+        if (Value == _resolvedId) return;
+
+        _resolvedId = Value;
+        _selected = Value is { } id ? await DataSource.GetAsync(id) : null;
+    }
+
+    private async Task<IEnumerable<TItem>> SearchAsync(string? search, CancellationToken cancellationToken)
+    {
+        var query = new KQuery
+        {
+            Search = search,
+            PageSize = MaxItems,
+            Filters = Filters ?? new Dictionary<string, string?>(),
+        };
+
         var page = await DataSource.LoadAsync(query, cancellationToken);
         return page.Items;
     }
 
-    private string ToDisplayText(T? item) => item is null ? string.Empty : DisplayText(item);
-
-    private Task OnValueChangedAsync(T? value) => ValueChanged.InvokeAsync(value);
+    private async Task OnSelectedChangedAsync(TItem? item)
+    {
+        _selected = item;
+        _resolvedId = item is null ? null : IdOf(item);
+        Value = _resolvedId;
+        await ValueChanged.InvokeAsync(_resolvedId);
+    }
 }
