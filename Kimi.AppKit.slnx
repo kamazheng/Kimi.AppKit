@@ -5,6 +5,7 @@
     <Project Path="src/Kimi.AppKit.Crud/Kimi.AppKit.Crud.csproj" />
     <Project Path="src/Kimi.AppKit.Data/Kimi.AppKit.Data.csproj" />
     <Project Path="src/Kimi.AppKit.Design/Kimi.AppKit.Design.csproj" />
+    <Project Path="src/Kimi.AppKit.Http/Kimi.AppKit.Http.csproj" />
     <Project Path="src/Kimi.AppKit.Templates/Kimi.AppKit.Templates.csproj" />
     <Project Path="src/Kimi.AppKit.Observability/Kimi.AppKit.Observability.csproj" />
     <Project Path="src/Kimi.AppKit.Web/Kimi.AppKit.Web.csproj" />

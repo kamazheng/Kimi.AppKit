@@ -9,6 +9,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
         <PackageReference Include="Microsoft.AspNetCore.TestHost" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+        <PackageReference Include="Refit" />
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,5 +26,6 @@
         <ProjectReference Include="..\..\src\Kimi.AppKit.Web\Kimi.AppKit.Web.csproj" />
         <ProjectReference Include="..\..\src\Kimi.AppKit.Observability\Kimi.AppKit.Observability.csproj" />
         <ProjectReference Include="..\..\src\Kimi.AppKit.Design\Kimi.AppKit.Design.csproj" />
+        <ProjectReference Include="..\..\src\Kimi.AppKit.Http\Kimi.AppKit.Http.csproj" />
     </ItemGroup>
 </Project>

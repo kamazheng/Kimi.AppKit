@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Description>Kimi.AppKit 的 Refit 客户端注册封装：源生成、零反射，统一 JSON 约定与错误处理（决策 14）。</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Refit.HttpClientFactory" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Kimi.AppKit.Core\Kimi.AppKit.Core.csproj" />
+    </ItemGroup>
+</Project>

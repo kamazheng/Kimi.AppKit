@@ -99,7 +99,50 @@ API 形状属于内部信息。
 
 ---
 
-## 四、验证清单（每个新端点都要走一遍）
+## 四、客户端调用 API：一律走 Refit，不要自写 `HttpClient` 封装
+
+旧模板的 `IStandardApi` 家族（把「调哪个端点」压缩成客户端自己拼的路由对象）已被
+**决策 14（2026-09-03）废弃**，替代方案是 [Refit](https://github.com/reactiveui/refit)——
+一个接口方法就是一个端点，路径/方法/入参/出参都写在方法签名里，源生成实现，不反射拼请求。
+
+选 Refit 而非自写的三条理由：请求构建走源生成、不反射，trimming 下不会退化；接口即文档，
+契约变化编译期就能发现；社区维护、无需自己踩 `HttpClient` 生命周期与序列化的坑。
+
+⚠️ 「零反射」只覆盖请求构建，**不覆盖 JSON 序列化**——那一段仍是反射版
+`System.Text.Json`，且 Refit 在序列化器内部抑制了 IL2026/IL3050，编译期没有信号。
+要真上 Native AOT 得给 `JsonSerializerOptions.TypeInfoResolver` 挂源生成的
+`JsonSerializerContext`。当前 Blazor WASM（裁剪但未关反射）不受影响。
+
+```csharp
+// ✅ 接口即契约，路径/方法/参数都在签名里
+public interface IAdminApi
+{
+    [Get("/api/admin/users/{id}")]
+    Task<UserDto> GetUserAsync(Guid id);
+
+    [Post("/api/admin/users")]
+    Task<UserDto> CreateUserAsync([Body] CreateUserRequest request);
+}
+```
+
+- **注册一律用 `AddAppKitRefitClient<T>(baseAddress)`（`Kimi.AppKit.Http` 包）**——
+  它内部才调 Refit 官方的 `AddRefitGeneratedClient<T>()`，并统一了 JSON 约定、
+  `ExceptionFactory`、`CollectionFormat`。
+  - 禁止用 `AddRefitClient<T>()`：走反射，在 trimmed / Native AOT 的 WASM 下会
+    **静默退化或直接抛异常**，只有跑在裁剪后的发布产物上才暴露，本地 `dotnet run` 看不出来。
+  - 禁止直接用 Refit 官方的 `AddRefitGeneratedClient<T>()`：请求构建是对的，但拿的是
+    Refit 默认 settings——错误提示退化成一句状态码、数组查询参数被拼成逗号分隔后
+    被服务端静默忽略。**这两条都不报错**，所以 grep 得到「谁没走统一封装」才是防线。
+- **归属边界**：Refit 只进模板的 Shared 层与 Client 包，`Kimi.AppKit.Core` 保持零依赖不引入。
+- **文件上传走 `IMultipartApi<T>`，不是 Refit 接口**——multipart 场景 Refit 语法表达不了，
+  这条契约单独保留（详见 `Kimi.AppKit.Core.Contracts.IMultipartApi`）。
+- **错误处理经 `RefitSettings.ExceptionFactory`**，不要在调用方各自 `try/catch` 判状态码——
+  服务端回的 `ProblemDetails` 要在这一层统一转成可读异常，漏配的后果是错误提示从
+  「这条记录已被他人修改」退化成一句没有信息量的「500 Internal Server Error」。
+
+---
+
+## 五、验证清单（每个新端点都要走一遍）
 
 - [ ] 匿名调用 → 401（不是 302，不是一页 HTML）
 - [ ] 已登录但角色不足 → 403
