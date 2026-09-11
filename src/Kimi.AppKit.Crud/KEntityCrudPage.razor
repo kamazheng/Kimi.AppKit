@@ -33,6 +33,9 @@
 
     [Parameter] public string SearchPlaceholder { get; set; } = "搜索…";
 
+    /// <summary>透传给 <see cref="KEntityForm{T}.FieldReadOnly"/>，见其说明。</summary>
+    [Parameter] public Func<T, string, bool>? FieldReadOnly { get; set; }
+
     private Task OnSearchChangedAsync(string? search)
     {
         _query = _query with { Search = search };
@@ -53,6 +56,7 @@
             { x => x.ReadOnly, readOnly },
             { x => x.HideIdentity, hideIdentity },
             { x => x.ExcludeInterfaces, ExcludeInterfaces },
+            { x => x.FieldReadOnly, FieldReadOnly },
         };
 
         var dialog = await DialogService.ShowAsync<Dialogs.KEntityFormDialog<T>>(title, parameters);

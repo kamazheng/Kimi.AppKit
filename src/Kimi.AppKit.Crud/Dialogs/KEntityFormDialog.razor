@@ -14,7 +14,7 @@
 
     <DialogContent>
         <KEntityForm T="T" Model="Model" ReadOnly="ReadOnly" ExcludeInterfaces="ExcludeInterfaces"
-                     HideIdentity="HideIdentity" ShowActionBar="false" FormId="@_formId"
+                     HideIdentity="HideIdentity" FieldReadOnly="FieldReadOnly" ShowActionBar="false" FormId="@_formId"
                      OnValidSubmit="OnSubmitAsync" />
     </DialogContent>
 
@@ -48,6 +48,9 @@
     [Parameter] public bool HideIdentity { get; set; }
 
     [Parameter] public IEnumerable<Type>? ExcludeInterfaces { get; set; }
+
+    /// <summary>透传给 <see cref="KEntityForm{T}.FieldReadOnly"/>，见其说明。</summary>
+    [Parameter] public Func<T, string, bool>? FieldReadOnly { get; set; }
 
     private Task OnSubmitAsync(T model)
     {

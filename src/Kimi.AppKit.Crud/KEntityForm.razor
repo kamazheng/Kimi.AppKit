@@ -10,7 +10,8 @@
         @foreach (var property in VisibleProperties)
         {
             <MudItem xs="12" sm="6" md="4">
-                <KEntityField Model="Model" Property="property" ReadOnly="@(ReadOnly || IsIdProperty(property))" />
+                <KEntityField Model="Model" Property="property"
+                              ReadOnly="@EntityPropertyInspector.IsFieldReadOnly(property, Model, ReadOnly, FieldReadOnly)" />
             </MudItem>
         }
     </MudGrid>
@@ -56,12 +57,16 @@
     /// </remarks>
     [Parameter] public bool HideIdentity { get; set; }
 
+    /// <summary>
+    /// 按"实体实例 + 属性名"追加只读规则，供业务页表达框架无法预知的锁定语义
+    /// （如"系统内置的记录只能改值和说明"）。与内置规则（整表单只读/主键）按更严格的一边叠加，
+    /// 不会把框架保护的字段重新打开为可编辑。
+    /// </summary>
+    [Parameter] public Func<T, string, bool>? FieldReadOnly { get; set; }
+
     private IEnumerable<PropertyInfo> VisibleProperties =>
-        HideIdentity ? _properties.Where(p => !IsIdProperty(p)) : _properties;
+        HideIdentity ? _properties.Where(p => !EntityPropertyInspector.IsIdProperty(p)) : _properties;
 
     protected override void OnInitialized() =>
         _properties = EntityPropertyInspector.GetEditableProperties(typeof(T), ExcludeInterfaces);
-
-    private static bool IsIdProperty(PropertyInfo property) =>
-        property.Name.Equals("Id", StringComparison.OrdinalIgnoreCase);
 }

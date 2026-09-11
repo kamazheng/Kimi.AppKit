@@ -82,6 +82,22 @@ public static class EntityPropertyInspector
         _ => 100,
     };
 
+    /// <summary>主键属性永远只读——它由数据库生成，用户手改没有意义。</summary>
+    public static bool IsIdProperty(PropertyInfo property) =>
+        property.Name.Equals("Id", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// 计算某个字段本次渲染的最终只读状态。
+    /// </summary>
+    /// <remarks>
+    /// 内置规则（整个表单只读、主键字段）与调用方传入的 <paramref name="fieldReadOnly"/>
+    /// 按"谁更严格听谁的"叠加（逻辑或），调用方只能追加限制，
+    /// 不能把框架保护的字段（如主键）重新打开为可编辑。
+    /// </remarks>
+    public static bool IsFieldReadOnly<T>(
+        PropertyInfo property, T model, bool formReadOnly, Func<T, string, bool>? fieldReadOnly) =>
+        formReadOnly || IsIdProperty(property) || (fieldReadOnly?.Invoke(model, property.Name) ?? false);
+
     /// <summary>
     /// 构造一个「按此属性取可排序值」的委托，供反射驱动的表格做客户端排序。
     /// </summary>
