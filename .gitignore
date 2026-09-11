@@ -399,3 +399,14 @@ artifacts/
 *.nupkg
 *.snupkg
 .DS_Store
+
+# 本机 IDE 用的「本仓库内联调」解决方案：把 AppTemplate.Next 与它 ProjectReference
+# 的 7 个 AppKit 源码包放进同一个 .sln，消除 C# Dev Kit 的
+# "Referenced project ... is not part of this solution" 弹窗。
+# 不能入库：KMoldApp.sln 是 dotnet new 模板的 primaryOutputs，会被原样分发给
+# 生成项目的用户；往其中写入只在本机 monorepo 里存在的 ../../src 路径会让
+# 所有用户的 dotnet restore 失败。KMoldApp.dev.sln 本身不受此约束保护
+# （template.json 只排除 .vscode/.idea/bin/obj），所以两者都不能入库，
+# 每台机器各自生成一次。
+samples/AppTemplate.Next/KMoldApp.dev.sln
+samples/AppTemplate.Next/.vscode/
