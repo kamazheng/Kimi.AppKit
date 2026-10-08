@@ -28,8 +28,11 @@ public sealed class KUserInfo
     /// <summary>角色 claim 的类型名。见类型注释里的 <c>MapInboundClaims</c> 说明。</summary>
     public const string RoleClaimType = "role";
 
-    /// <summary>显示名 claim 的类型名。</summary>
-    public const string DisplayNameClaimType = "displayname";
+    /// <summary>
+    /// 显示名 claim 的类型名。来源：Auth 的 <c>ClaimsDestinationPolicy.cs:131</c>
+    /// （<c>Kimi.KMold.Auth</c> 仓，<c>DisplayName = "display_name"</c>）。
+    /// </summary>
+    public const string DisplayNameClaimType = "display_name";
 
     /// <summary>登录名。</summary>
     public required string Name { get; init; }
@@ -47,11 +50,11 @@ public sealed class KUserInfo
     /// 从服务端的 <see cref="ClaimsPrincipal"/> 构造。
     /// </summary>
     /// <remarks>
-    /// ⚠️ **不要因为缺少某个 claim 就抛异常。** 前身对 <c>name</c> 与 <c>displayname</c>
-    /// 都用「找不到就抛」，而 <c>displayname</c> 是不少 IdP 根本不发的可选 claim。
+    /// ⚠️ **不要因为缺少某个 claim 就抛异常。** 前身对 <c>name</c> 与 <c>display_name</c>
+    /// 都用「找不到就抛」，而 <c>display_name</c> 是不少 IdP 根本不发的可选 claim。
     /// 那个异常发生在 <c>PersistentComponentState</c> 的持久化回调里，
     /// 后果是**客户端认证态整个丢失、用户被弹回登录页**，而日志里只有一句
-    /// 「Could not find required 'displayname' claim」——看不出它会导致登不上。
+    /// 「Could not find required 'display_name' claim」——看不出它会导致登不上。
     /// </remarks>
     public static KUserInfo FromClaimsPrincipal(ClaimsPrincipal principal, string idToken)
     {
