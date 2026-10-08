@@ -24,6 +24,10 @@
 **1. 渲染模式无关。** 组件在静态 SSR、InteractiveServer、WebAssembly 三种模式下都能用。
 数据访问经 `ICrudDataSource<T>` 抽象——WASM 宿主走 HTTP，Blazor Server 宿主直连 `DbContext`。
 
+通用 CRUD 的保存在 `EfCrudDataSource.UpsertAsync` 内先做 DataAnnotations 校验（`[Required]`、`[MaxLength]` 等）并翻译唯一约束冲突，
+失败返回 `KResult.Fail`（端点转 400）；Excel 导入逐行走同一入口。审计属性（`IAuditableEntity`）不参与校验；
+不要在导航属性或服务端填充字段上标 `[Required]`。
+
 **2. 隐性知识随包走。** 那些「不这么写会静默出错」的约束写在 XML 注释里，消费方靠 IntelliSense 就能读到，
 不必翻文档、也不必重新踩一遍。因此所有包强制 `GenerateDocumentationFile`。
 

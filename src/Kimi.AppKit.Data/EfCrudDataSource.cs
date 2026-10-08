@@ -92,6 +92,10 @@ public class EfCrudDataSource<TContext, TEntity>(IDbContextFactory<TContext> con
     {
         ArgumentNullException.ThrowIfNull(item);
 
+        // 保存前校验（DataAnnotations）。Excel 导入逐行调本方法，所以同样逐行校验、逐行报错。
+        var errors = CrudSaveGuard.Validate(item);
+        if (errors.Count > 0) return KResult.Fail(errors);
+
         await using var db = await ContextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
         var isNew = IsTransient(db, item);
@@ -108,6 +112,11 @@ public class EfCrudDataSource<TContext, TEntity>(IDbContextFactory<TContext> con
             // 这是**预期内**的业务结果，不是意外。返回可读的提示而不是让异常冒到全局处理器——
             // 后者会给用户一个「服务器内部错误」，而实际上他只需要刷新后重试。
             return KResult.Fail("这条记录已被其他人修改，请刷新后重试。");
+        }
+        catch (DbUpdateException ex) when (CrudSaveGuard.IsUniqueViolation(ex))
+        {
+            // 唯一约束冲突是预期内的业务结果（同名记录），翻成 400 而不是 500。
+            return KResult.Fail(CrudSaveGuard.UniqueMessage(db, typeof(TEntity), ex));
         }
     }
 
