@@ -12,17 +12,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# 先只拷还原所需的清单，让 restore 层在源码变动时仍命中缓存。
-COPY NuGet.config Directory.Build.props Directory.Packages.props ./
-COPY KMoldApp/KMoldApp.csproj KMoldApp/
-COPY KMoldApp.Client/KMoldApp.Client.csproj KMoldApp.Client/
-COPY KMoldApp.Shared/KMoldApp.Shared.csproj KMoldApp.Shared/
-COPY KMoldApp.Data/KMoldApp.Data.csproj KMoldApp.Data/
-RUN dotnet restore KMoldApp/KMoldApp.csproj --configfile NuGet.config
-
+# ⚠️ 不要拆成「先只拷 csproj/props 做 restore 层缓存、再 COPY 源码」。
+#    曾这么做：构建全绿、镜像也起得来，但页面上所有交互全死——
+#    `/_framework/blazor.web.js` 404，且没有任何构建告警。
+#    原因：SDK 是否把 Microsoft.AspNetCore.App.Internal.Assets（blazor.web.js 的来源）
+#    加进还原图，取决于它在**还原时**能否看到 .razor 文件；只有 csproj 时看不到，
+#    还原出来的图里就没有这个包，发布产物里也就没有 blazor.web.js。
+#    代价是源码一变就重新还原；要缓存可在 podman/buildah 上加 `RUN --mount=type=cache`。
 COPY . .
-# ⚠️ 不要在这里插 dotnet clean：它会删掉刚还原的产物，使 publish 重新还原一次。
-RUN dotnet publish KMoldApp/KMoldApp.csproj -c Release -o /app/out --no-restore
+# ⚠️ 不要在这里插 dotnet clean，也不要加 --no-restore（见上）。
+RUN dotnet publish KMoldApp/KMoldApp.csproj -c Release -o /app/out
 
 # Stage 2: 运行
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
@@ -30,8 +29,8 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 # 非 root（数字 UID，便于 K8s/ACA 的 runAsNonRoot 校验）；监听 8080（非特权端口）。
-ENV ASPNETCORE_ENVIRONMENT=Production \
-    ASPNETCORE_URLS=http://+:8080
+# （aspnet 基础镜像已设 ASPNETCORE_HTTP_PORTS=8080，故无需再配 ASPNETCORE_URLS。）
+ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 8080
 USER 10001
 ENTRYPOINT ["dotnet", "KMoldApp.dll"]
