@@ -15,9 +15,10 @@
 |---|---|
 | git-filter-repo | `a40bce548d2c`（`git filter-repo --version`） |
 | gitleaks | `docker.io/zricethezav/gitleaks:v8.24.3`（podman，`--tls-verify=false` 拉取） |
-| 规则文件 | `docs/release/history-rewrite-rules.txt`（同目录入库） |
+| 规则文件 | `docs/release/history-rewrite-rules.txt`（同目录入库；**不得写注释**，见「规则的取舍」） |
+| mailmap 生成 | `docs/release/history-mailmap.sh <镜像仓>`（运行时生成，不入库静态表） |
 | gitleaks 配置 | `docs/release/gitleaks.toml`（默认规则 + 1 条已确认误报的行级放行） |
-| 计数脚本 | `docs/release/history-counts.sh <镜像仓路径>` |
+| 计数脚本 | `docs/release/history-counts.sh <镜像仓路径>`（任一计数非 0 则退出 1） |
 
 ## 演练步骤（可原样重放）
 
@@ -31,54 +32,57 @@ cd /tmp/appkit-rewrite/after.git
 git filter-repo --path samples/AppTemplate --invert-paths \
   --replace-text  <仓>/docs/release/history-rewrite-rules.txt \
   --replace-message <仓>/docs/release/history-rewrite-rules.txt \
-  [--mailmap <mailmap 文件>]        # 见「待用户拍板」
+  --mailmap <history-mailmap.sh 的输出>
 
 # 2) 计数
 <仓>/docs/release/history-counts.sh /tmp/appkit-rewrite/after.git
 
-# 3) gitleaks（注意 macOS 上 podman 只共享 /private/tmp，不是 /tmp 的别名路径之外的目录）
+# 3) gitleaks（macOS 上 podman 只共享 /private/tmp，挂载路径要写 /private/tmp/...）
 podman run --rm -v /private/tmp/appkit-rewrite/after.git:/repo:ro -v /private/tmp/appkit-rewrite:/out \
   docker.io/zricethezav/gitleaks:v8.24.3 git /repo --no-banner --redact \
   --config /out/gitleaks.toml --report-format json --report-path /out/gitleaks-after.json
 ```
 
-## 结果（演练对象：本分支 + 其余本地分支与 tag，共 6 个 ref）
+## 结果（演练对象：本分支所在本地副本，含 4 个本地分支与 1 个 tag；94/106 为含本线新提交后的数）
 
 | 指标 | 重写前 | 重写后 | 验收 |
 |---|---|---|---|
-| 提交数（所有 ref） | 102 | 90 | 12 个提交只改了旧样例路径，被 filter-repo 当作空提交剪掉 |
-| 1e-1 `git log --all -p -- 'samples/AppTemplate/*'` 行数 | 1,086,559 | **0** | 0 ✅ |
-| 1e-2 `git log --all -p \| grep -ciE '[a-z0-9-]+\.<源公司域名>'` | 71 | **0** | 0 ✅ |
-| 1e-3 gitleaks 全历史发现数（默认规则） | 2 | 1（误报） | 见下 |
-| 1e-3 gitleaks 全历史发现数（`gitleaks.toml`） | 2 | **0** | 0 ✅ |
+| 提交数（所有 ref） | 106 | 94 | 纯旧样例路径的提交被当作空提交剪掉 |
+| 1e-1 路径 `-p` 行数 | 1,086,559 | **0** | 0 ✅ |
+| 1e-2 `*.<源公司域名>` 行数 | 71 | **0** | 0 ✅ |
+| 1e-3 gitleaks 全历史（`gitleaks.toml`） | 2 | **0** | 0 ✅（默认规则下剩 1 误报，见下） |
+| 辅助：含源公司名的行数（不分大小写） | 5069 | 0 | |
+| 辅助：作者/提交者含源公司名 | 89 | 0 | mailmap 生效 |
+| 辅助：中文全称/内部 GitLab 组/内网网段残留 | 4016 | 0 | |
 | 辅助：`*.cdu(qa).` 主机行数 | 51 | 0 | |
-| 辅助：含源公司名（不分大小写）的行数 | 5027 | 74 | 74 行全是提交作者邮箱，见下 |
-| 重写后 `dotnet test`（分支 `s1/a4-public-hygiene` 检出） | — | 44 + 33 + 289 通过 | 重写不破坏构建 |
+| 重写后检出 `dotnet test` | — | 通过（前一轮演练实测：44+33+289） | |
 
-gitleaks 说明：
-- 重写前 2 条：旧样例里的 DataProtection 密钥 XML（`generic-api-key`，路径移除后消失）与 `docs/hardcode-audit.md:147`。
-- 后者是误报：文档里描述配置键 `EmployeeApi:BypassCertificateValidation=true` 被当成 key=value。
-  `gitleaks.toml` 用**行级正则**精确放行这一行，不放行整个文件，不依赖提交哈希（重写后哈希会变，`.gitleaksignore` 指纹不可用）。
-- 注意 gitleaks 默认规则**并不认** DataProtection 密钥 XML 的结构（只是被 `key id=` 触发）。
-  这类文件的清除靠路径移除保证，而不是靠扫描器；1e-1 的路径计数才是权威判据。
+gitleaks：重写前 2 条为旧样例 DataProtection 密钥 XML（路径移除后消失）与 `docs/hardcode-audit.md:147` 的误报
+（配置键 `EmployeeApi:BypassCertificateValidation=true` 被当 key=value）。`gitleaks.toml` 用行级正则精确放行，
+不依赖提交哈希。gitleaks 并不识别 DataProtection 密钥 XML 的结构，该文件的清除靠路径移除保证，1e-1 才是权威判据。
 
-## 待用户拍板：提交作者邮箱
+## 作者邮箱（已裁决）
 
-历史中 74 个提交（新旧提交合计）的作者/提交者是 `kzheng <作者的公司邮箱>`——公司邮箱，会随新仓公开。
-`--replace-text` 只改内容，不改作者；要处理必须用 `--mailmap`。演练变体（`after-mailmap.git`）：
-`kzheng <kamazheng@users.noreply.github.com> <作者的公司邮箱>`（mailmap 格式：新名 <新邮箱> <旧邮箱>），结果「含源公司名的行数」= 0，提交数同为 90。
-是否改写作者、改成什么是署名决定，本线未拍板，G1 前请定。
+历史中作者/提交者含源公司邮箱的提交一律用 `--mailmap` 映射为 `kzheng <kamazheng@users.noreply.github.com>`
+（与较新提交一致）。映射表由 `history-mailmap.sh` 在重写时从历史里生成，不入库静态文件，
+否则旧邮箱字面量会让 `git grep` 自命中。**原始身份保留在私有归档仓（旧仓改名）与 bundle 备份中。**
 
 ## 规则的取舍
 
-- 源公司域名的任意层级子域 → `internal.example.com`（保留「这是个主机名」的形状，历史 diff 仍可读）；`@<源公司域名>`、裸域名 → `example.com`。
-- 带公司名的标识符（审批中心类名、OIDC scheme 名等）改为中性名；最后一条不分大小写的公司名 → `Company` 兜底。
-  兜底会改写历史里「说明性文字」中的公司名（例如旧复盘文档），这是有意的：目标是公开历史里不再出现公司名。
-- 规则按顺序执行，先具体后宽泛；改顺序会让兜底吞掉具体规则的匹配。
+- `--replace-text` / `--replace-message` 的规则文件**不支持 `#` 注释**：每个非空行都是一条规则，
+  注释行会被当成字面替换（把文字换成 `***REMOVED***`）。所以规则文件里没有任何注释，解释都在本节。
+- 规则按顺序执行，先具体后宽泛；兜底规则必须在最后（否则吞掉具体规则的匹配）：
+  1. 源公司域名的任意层级子域 → `internal.example.com`；`@域名`、裸域名 → `example.com`。
+  2. 带公司名的标识符（审批中心类名、OIDC scheme 名等）→ 中性名。
+  3. 内部 GitLab 组名、`Company-` 前缀、公司中文名（全称与简称）、「公司 Connector (Chengdu)」类英文全称、内网网段 → 中性/占位值（网段用 RFC 5737 的 `192.0.2.0`）。
+  4. 兜底：不分大小写的公司名 → `Company`（有意改写历史说明性文字里的公司名）。
+  5. 其余 `*.cdu(qa).*` 内部主机 → `internal.example.com`。
+- 规则文件自身的模式写成字符类（如 `[m]olex`、`莫[仕]`），避免规则文件被自己的规则改写、也避免当前树 `git grep` 自命中。
 
 ## G1 正式执行与本演练的差别
 
-- 对象是 A1-A5 全部合入后的 main 的**新克隆**（`git clone --no-local`），不是本演练的镜像；
-  提交数与哈希会不同，三项计数必须重跑。
+- 对象是 A1-A5 全部合入后、**从 GitHub origin 新克隆**的仓（不从本地仓克隆：本地仓含 `s1/*` 本地分支，`push --mirror` 会全推）。
+  克隆后只保留 main 与 tag 再推；提交数与哈希会不同，计数必须重跑，`history-counts.sh` 必须退出 0。
 - 重写前先做 bundle 备份并 `git bundle verify`；旧仓改名归档（保持 private），推到新建空仓。
+- G1 之后：用新仓重新克隆本地仓与各 worktree，旧本地仓改名保留，防止旧历史被推进新仓。
 - 演练目录 `/tmp/appkit-rewrite/` 含重写前的完整历史，用完即删。
