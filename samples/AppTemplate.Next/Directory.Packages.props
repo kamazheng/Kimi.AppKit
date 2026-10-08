@@ -46,6 +46,7 @@
         <PackageVersion Include="Kimi.AppKit.Components" Version="$(KimiAppKitVersion)" />
         <PackageVersion Include="Kimi.AppKit.Crud" Version="$(KimiAppKitVersion)" />
         <PackageVersion Include="Kimi.AppKit.Observability" Version="$(KimiAppKitVersion)" />
+        <PackageVersion Include="Kimi.AppKit.Http" Version="$(KimiAppKitVersion)" />
     </ItemGroup>
 
     <!-- PG 存储。Kimi.AppKit.Web 刻意不引用它（那会把 PG 驱动强加给只用 SQL Server 的
@@ -63,19 +64,9 @@
 
     <!-- ── 传递依赖的安全提版 ──────────────────────────────────────────
          这些包没有任何工程直接引用，靠 CentralPackageTransitivePinningEnabled 提版。
-         它们随 Kimi.AppKit.Web 的 NPOI / Hangfire 进来。
+         它们随 Kimi.AppKit.Web 的 Hangfire 进来。
          删除任何一条之前，先跑 `dotnet restore` 确认审计不再报 NU1902/NU1903。 -->
     <ItemGroup>
-        <!-- NPOI 依赖 System.Security.Cryptography.Xml 8.0.2，该版本有 8 个 high severity
-             建议（GHSA-23rf-6693-g89p 等）。NPOI 自身没跟进，只能在这里提到 10.0.11。 -->
-        <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.11" />
-
-        <!-- NPOI 2.7.1 依赖 SixLabors.ImageSharp 2.1.8（2 个 high + 2 个 moderate 建议）。
-             ⚠️ **只能提到 2.1.x 的最新补丁，不要跳 3.x** —— 这是许可问题而非技术问题：
-             2.x 是 Apache-2.0，3.x 起改用 Six Labors Split License，
-             闭源商业使用需另购授权，而本模板正是要交付给客户的商业产品。 -->
-        <PackageVersion Include="SixLabors.ImageSharp" Version="2.1.13" />
-
         <!-- Hangfire 依赖 Newtonsoft.Json 11.0.1（1 个 high severity 建议，
              GHSA-5crp-9r3c-p9vr）。Hangfire 自身没跟进，只能在这里提版。 -->
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />

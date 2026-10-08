@@ -4,7 +4,7 @@
 > 配套：消费 Kimi.AppKit 的硬约束见 `.claude/rules/appkit-consumption.md`；领域约束见 `.claude/rules/domain-constraints.md`；改码流程见 `.claude/rules/code-change-protocol.md`；决策见 `ADR/`。
 
 - **项目定位**：`dotnet new` 模板的样例宿主。它同时是**两样东西**——
-  ① 派生真实业务系统的起点；② `Kimi.AppKit` 七个包的**活体集成测试**：包里任何能力接不上，这里第一个暴露。
+  ① 派生真实业务系统的起点；② `Kimi.AppKit` 九个包（8 库 + 模板）的**活体集成测试**：包里任何能力接不上，这里第一个暴露。
 - **技术栈**：.NET 10 · Blazor Web App（全局 InteractiveWebAssembly）· MudBlazor 9 · EF Core 10 双 provider（PostgreSQL / SQL Server）· OpenIddict（经 `Kimi.KMold.Auth`）
 - **顶层模块**：`KMoldApp`（服务端宿主）· `KMoldApp.Client`（WASM）· `KMoldApp.Shared`（两端共用契约）· `KMoldApp.Data`（实体与 DbContext）· `KMoldApp.Migrations.Npgsql` / `.SqlServer`（两套独立迁移）
 

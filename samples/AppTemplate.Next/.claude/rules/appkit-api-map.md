@@ -74,12 +74,36 @@ paths:
 | 业务异常（带状态码） | `BaseException` | 自定义同名/同形状异常 |
 | 「详情该不该暴露」策略 | `IErrorDetailPolicy` | 在异常处理器里写死 |
 | CORS | `AddAppCors(origins)` | `AllowAnyOrigin()` |
-| Excel 导入导出 | `IExcelService` | 自己用 NPOI |
+| Excel 导入导出（单 sheet 标量表格） | `IExcelService`（`AddAppKitExcel()`，底层 ClosedXML） | 引 NPOI（**禁止**，含其传递的 ImageSharp 2.x 无补丁） |
 | 邮件 | `IKEmailSender` / `AddAppKitEmail` | `System.Net.Mail.SmtpClient`（微软已不推荐） |
 | 后台任务 | `AddAppKitHangfire(...)` | 自己配 Hangfire 存储 |
 | 请求本地化 | `UseAppKitRequestLocalization(default, supported)` | 自己拼 `RequestLocalizationOptions` |
 | 可观测性 | `AddAppKitObservability()` | 自己配 OTel |
 | 敏感数据脱敏 | `KSensitiveDataRedactor` | 自写正则 |
+
+## HTTP 客户端（Kimi.AppKit.Http）
+
+| 想做 | 必须用 | 禁止自写 |
+|---|---|---|
+| 调用其他服务的 REST API（Refit 接口） | `AddAppKitRefitClient<T>(baseAddress)`（`Kimi.AppKit.Http`） | 手写 `HttpClient` + `JsonSerializer` 拼 URL；自己配 Refit 的 `CollectionFormat`（数组查询参数必须 `Multi`，包内已设） |
+| 服务端预渲染时的 Refit 占位 | `AddPrerenderRefitClient<T>()` | 让预渲染真去调远端 |
+
+> 本模板默认只引 `Kimi.AppKit.Crud` 的 CRUD 数据源；要接别的服务时在 `Directory.Packages.props`
+> 已有的 `Kimi.AppKit.Http` 版本上加 `<PackageReference Include="Kimi.AppKit.Http" />` 即可。
+
+## 可观测性（Kimi.AppKit.Observability）
+
+| 想做 | 必须用 | 禁止自写 |
+|---|---|---|
+| OTel 追踪/指标/日志装配 | `builder.AddAppKitObservability()`（端点走 `OTEL_EXPORTER_OTLP_ENDPOINT`，未配置即跳过） | 自己配 `AddOpenTelemetry()` |
+| 给 trace 打终端用户标签 | `app.UseAppKitEndUserTag()` | 自写中间件读 `ClaimsPrincipal` |
+| 日志/追踪里脱敏 | `KSensitiveDataRedactor.Redact` / `RedactAuthorizationHeader` | 自写正则 |
+
+## Excel 例外条款
+
+`IExcelService` 只负责「标量属性 ↔ 单 sheet 表格」。**复杂带样式报表**（多 sheet、合并单元格、
+条件格式）属于**例外**：应用直引 **ClosedXML**（版本经本目录 `Directory.Packages.props`
+与 AppKit 保持一致），**禁止引 NPOI**。走例外前仍按下方「例外流程」记 ADR。
 
 ## UI 组件
 

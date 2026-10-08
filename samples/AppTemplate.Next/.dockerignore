@@ -1,0 +1,22 @@
+# 构建上下文只留「发布主工程所需」的源码；其余一律不进上下文。
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/node_modules/
+.git/
+.gitignore
+.dockerignore
+Dockerfile
+
+# 与镜像无关：测试、迁移、文档、脚本、AI 规则
+KMoldApp.Tests/
+KMoldApp.Migrations.*/
+scripts/
+ADR/
+.claude/
+.template.config/
+*.md
+*.sln

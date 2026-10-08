@@ -22,7 +22,7 @@
         <NoDefaultExcludes>true</NoDefaultExcludes>
 
         <!-- NU5128：模板包没有 lib/ref，不需要依赖组。
-             NU5110/NU5111：包里带 .ps1（ChangeProjectName.ps1 / migrate-prod.ps1）。
+             NU5110/NU5111：历史上包里带过 .ps1（ChangeProjectName.ps1 / migrate-prod.ps1，均已删除）。
              这两条针对的是「安装期执行脚本」的老式包约定，对模板包不适用——
              这些脚本是给生成出来的项目用的源码内容，本来就不该在安装时执行。 -->
         <NoWarn>$(NoWarn);NU5128;NU5110;NU5111</NoWarn>
@@ -57,7 +57,7 @@
 
         <ItemGroup>
             <TemplateSourceFile Include="$(TemplateSourceRoot)**/*"
-                                Exclude="$(TemplateSourceRoot)**/bin/**;$(TemplateSourceRoot)**/obj/**;$(TemplateSourceRoot)**/.vs/**;$(TemplateSourceRoot)**/.vscode/**;$(TemplateSourceRoot)**/.idea/**;$(TemplateSourceRoot)**/node_modules/**;$(TemplateSourceRoot)**/*.user;$(TemplateSourceRoot)Kimi.AppKit.Sample/api/**" />
+                                Exclude="$(TemplateSourceRoot)**/bin/**;$(TemplateSourceRoot)**/obj/**;$(TemplateSourceRoot)**/.vs/**;$(TemplateSourceRoot)**/.vscode/**;$(TemplateSourceRoot)**/.idea/**;$(TemplateSourceRoot)**/node_modules/**;$(TemplateSourceRoot)**/*.user;$(TemplateSourceRoot)KMoldApp.dev.sln;$(TemplateSourceRoot)scripts/template-selftest.sh;$(TemplateSourceRoot)Kimi.AppKit.Sample/api/**" />
         </ItemGroup>
 
         <Copy SourceFiles="@(TemplateSourceFile)"
