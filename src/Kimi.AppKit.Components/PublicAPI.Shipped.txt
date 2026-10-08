@@ -368,8 +368,6 @@ Kimi.AppKit.Components.KEnvironmentServiceCollectionExtensions
 Kimi.AppKit.Components._Imports
 Kimi.AppKit.Components._Imports.Execute() -> void
 Kimi.AppKit.Components._Imports._Imports() -> void
-const Kimi.AppKit.Design.Tokens.BlueprintPalette.FontStack = "
-const Kimi.AppKit.Design.Tokens.BlueprintPalette.MonoStack = "
 override Kimi.AppKit.Components.Auth.KErrorPage.OnInitialized() -> void
 override Kimi.AppKit.Components.Auth.KPersistentAuthenticationStateProvider.GetAuthenticationStateAsync() -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState!>!
 override Kimi.AppKit.Components.Buttons.ErrorCatchButton.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder! builder) -> void

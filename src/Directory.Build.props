@@ -28,7 +28,9 @@
         <!-- 包必须带 XML doc：本产品把「实测换来的隐性知识」写在 XML 注释里，
              消费方靠 IntelliSense 读到它们。丢了等于知识丢了。 -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NoWarn>$(NoWarn);CS1591</NoWarn>
+        <!-- RS0041：Razor 源生成器为带 @typeparam / 部分组件产出的 BuildRenderTree(__builder) 没有 nullable 标注（oblivious），
+             是生成器行为、无法在 .razor 里改；这些 override 在 PublicAPI.Shipped.txt 里以 `~` 前缀登记。 -->
+        <NoWarn>$(NoWarn);CS1591;RS0041</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
