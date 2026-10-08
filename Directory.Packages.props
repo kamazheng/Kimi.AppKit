@@ -37,9 +37,6 @@
         <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.11" />
         <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.11" />
         <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
-
-        <!-- ⚠️ 这个包不跟随 ASP.NET Core 的版本线：它是 netstandard2.0 的老 shim，
-             最新就是 2.3.x。看到 "2.3.12" 不要以为是漏升了。 -->
     </ItemGroup>
 
 

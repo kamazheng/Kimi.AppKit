@@ -369,7 +369,6 @@ FodyWeavers.xsd
 **/wwwroot/[Pp]ublic/
 */[Aa]pi/
 
-Kimi.AppKit.Sample/_docfx.txt
 .superpowers/
 
 # Graphify 知识图谱输出
@@ -378,8 +377,6 @@ graphify-out/
 # Playwright MCP 临时页面快照与验证截图
 .playwright-mcp/
 /*.png
-!Kimi.AppKit.Sample/**/*.png
-!Kimi.AppKit.Sample.Client/**/*.png
 
 # Claude Code agent worktrees (transient)
 .claude/worktrees/
@@ -389,8 +386,6 @@ graphify-out/
 .claude/settings.local.json
 
 # Data Protection 密钥环（含加密密钥，按环境持久化到卷，切勿入库）
-Kimi.AppKit.Sample/DataProtection-Keys/
-Kimi.AppKit.Sample/_docfx.txt
 
 # JetBrains Rider / IntelliJ 本地 IDE 配置（目录名含项目名，不应入库）
 .idea/
