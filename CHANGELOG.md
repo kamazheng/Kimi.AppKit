@@ -29,7 +29,8 @@
 - **行为：`EfCrudDataSource.UpsertAsync` 保存前做 DataAnnotations 校验。** 此前端点手工读 body、自动校验不跑，
   `[Required]`/`[MaxLength]` 形同虚设（名称留空也能保存）。现在校验失败返回 `KResult.Fail`（端点转 400），不落库；
   Excel 导入逐行调用同一方法，沿用既有「逐行报错」语义。`IAuditableEntity` 的四个审计属性不参与校验。
-  唯一约束冲突（PostgreSQL 23505 / SQL Server 2601、2627）同样返回可读的 `KResult.Fail`，不再冒成 500。
+  校验消息为中文（字段名取 `[Display(Name)]`，显式 `ErrorMessage` 优先）。
+  唯一约束冲突（PostgreSQL 23505 / SQL Server 2601、2627 / SQLite 2067、1555）同样返回可读的 `KResult.Fail`，不再冒成 500。
   实体上若给导航属性或服务端填充字段标了 `[Required]`，升级后会开始被拒，请移除该特性。
 
 ### Added

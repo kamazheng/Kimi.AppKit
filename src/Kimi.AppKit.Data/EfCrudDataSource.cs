@@ -116,7 +116,7 @@ public class EfCrudDataSource<TContext, TEntity>(IDbContextFactory<TContext> con
         catch (DbUpdateException ex) when (CrudSaveGuard.IsUniqueViolation(ex))
         {
             // 唯一约束冲突是预期内的业务结果（同名记录），翻成 400 而不是 500。
-            return KResult.Fail(CrudSaveGuard.UniqueMessage(db, typeof(TEntity)));
+            return KResult.Fail(CrudSaveGuard.UniqueMessage(db, typeof(TEntity), ex));
         }
     }
 
