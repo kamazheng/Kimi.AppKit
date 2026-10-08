@@ -75,6 +75,18 @@ jobs:
         with:
           global-json-file: global.json
 
+      # 依赖图断言：ImageSharp / NPOI 已整体移出依赖图（2.x 全线有未修复公告、2.8+ 与 4.x 许可不可接受）。
+      # restore 不带任何审计绕过——审计公告在 TreatWarningsAsErrors 下会直接让 restore 失败。
+      - name: 依赖图断言（无 ImageSharp / NPOI，restore 审计通过）
+        run: |
+          dotnet restore Kimi.AppKit.slnx --force
+          hits=$(dotnet list Kimi.AppKit.slnx package --include-transitive | grep -ciE 'imagesharp|npoi' || true)
+          if [ "$hits" != "0" ]; then
+            echo "::error::依赖图里出现 ImageSharp/NPOI（$hits 处）"
+            dotnet list Kimi.AppKit.slnx package --include-transitive | grep -iE 'imagesharp|npoi'
+            exit 1
+          fi
+
       # ⚠️ 这一步不允许 continue-on-error。
       #    参考教训：Kimi.MudBlazorExtentions 的 CI 里 run_test 跑的是一个 10 行的空 [Fact]，
       #    于是历次发布实质上没有任何自动化验证。gate 必须是真的。
