@@ -30,6 +30,10 @@ public sealed class TemplatePackagingTests : IClassFixture<TemplatePackagingTest
         => Assert.DoesNotContain(_pkg.Entries, e => e.Contains("migrate-prod", StringComparison.OrdinalIgnoreCase));
 
     [Fact]
+    public void 模板包不含只能在_AppKit_仓内运行的_selftest_脚本()
+        => Assert.DoesNotContain(_pkg.Entries, e => e.Contains("template-selftest", StringComparison.OrdinalIgnoreCase));
+
+    [Fact]
     public void 模板包含_Dockerfile_与_dockerignore()
     {
         Assert.Contains(_pkg.Entries, e => e.EndsWith("content/kimiapp/Dockerfile", StringComparison.Ordinal));
