@@ -85,7 +85,7 @@ public sealed class KCrudEndpointsTests
                     services.AddAuthentication("Test").AddScheme<TestSchemeOptions, TestHandler>("Test", _ => { });
                     services.AddDefaultDenyAuthorization();
                     services.AddSingleton<ICrudDataSource<Widget>>(source);
-                    services.AddSingleton<IExcelService, NpoiExcelService>();
+                    services.AddAppKitExcel();
                 })
                 .Configure(app =>
                 {
@@ -240,6 +240,26 @@ public sealed class KCrudEndpointsTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task 导出的xlsx可被ExcelService解析出与种子数据相同的行数()
+    {
+        var (host, client, source) = await StartAsync(e => e.AllowAnonymousRead());
+        using var _h = host;
+        source.Items.AddRange([new Widget { Id = 1, Name = "螺栓" }, new Widget { Id = 2, Name = "螺母" }, new Widget { Id = 3, Name = "垫片" }]);
+
+        var response = await client.GetAsync("/api/crud/widget/export");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            response.Content.Headers.ContentType?.MediaType);
+
+        var excel = host.Services.GetRequiredService<IExcelService>();
+        await using var body = await response.Content.ReadAsStreamAsync();
+        var rows = excel.Import<Widget>(body);
+
+        Assert.Equal(source.Items.Count, rows.Count);
+        Assert.Equal(source.Items.Select(w => w.Name), rows.Select(w => w.Name));
     }
 
     [Fact]

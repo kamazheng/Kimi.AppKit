@@ -116,15 +116,10 @@
          这些包没有任何工程直接引用，靠 CentralPackageTransitivePinningEnabled 提版。
          删除任何一条之前，先跑 `dotnet restore` 确认审计不再报 NU1903。 -->
     <ItemGroup>
-        <!-- NPOI 依赖 System.Security.Cryptography.Xml 8.0.2，该版本有 8 个 high severity
-             建议（GHSA-23rf-6693-g89p 等）。NPOI 自身没跟进，只能在这里提到 10.0.11。 -->
-        <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.11" />
-
-        <!-- NPOI 2.7.1 依赖 SixLabors.ImageSharp 2.1.8（2 个 high + 2 个 moderate 建议）。
-             ⚠️ **只能提到 2.1.x 的最新补丁，不要跳 3.x** —— 这同样是许可问题：
-             2.x 是 Apache-2.0，3.x 起改用 Six Labors Split License，闭源商业使用需另购授权。
-             2.1.13 既修完漏洞又仍是 Apache-2.0，是这条线上唯一两全的落点。 -->
-        <PackageVersion Include="SixLabors.ImageSharp" Version="2.1.13" />
+        <!-- ClosedXML 0.105.x 依赖 SixLabors.Fonts [1.0.0,3.0.0)。
+             ⚠️ **只能停在 1.0.x：2.x 起改用 Six Labors Split License**，闭源商业使用需另购授权；
+             1.0.x 是 Apache-2.0 且无安全公告。升 ClosedXML 前先确认它没有抬高 Fonts 的下限。 -->
+        <PackageVersion Include="SixLabors.Fonts" Version="1.0.1" />
 
         <!-- Hangfire 依赖 Newtonsoft.Json 11.0.1（1 个 high severity 建议，
              GHSA-5crp-9r3c-p9vr）。Hangfire 自身没跟进，只能在这里提版。 -->
@@ -144,18 +139,19 @@
              它唯一的用途是让通用查询端点解析客户端传来的过滤表达式字符串，
              那正是 P2 量化判定「不抽」的能力（MES 里 0 使用），P7c 已连同输入口一并移除。
              列表查询走 Kimi.AppKit.Data 的 ReflectiveCrudDataSource（表达式树 + 属性白名单）。 -->
-        <!-- ⚠️ 刻意停在 2.7.1，不要升 2.8.0 —— 这是许可问题不是技术问题。
-             2.7.1 = Apache-2.0（无附加条件）；
-             2.8.0 起 nuget.org 上的**二进制包**改用 OSMF（Open Source Maintenance Fee）协议：
-             用于营利活动且年营收 ≥ US$10,000 的用户须按月付维护费，构建时还要求显式写
-             <AcceptNPOIOSMFLicense>true</AcceptNPOIOSMFLicense> 表示接受 EULA。
-             本产品是对外销售的商业软件，会落进收费区间。
-             TODO(P3): ExcelService 迁进 Kimi.AppKit.Web 时定夺——付费、或换 ClosedXML(MIT)。 -->
+        <!-- Excel：ClosedXML（MIT），不用 NPOI。为什么（决策记录，勿凭印象换回）：
+             · NPOI 2.7.x（Apache-2.0）依赖 SixLabors.ImageSharp 2.x，该系列 5 条公告（2026-10-07）
+               覆盖 2.x 全线、唯一修复版 4.1.2；NPOI 2.7.6 仍依赖 ImageSharp 2.1.11，升级无解。
+             · NPOI 2.8+ 起二进制包改用 OSMF 维护费协议（营利且年营收 ≥ US$10,000 须付费，
+               构建时还要求 <AcceptNPOIOSMFLicense>true</AcceptNPOIOSMFLicense>），本产品是对外销售的商业软件。
+             · ImageSharp 4.x 是 Six Labors Split License，闭源商业使用需购授权。
+             ClosedXML 不依赖 ImageSharp / BouncyCastle / NPOI 一族。
+             复杂带样式报表由应用直引 ClosedXML（版本经 CPM 与此处一致）。 -->
+        <PackageVersion Include="ClosedXML" Version="0.105.1" />
         <!-- 邮件。⚠️ 刻意不用 System.Net.Mail.SmtpClient——微软官方文档原话是
              「不应当用于新开发」，并直接点名 MailKit 作为替代。这不是风格问题：
              SmtpClient 对现代 TLS 与 OAuth2 支持不足，连不上 Office 365 这类服务。 -->
         <PackageVersion Include="MailKit" Version="4.17.0" />
-        <PackageVersion Include="NPOI" Version="2.7.1" />
         <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
         <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.22.0" />
         <PackageVersion Include="nacos-sdk-csharp" Version="1.3.10" />

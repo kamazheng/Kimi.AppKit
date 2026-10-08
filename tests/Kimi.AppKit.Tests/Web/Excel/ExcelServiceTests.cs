@@ -58,6 +58,9 @@ public sealed class ExcelServiceTests
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
     }
 
+    // xlsx 的 <col width> 是「字符数 + 约 0.71 的单元格内边距」，Excel 界面显示的是不含边距的值。
+    private const double Tolerance = 1.0;
+
     private static IExcelService Service() =>
         new ServiceCollection().AddAppKitExcel().BuildServiceProvider().GetRequiredService<IExcelService>();
 
@@ -169,11 +172,11 @@ public sealed class ExcelServiceTests
     [InlineData("汉汉汉汉汉汉汉汉汉汉", 22)]
     [InlineData("abc", 8)]
     public void T7_列宽按显示宽度_CJK计2_下限8(string value, int expected) =>
-        Assert.Equal(expected, ColumnWidth(Service().Export([new A { Value = value }])), 0.5);
+        Assert.Equal(expected, ColumnWidth(Service().Export([new A { Value = value }])), Tolerance);
 
     [Fact]
     public void T7_列宽上限60() =>
-        Assert.Equal(60, ColumnWidth(Service().Export([new A { Value = new string('a', 100) }])), 0.5);
+        Assert.Equal(60, ColumnWidth(Service().Export([new A { Value = new string('a', 100) }])), Tolerance);
 
     private static double ColumnWidth(byte[] xlsx) =>
         double.Parse(Part(xlsx, "xl/worksheets/sheet1.xml").Descendants(Ns + "col").First().Attribute("width")!.Value,
