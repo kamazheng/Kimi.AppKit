@@ -2,17 +2,17 @@
 # 格式：`regex:<模式>==><替换>`；未带 regex: 前缀的行为字面量。顺序即执行顺序，先具体后宽泛。
 # 配合：--path samples/AppTemplate --invert-paths（整个旧样例路径从全部历史移除）
 
-# 1) 内部主机名：任意层级子域 + example.com -> 占位域名（example.com 同级，保留「这是个主机名」的形状）
-regex:(?i)[a-z0-9-]+(\.[a-z0-9-]+)*\.Company\.com==>internal.example.com
+# 1) 内部主机名：任意层级子域 + 源公司域名 -> 占位域名（example.com 同级，保留「这是个主机名」的形状）
+regex:(?i)[a-z0-9-]+(\.[a-z0-9-]+)*\.[m]olex\.com==>internal.example.com
 # 2) 邮箱/裸域名
-regex:(?i)@Company\.com==>@example.com
-regex:(?i)\bCompany\.com\b==>example.com
+regex:(?i)@[m]olex\.com==>@example.com
+regex:(?i)\b[m]olex\.com\b==>example.com
 # 3) 公司名带入的标识符
-regex:UseApprovalCenter==>UseApprovalCenter
-regex:ApproveCenter==>ApproveCenter
-regex:CompanyOidc==>CompanyOidc
-regex:Company-==>Company-
+regex:Use[M]olexApprovalCenter==>UseApprovalCenter
+regex:[M]olexApproveCenter==>ApproveCenter
+regex:[M]olexCduOpenId==>CompanyOidc
+regex:[M]olexCDU-==>Company-
 # 4) 其余公司名字样（大小写不敏感）-> 中性词；放最后兜底
-regex:(?i)Company==>Company
-# 5) 内部其它主机名（cdu/cduqa 子域，不含 Company 的形态）
+regex:(?i)[m]olex==>Company
+# 5) 内部其它主机名（cdu/cduqa 子域，不含源公司域名的形态）
 regex:(?i)[a-z0-9-]+\.(cdu|cduqa)\.[a-z0-9.-]+==>internal.example.com

@@ -5,7 +5,7 @@
 
 ## 为什么重写、为什么推新仓
 
-- 旧样例 `samples/AppTemplate`（329 文件）含内部主机名、内部命名空间配置、DataProtection 密钥 XML；历史里另有文档/注释中的内部主机名。
+- 旧样例 `samples/AppTemplate`（329 文件）含内部主机名、内部配置中心命名空间、DataProtection 密钥 XML；历史里另有文档/注释中的内部主机名。
 - 只删当前树没用：旧提交仍可达。直接改可见性也不行：GitHub 对象存储与 Actions 记录仍可按 SHA 访问旧提交。
   所以做法是重写后推到**新建**仓，旧仓改名归档并保持 private。
 
@@ -48,11 +48,11 @@ podman run --rm -v /private/tmp/appkit-rewrite/after.git:/repo:ro -v /private/tm
 |---|---|---|---|
 | 提交数（所有 ref） | 102 | 90 | 12 个提交只改了旧样例路径，被 filter-repo 当作空提交剪掉 |
 | 1e-1 `git log --all -p -- 'samples/AppTemplate/*'` 行数 | 1,086,559 | **0** | 0 ✅ |
-| 1e-2 `git log --all -p \| grep -ciE '[a-z0-9-]+\.Company\.com'` | 71 | **0** | 0 ✅ |
+| 1e-2 `git log --all -p \| grep -ciE '[a-z0-9-]+\.<源公司域名>'` | 71 | **0** | 0 ✅ |
 | 1e-3 gitleaks 全历史发现数（默认规则） | 2 | 1（误报） | 见下 |
 | 1e-3 gitleaks 全历史发现数（`gitleaks.toml`） | 2 | **0** | 0 ✅ |
 | 辅助：`*.cdu(qa).` 主机行数 | 51 | 0 | |
-| 辅助：含 `Company`（不分大小写）的行数 | 5027 | 74 | 74 行全是提交作者邮箱，见下 |
+| 辅助：含源公司名（不分大小写）的行数 | 5027 | 74 | 74 行全是提交作者邮箱，见下 |
 | 重写后 `dotnet test`（分支 `s1/a4-public-hygiene` 检出） | — | 44 + 33 + 289 通过 | 重写不破坏构建 |
 
 gitleaks 说明：
@@ -64,15 +64,15 @@ gitleaks 说明：
 
 ## 待用户拍板：提交作者邮箱
 
-历史中 74 个提交（新旧提交合计）的作者/提交者是 `kzheng <kai.zheng@example.com>`——公司邮箱，会随新仓公开。
+历史中 74 个提交（新旧提交合计）的作者/提交者是 `kzheng <作者的公司邮箱>`——公司邮箱，会随新仓公开。
 `--replace-text` 只改内容，不改作者；要处理必须用 `--mailmap`。演练变体（`after-mailmap.git`）：
-`kzheng <kamazheng@users.noreply.github.com> <kai.zheng@example.com>`，结果「含 Company 的行数」= 0，提交数同为 90。
+`kzheng <kamazheng@users.noreply.github.com> <作者的公司邮箱>`（mailmap 格式：新名 <新邮箱> <旧邮箱>），结果「含源公司名的行数」= 0，提交数同为 90。
 是否改写作者、改成什么是署名决定，本线未拍板，G1 前请定。
 
 ## 规则的取舍
 
-- `*.example.com` → `internal.example.com`（保留「这是个主机名」的形状，历史 diff 仍可读）；`@example.com`、裸 `example.com` → `example.com`。
-- `ApproveCenter` 等带公司名的标识符改为中性名；最后一条 `(?i)Company` → `Company` 兜底。
+- 源公司域名的任意层级子域 → `internal.example.com`（保留「这是个主机名」的形状，历史 diff 仍可读）；`@<源公司域名>`、裸域名 → `example.com`。
+- 带公司名的标识符（审批中心类名、OIDC scheme 名等）改为中性名；最后一条不分大小写的公司名 → `Company` 兜底。
   兜底会改写历史里「说明性文字」中的公司名（例如旧复盘文档），这是有意的：目标是公开历史里不再出现公司名。
 - 规则按顺序执行，先具体后宽泛；改顺序会让兜底吞掉具体规则的匹配。
 
