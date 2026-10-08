@@ -55,14 +55,11 @@ jobs:
 
       # 排除的规则，每条都有理由——不要为了让 CI 变绿而随手往这里加：
       #   119 作者与所有者相同 —— 个人仓库天然如此
-      #    52 仓库 URL 不可访问 —— 仓库当前是 private，校验器拿到 404。
-      #       ⚠️ 包本身是要发到公开 nuget.org 的，仓库转 public 后应删掉这条豁免，
-      #          否则会掩盖「RepositoryUrl 真的写错了」这类问题。
       - name: 校验包元数据
         run: |
           shopt -s nullglob
           for pkg in "${{ env.NuGetDirectory }}"/*.nupkg; do
-            meziantou.validate-nuget-package "$pkg" --excluded-rule-ids 119,52
+            meziantou.validate-nuget-package "$pkg" --excluded-rule-ids 119
           done
 
   run_test:
