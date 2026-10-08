@@ -48,7 +48,7 @@ echo "    模板包：$TEMPLATE_PKG"
 
 echo "==> [2/4] 安装模板包（隔离 hive）并生成 $PROBE_NAME"
 dotnet new install "$TEMPLATE_PKG" --debug:custom-hive "$HIVE" >/dev/null
-dotnet new kimiapp -n "$PROBE_NAME" -o "$OUT" --skip-restore --debug:custom-hive "$HIVE"
+dotnet new kimiapp -n "$PROBE_NAME" -o "$OUT" --skipRestore true --debug:custom-hive "$HIVE"
 
 echo "==> [3/4] 断言无旧项目名残留"
 if grep -rl "KMoldApp" "$OUT" 2>/dev/null | head -1 | grep -q .; then
