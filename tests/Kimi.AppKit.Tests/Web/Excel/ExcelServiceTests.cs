@@ -59,7 +59,12 @@ public sealed class ExcelServiceTests
     }
 
     // xlsx 的 <col width> 是「字符数 + 约 0.71 的单元格内边距」，Excel 界面显示的是不含边距的值。
-    private const double Tolerance = 1.0;
+    // 所以断言 0 <= 实际 - 目标 < 1：少于目标（边距丢失）或多出整 1 都会红。
+    private static void AssertWidth(double expected, byte[] xlsx)
+    {
+        var delta = ColumnWidth(xlsx) - expected;
+        Assert.InRange(delta, 0, 0.99999);
+    }
 
     private static IExcelService Service() =>
         new ServiceCollection().AddAppKitExcel().BuildServiceProvider().GetRequiredService<IExcelService>();
@@ -151,12 +156,37 @@ public sealed class ExcelServiceTests
     public sealed class LowerCased { public string name { get; set; } = ""; public int qty { get; set; } }
 
     [Fact]
-    public void T5_只有表头为空列表_sheetIndex选择第N个()
+    public void T5_只有表头为空列表()
     {
         var svc = Service();
         Assert.Empty(svc.Import<A>(Open(svc.Export(Array.Empty<A>()))));
-        // 只有一个 sheet 的文件，sheetIndex=1 应当失败而不是静默读到第 0 个
-        Assert.ThrowsAny<Exception>(() => svc.Import<A>(Open(svc.Export([new A { Value = "x" }])), sheetIndex: 1));
+    }
+
+    private static byte[] TwoSheets()
+    {
+        using var wb = new ClosedXML.Excel.XLWorkbook();
+        var s1 = wb.Worksheets.Add("first");
+        s1.Cell(1, 1).Value = "Value"; s1.Cell(2, 1).Value = "from-first";
+        var s2 = wb.Worksheets.Add("second");
+        s2.Cell(1, 1).Value = "Value"; s2.Cell(2, 1).Value = "from-second-1"; s2.Cell(3, 1).Value = "from-second-2";
+        using var ms = new MemoryStream();
+        wb.SaveAs(ms);
+        return ms.ToArray();
+    }
+
+    [Fact]
+    public void T5_sheetIndex选择第N个sheet()
+    {
+        var svc = Service();
+        Assert.Equal("from-first", Assert.Single(svc.Import<A>(Open(TwoSheets()))).Value);
+        Assert.Equal(["from-second-1", "from-second-2"],
+            svc.Import<A>(Open(TwoSheets()), sheetIndex: 1).Select(a => a.Value));
+    }
+
+    [Fact]
+    public void T5_sheetIndex越界抛ArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => Service().Import<A>(Open(TwoSheets()), sheetIndex: 5));
     }
 
     [Fact]
@@ -172,11 +202,11 @@ public sealed class ExcelServiceTests
     [InlineData("汉汉汉汉汉汉汉汉汉汉", 22)]
     [InlineData("abc", 8)]
     public void T7_列宽按显示宽度_CJK计2_下限8(string value, int expected) =>
-        Assert.Equal(expected, ColumnWidth(Service().Export([new A { Value = value }])), Tolerance);
+        AssertWidth(expected, Service().Export([new A { Value = value }]));
 
     [Fact]
     public void T7_列宽上限60() =>
-        Assert.Equal(60, ColumnWidth(Service().Export([new A { Value = new string('a', 100) }])), Tolerance);
+        AssertWidth(60, Service().Export([new A { Value = new string('a', 100) }]));
 
     private static double ColumnWidth(byte[] xlsx) =>
         double.Parse(Part(xlsx, "xl/worksheets/sheet1.xml").Descendants(Ns + "col").First().Attribute("width")!.Value,
