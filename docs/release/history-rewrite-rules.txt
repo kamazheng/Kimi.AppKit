@@ -1,0 +1,15 @@
+regex:(?i)[a-z0-9-]+(\.[a-z0-9-]+)*\.[m]olex\.com==>internal.example.com
+regex:(?i)@[m]olex\.com==>@example.com
+regex:(?i)\b[m]olex\.com\b==>example.com
+regex:Use[M]olexApprovalCenter==>UseApprovalCenter
+regex:[M]olexApproveCenter==>ApproveCenter
+regex:[M]olexCduOpenId==>CompanyOidc
+regex:[M]olexCDU-==>Company-
+regex:MLX-CD[U]-==>Company-
+regex:mlxnet[d]ev==>internal-group
+regex:莫[仕]连接器（成都）有限公司==>公司中文全称
+regex:莫[仕]==>公司
+regex:(?i)[m]olex Connector \(Chengdu\) Co\., Ltd\.==>Company Co., Ltd.
+regex:10\.221\.16[5]\.0==>192.0.2.0
+regex:(?i)[m]olex==>Company
+regex:(?i)[a-z0-9-]+\.(cdu|cduqa)\.[a-z0-9.-]+==>internal.example.com

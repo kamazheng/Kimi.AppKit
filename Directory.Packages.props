@@ -7,9 +7,7 @@
       升级时漏改一条就会出现「同一家族跨版本混用」——NuGet 只在少数情况下报错，
       多数时候是静默选一个较高版本，运行期才暴露。
 
-      ⚠️ 升级 MudBlazor 主版本时，CodeBeam.MudBlazor.Extensions 必须同步跳版
-         （它的大版本与 MudBlazor 一一对应）。
-         本仓库刻意停在 MudBlazor 8 系，8→9 是 P5 的独立分支。
+      ⚠️ MudBlazor 当前为 9.x。升级 MudBlazor 主版本前先确认依赖它的第三方扩展已跟进。
     -->
 
     <PropertyGroup>
@@ -31,31 +29,16 @@
         <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.11" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.11" />
         <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.11" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.11" />
-        <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.11" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11" />
         <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.11" />
         <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.11" />
         <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.11" />
         <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.11" />
         <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.11" />
         <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
-
-        <!-- ⚠️ 这个包不跟随 ASP.NET Core 的版本线：它是 netstandard2.0 的老 shim，
-             最新就是 2.3.x。看到 "2.3.12" 不要以为是漏升了。 -->
-        <PackageVersion Include="Microsoft.AspNetCore.Http" Version="2.3.12" />
     </ItemGroup>
 
-    <!-- ── API 版本化 / 文档 ──────────────────────────────────────────── -->
-    <ItemGroup>
-        <PackageVersion Include="Asp.Versioning.Mvc" Version="10.2.1" />
-        <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.2.1" />
-        <!-- P3 换成 Microsoft.AspNetCore.OpenApi + Scalar.AspNetCore（决策 #8） -->
-        <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
-    </ItemGroup>
 
     <!-- ── 可观测性（整族对齐 1.18.0，全部正式版）────────────────────────
          ⚠️ 这里**刻意不列** Prometheus 导出器与 EventCounters：二者至今只有 beta/alpha，
@@ -78,15 +61,14 @@
     <ItemGroup>
         <PackageVersion Include="Hangfire" Version="1.8.25" />
         <PackageVersion Include="Hangfire.Console" Version="1.4.3" />
-        <!-- PG 存储。Kimi.AppKit.Web 刻意不引用它（那会把 PG 驱动强加给只用 SQL Server 的
-             消费方），由消费方按需引入并经 AddAppKitHangfire 的 configurePostgres 接线。 -->
-        <PackageVersion Include="Hangfire.PostgreSql" Version="1.21.1" />
+        <!-- PG 存储（Hangfire.PostgreSql）刻意不在此登记：Kimi.AppKit.Web 不引用它
+             （那会把 PG 驱动强加给只用 SQL Server 的消费方），由消费方按需引入，
+             并经 AddAppKitHangfire 的 configurePostgres 接线。 -->
     </ItemGroup>
 
-    <!-- ── UI（P5a：MudBlazor 8→9，与 KMold Auth/Files 对齐）────────────
+    <!-- ── UI（MudBlazor 9.x）────────────────────────────────────────
          ⚠️ MudBlazor 一律钉死具体版本，禁用浮动 `9.*`：浮动会在每次 restore/部署
             静默升级，曾导致文件上传行为在无代码改动的情况下回归。
-         ⚠️ CodeBeam 的大版本与 MudBlazor 一一对应，必须同步跳版。
 
          ⚠️ 不要加回 MudBlazor.ThemeManager / FormCraft / FormCraft.ForMudBlazor。
             三者已随 P7b/P7c 删除且**没有任何引用方**：
@@ -97,20 +79,8 @@
               两套并存正是「不知道该用哪个」的成因。 -->
     <ItemGroup>
         <PackageVersion Include="MudBlazor" Version="9.9.0" />
-        <PackageVersion Include="CodeBeam.MudBlazor.Extensions" Version="9.1.0" />
-        <PackageVersion Include="Blazor-ApexCharts" Version="7.0.0" />
-        <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
-        <PackageVersion Include="Blazored.SessionStorage" Version="2.4.0" />
-        <PackageVersion Include="BlazorDownloadFileFast" Version="1.0.0.1" />
     </ItemGroup>
 
-    <!-- ── 待内化的私有包（P1/P2/P5 后全部移除）────────────────────────
-         都是 net8.0/net9.0，可被 net10 工程引用（同框架家族向前兼容）。 -->
-    <ItemGroup>
-        <PackageVersion Include="Kimi.EFExtensions" Version="1.0.8" />
-        <PackageVersion Include="Kimi.MudBlazorExtentions" Version="1.1.13" />
-        <PackageVersion Include="Kimi.CkEditor" Version="1.0.1" />
-    </ItemGroup>
 
     <!-- ── 传递依赖的安全提版 ──────────────────────────────────────────
          这些包没有任何工程直接引用，靠 CentralPackageTransitivePinningEnabled 提版。
@@ -133,8 +103,6 @@
                 后者走反射，在 trimmed / Native AOT 的 WASM 下会静默退化或抛。 -->
         <PackageVersion Include="Refit" Version="15.2.0" />
         <PackageVersion Include="Refit.HttpClientFactory" Version="15.2.0" />
-        <PackageVersion Include="Bogus" Version="35.6.5" />
-        <PackageVersion Include="FluentValidation" Version="12.1.1" />
         <!-- ⚠️ 不要加回 Microsoft.EntityFrameworkCore.DynamicLinq。
              它唯一的用途是让通用查询端点解析客户端传来的过滤表达式字符串，
              那正是 P2 量化判定「不抽」的能力（MES 里 0 使用），P7c 已连同输入口一并移除。
@@ -154,11 +122,6 @@
         <PackageVersion Include="MailKit" Version="4.17.0" />
         <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
         <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.22.0" />
-        <PackageVersion Include="nacos-sdk-csharp" Version="1.3.10" />
-        <PackageVersion Include="nacos-sdk-csharp.AspNetCore" Version="1.3.10" />
-        <PackageVersion Include="nacos-sdk-csharp.Extensions.Configuration" Version="1.3.10" />
-        <PackageVersion Include="nacos-sdk-csharp.IniParser" Version="1.3.10" />
-        <PackageVersion Include="nacos-sdk-csharp.YamlParser" Version="1.3.10" />
     </ItemGroup>
 
     <!-- 测试用的 provider。SQLite 内存模式能真正跑事务与约束，

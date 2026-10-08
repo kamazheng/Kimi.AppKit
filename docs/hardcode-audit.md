@@ -1,7 +1,12 @@
 # 硬编码审计：模板通用化清单
 
-> 审计日期 2026-09-02（P0 阶段）。范围：`samples/AppTemplate` 全部四个工程 + CI/部署脚本。
-> 这是把模板从「Company 成都工厂内部工具」改造成「任何客户可用的商业产品模板」的待办总账。
+> 审计日期 2026-09-02（P0 阶段）。范围：前身样例工程（`samples/AppTemplate`，S1 起已从仓库移出）全部四个工程 + CI/部署脚本。
+> 这是把模板从「某成都工厂内部工具」改造成「任何客户可用的商业产品模板」的待办总账。
+
+> **状态（2026-10，公开前整理）**：本文是历史审计总账，保留作设计依据。条目所指的前身样例工程已不在仓库内；
+> 公司名、内部主机名已替换为 `<…>` 占位。已修的部分由 AppKit 包承接——邮件地址全配置化（`KEmailOptions.FromAddress`）、
+> 遥测命名空间与过滤配置化（`KObservabilityOptions`）、`XmlDocLookup` 不再默认他项目文件名；
+> 其余条目属前身工程的具体实现，新模板（`samples/AppTemplate.Next`）按 AppKit 包的配置化约定另行实现，不逐条对账。
 
 **核心判据**：任何「换个客户就是错的」值，都不该出现在代码里。
 **安全判据**：配置项的**默认值必须在客户环境下是安全的**——信任网段的默认值是空，不是放行。
@@ -15,25 +20,25 @@
 | # | 位置 | 当前值 | 建议配置键 / 安全默认值 |
 |---|---|---|---|
 | A1-1 | `Kimi.AppKit.Sample/Program.cs:168` | `KnownIPNetworks = { IPNetwork("192.0.2.0", 23) }` | `Network:TrustedProxyCidrs`（string[]），默认 **空数组**。成都工厂反代网段写死在代码里，且代码注释自己就承认 /23 过宽 |
-| A1-2 | `Kimi.AppKit.Sample/appsettings.json:21` | `NacosConfig:ServerAddresses = ["http://internal.example.com/"]` | P3 整体删除 Nacos，换 `IKConfigSource` |
-| A1-3 | `appsettings.{Development,Staging,Production}.json:9` | 三套真实 Company 命名空间 GUID | 同上；顺带是内部信息泄露 |
-| A1-4 | `Client/wwwroot/appsettings.*.json:3-8` | `FileService:Url` = `internal.example.com`、`Viewer:Url` = `internal.example.com` | 同名键，默认 `https://fileservice.example.com` / `https://viewer.example.com/...`，**启动期校验**。WASM 端配置走不了配置中心，只能靠这里 |
-| A1-5 | `Infrastructure/ConfigureServices.cs:228` | `internalDomains = { "internal.example.com", "internal.example.com" }` | `OpenIDConnect:TrustedBackchannelHosts`，默认 **空**。⚠️ 见安全隐患 #3——这个机制本身要重做 |
-| A1-6 | `Infrastructure/OpenTelemetryHelper.cs:33` | `serviceNameSpace = $"Company-{env}"` | `Telemetry:ServiceNamespace`，默认取产品名 |
-| A1-7 | `Infrastructure/OpenTelemetryHelper.cs:124` | `Host.Contains("internal.example.com")` 用于排除轮询噪音 | `Telemetry:ExcludedHttpHosts`，应与配置中心地址联动而非二次硬编码 |
-| A1-8 | `.gitlab-ci.yml:1-3` | `include: project: 'Company/coc/dt/me/internal-group/chengdu/CDU_CICD'` | **本审计里唯一阻断式的一条**：客户 CI 在解析阶段就失败。改为仓库自带完整 jobs |
-| A1-9 | `.gitlab-ci.yml:7` | 注释示例用 `internal.example.com` | 换成 `app.<customer>.example.com` |
+| A1-2 | `Kimi.AppKit.Sample/appsettings.json:21` | `NacosConfig:ServerAddresses = ["http://<配置中心主机>/"]` | P3 整体删除 Nacos，换 `IKConfigSource` |
+| A1-3 | `appsettings.{Development,Staging,Production}.json:9` | 三套真实 内部配置中心命名空间 GUID | 同上；顺带是内部信息泄露 |
+| A1-4 | `Client/wwwroot/appsettings.*.json:3-8` | `FileService:Url` = `<内部文件服务主机>`、`Viewer:Url` = `<内部看图主机>` | 同名键，默认 `https://fileservice.example.com` / `https://viewer.example.com/...`，**启动期校验**。WASM 端配置走不了配置中心，只能靠这里 |
+| A1-5 | `Infrastructure/ConfigureServices.cs:228` | `internalDomains = { "<内部认证主机-生产>", "<内部认证主机-测试>" }` | `OpenIDConnect:TrustedBackchannelHosts`，默认 **空**。⚠️ 见安全隐患 #3——这个机制本身要重做 |
+| A1-6 | `Infrastructure/OpenTelemetryHelper.cs:33` | `serviceNameSpace = $"<公司缩写>-{env}"` | `Telemetry:ServiceNamespace`，默认取产品名 |
+| A1-7 | `Infrastructure/OpenTelemetryHelper.cs:124` | `Host.Contains("<配置中心主机>")` 用于排除轮询噪音 | `Telemetry:ExcludedHttpHosts`，应与配置中心地址联动而非二次硬编码 |
+| A1-8 | `.gitlab-ci.yml:1-3` | `include: project: '<源公司内部 GitLab 组>/CDU_CICD'` | **本审计里唯一阻断式的一条**：客户 CI 在解析阶段就失败。改为仓库自带完整 jobs |
+| A1-9 | `.gitlab-ci.yml:7` | 注释示例用 `<内部应用主机>` | 换成 `app.<customer>.example.com` |
 
 ### A2 组织与品牌
 
 | # | 位置 | 当前值 |
 |---|---|---|
-| A2-1 | `Client/Layout/MainLayout.razor:70` | `<MudText>Company CDU</MudText>`——同文件里已有 `LocalEnvironmentData.AppName` 可用却没用 |
-| A2-2 | `Client/Pages/HttpLogin.razor:16`、`QrPrint.razor:15`、`HomePages/Home.razor:39-40,73` | `公司��连接器（成都）有限公司` / `Company Co., Ltd.`。⚠️ **`Home.razor:4` 的注释声称「换项目只需改配置，不必动这个文件」——这句话是假的**，典型的静默陷阱 |
-| A2-3 | `QrPrint.razor:14,58`、`HttpLogin.razor:15,63`、`Infrastructure/QrLoginSupport.cs:78`、`MainLayout.razor:66` | `CDU_Logo.png` / `Company_185.png` + alt 文本，**4 处独立硬编码**，其中一处是服务端字符串拼 HTML |
-| A2-4 | `Shared/Constants/AppConstant.cs:23` | `EmailFrom = "Company-TMES@example.com"`（编译期常量） |
-| A2-5 | `Services/System/EmailService.cs:232-236` | `$"Company-{appShortName}@example.com"`——只有中间段可配 |
-| A2-6 | `Services/System/ApproveCenter.cs` + `Program.cs:91-93` | 类名、方法名 `UseApprovalCenter`、配置段 `ApproveCenter:*` 全带公司名，且**无条件装配** |
+| A2-1 | `Client/Layout/MainLayout.razor:70` | `<MudText><公司> <工厂></MudText>`——同文件里已有 `LocalEnvironmentData.AppName` 可用却没用 |
+| A2-2 | `Client/Pages/HttpLogin.razor:16`、`QrPrint.razor:15`、`HomePages/Home.razor:39-40,73` | `<公司中文法定名>` / `<公司英文法定名>`。⚠️ **`Home.razor:4` 的注释声称「换项目只需改配置，不必动这个文件」——这句话是假的**，典型的静默陷阱 |
+| A2-3 | `QrPrint.razor:14,58`、`HttpLogin.razor:15,63`、`Infrastructure/QrLoginSupport.cs:78`、`MainLayout.razor:66` | `CDU_Logo.png` / `<公司>_Logo.png` + alt 文本，**4 处独立硬编码**，其中一处是服务端字符串拼 HTML |
+| A2-4 | `Shared/Constants/AppConstant.cs:23` | `EmailFrom = "<公司前缀>-<系统>@<公司域名>"`（编译期常量） |
+| A2-5 | `Services/System/EmailService.cs:232-236` | `$"<公司前缀>-{appShortName}@<公司域名>"`——只有中间段可配 |
+| A2-6 | `Services/System/<公司>ApproveCenter.cs` + `Program.cs:91-93` | 类名、方法名 `Use<公司>ApprovalCenter`、配置段 `<公司>ApproveCenter:*` 全带公司名，且**无条件装配** |
 | A2-7 | `.vscode/settings.json:2` | `"lrm.resourcePath": "/Users/kzheng/Developer/work/..."` 个人绝对路径进了版本控制 |
 | A2-8 | `.claude/settings.json` | 同上，`additionalDirectories` 里是个人机器路径 |
 
@@ -71,14 +76,14 @@
 
 | # | 位置 | 问题 |
 |---|---|---|
-| A4-1 | `Infrastructure/ConfigureServices.cs:91` **与** `Infrastructure/LoginLogoutEndpointRouteBuilderExtensions.cs:33` | `const string MCDU_OIDC_SCHEME = "CompanyOidc"` **在两个文件里各定义一份**。除了带品牌名，更要命的是改一处漏一处会让 `AddOpenIdConnect` / `SignOutAsync` **静默认证失败**。收成单一常量或 `Auth:OidcSchemeName` |
-| A4-2 | `Program.cs:92-93` | `ApproveCenter:*` 配置段名（同 A2-6） |
+| A4-1 | `Infrastructure/ConfigureServices.cs:91` **与** `Infrastructure/LoginLogoutEndpointRouteBuilderExtensions.cs:33` | `const string <前缀>_OIDC_SCHEME = "<公司>CduOpenId"` **在两个文件里各定义一份**。除了带品牌名，更要命的是改一处漏一处会让 `AddOpenIdConnect` / `SignOutAsync` **静默认证失败**。收成单一常量或 `Auth:OidcSchemeName` |
+| A4-2 | `Program.cs:92-93` | `<公司>ApproveCenter:*` 配置段名（同 A2-6） |
 
 ### A5 外部系统集成
 
 | # | 位置 | 问题 |
 |---|---|---|
-| A5-1 | `Shared/DTOs/EmployeeInfoDto.cs:12-110` | 完全按 Company SAP/HR 字段建模（`L1manager`..`L4manager`、`Idnumber`、`DirectLabor`），换 HR 系统要重写 DTO 而不是改配置。应抽 `IHrProvider` |
+| A5-1 | `Shared/DTOs/EmployeeInfoDto.cs:12-110` | 完全按源公司 SAP/HR 字段建模（`L1manager`..`L4manager`、`Idnumber`、`DirectLabor`），换 HR 系统要重写 DTO 而不是改配置。应抽 `IHrProvider` |
 | A5-2 | `Program.cs:104-111` | HR 专用 HttpClient 的 `ServerCertificateCustomValidationCallback` **无条件 true**。见安全隐患 #4 |
 
 ---
@@ -101,7 +106,7 @@
 | `GetDbRecordsRequest.cs:36` | `PageSize = 1000` 默认且**服务端无上限** | `GeneralDbQuery:DefaultPageSize=100` / `MaxPageSize=500`。当前状态是可被客户端拉爆的 DoS 面 |
 | `DynamicLinqService.cs:91`(1000) vs `:153`(50)，`.Helper.cs:386` 无上限 | 同一服务内两处默认值不一致 | 同上 |
 | `TablesSelectPage.razor:93` | `PageSizeOptions {20,50,100}` | `GeneralDbQuery:PageSizeOptions` |
-| `Infrastructure/ConfigureServices.cs:99` | `MemoryCache.SizeLimit = 10000`（按 Company 车间规模估） | `Cache:MemoryCacheSizeLimit` |
+| `Infrastructure/ConfigureServices.cs:99` | `MemoryCache.SizeLimit = 10000`（按 某工厂车间规模估） | `Cache:MemoryCacheSizeLimit` |
 | `Client/Extensions/FileMetaCache.cs:24` | `MaxEntries = 512` | `Cache:FileMetaMaxEntries` |
 | `Infrastructure/MmsRetryHelper.cs:13` | `maxAttempts=3, baseDelayMs=200` 手写重试 | `Retry:*`；或换 Polly |
 | `Tasks/HangfireTasks.cs:14-20` | Cron 固定 1 点 | 可配置 + 配合 A3 的时区统一 |
@@ -118,7 +123,7 @@
 ## C. 可以保留
 
 - Migrations 里的 schema 名 `Reference` / `Data`（走 `DbSchema` 常量，通用英文）
-- `[MaxLength]` / `[StringLength]` 的各种长度（50/100/256/500/1000/2000，均为通用值，未发现绑定 Company 工号格式的假设）
+- `[MaxLength]` / `[StringLength]` 的各种长度（50/100/256/500/1000/2000，均为通用值，未发现绑定源公司工号格式的假设）
 - `DefaultContext.SeedData.cs` 为空实现，无硬编码种子数据
 - `DesignTimeDbContextFactory.cs:26` 的 `Host=design-time-only;...;Password=none`——刻意指向不存在实例的防呆值，不是真实凭据
 - `AppRoles.cs` 的角色前缀已基于可配置的 `AppConstant.AppShortName` 生成
@@ -140,17 +145,17 @@
 
 **3. 对硬编码域名无条件禁用证书校验**
 `Infrastructure/ConfigureServices.cs:18-34, 228`，`CustomHttpClientHandler` 对列表内域名 `ServerCertificateCustomValidationCallback => true`。
-当前因为域名是 Company 专属而「暂时无害」，但**「往列表里加个域名就能全局关掉证书校验」这个机制本身**要重做，不能只是换成客户域名。
+当前因为域名是 源公司专属而「暂时无害」，但**「往列表里加个域名就能全局关掉证书校验」这个机制本身**要重做，不能只是换成客户域名。
 
 **4. HR 集成 HttpClient 无条件绕过证书校验**
 `Program.cs:104-111`，无任何开关。
 → 默认 `false`，仅在显式配置 `EmployeeApi:BypassCertificateValidation=true` 时允许，且文档中标注为不安全选项。
 
 **5. CI 引用私有 GitLab 组**
-`Company/coc/dt/me/internal-group/chengdu/CDU_CICD` 暴露源公司内部组织架构。
+`<源公司内部 GitLab 组>/CDU_CICD` 暴露源公司内部组织架构。
 
 **6. 运维文档示例用真实域名**
-`scripts/migrate-prod.ps1:28` 与《数据库迁移操作手册》里的 `kinit kzheng@example.com`。
+`scripts/migrate-prod.ps1:28` 与《数据库迁移操作手册》里的 `kinit <user>@<REALM>`。
 → 换 `youruser@CONTOSO.COM`。
 
 ---

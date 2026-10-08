@@ -1,0 +1,10 @@
+# gitleaks 配置：在默认规则之上，仅放行已人工确认的误报。
+title = "Kimi.AppKit gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "docs/hardcode-audit.md 里的配置键名描述（EmployeeApi:BypassCertificateValidation=true）被 generic-api-key 误判；不是凭据"
+regexTarget = "line"
+regexes = ['''EmployeeApi:BypassCertificateValidation''']
