@@ -1,0 +1,2 @@
+PanelOptions.DocOnlyOption
+PanelOptions.Width
