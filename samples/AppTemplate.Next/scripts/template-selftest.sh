@@ -19,7 +19,7 @@ set -eu
 
 PROBE_NAME="${TEMPLATE_SELFTEST_NAME:-CiProbe}"
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-REPO_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd)"
+REPO_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd -P)"
 
 if [ ! -f "$REPO_ROOT/Kimi.AppKit.slnx" ]; then
     echo "!!! 找不到 $REPO_ROOT/Kimi.AppKit.slnx：本脚本只能在 Kimi.AppKit 仓库内运行" >&2
