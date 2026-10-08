@@ -129,6 +129,7 @@
 - `AppRoles.cs` 的角色前缀已基于可配置的 `AppConstant.AppShortName` 生成
 - OIDC claim 短名 `"role"` / `"name"`——标准约定
 - `generate-dockerfile.sh` 只引用公共 `mcr.microsoft.com/dotnet/*`（但第 3 行中文注释编码损坏，顺手修）
+  —— **已删**（S1/A3：模板源头删除该脚本，根目录 `Dockerfile` 为唯一镜像构建入口，本条不再适用）
 
 ---
 
@@ -157,6 +158,7 @@
 **6. 运维文档示例用真实域名**
 `scripts/migrate-prod.ps1:28` 与《数据库迁移操作手册》里的 `kinit <user>@<REALM>`。
 → 换 `youruser@CONTOSO.COM`。
+**已删**（S1/A3：`scripts/migrate-prod.{sh,ps1}` 已从模板删除，迁移闸门由部署侧的迁移镜像承接；该条随脚本消失，无需再改）。
 
 ---
 

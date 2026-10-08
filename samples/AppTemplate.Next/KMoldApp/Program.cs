@@ -148,7 +148,9 @@ builder.Services.AddAppKitHangfire(
     hangfireProvider,
     hangfireConnection,
     configurePostgres: c => c.UsePostgreSqlStorage(o => o.UseNpgsqlConnection(hangfireConnection)));
-builder.Services.AddHangfireServer();
+// ⚠️ 不要再补一句 AddHangfireServer()：AddAppKitHangfire 内部已经注册了服务器，
+//    再调一次是两个 BackgroundJobServer 抢同一个队列（不报错，并发度悄悄翻倍）。
+//    TemplateHangfireTests 守着这一条。
 
 // ⚠️ 这是**开放面白名单**：没登记的实体既解析不出数据源、也映射不出端点。
 //    前身把「读写任意表」压缩成一个通用端点，于是「这个系统对外开放了哪些表」

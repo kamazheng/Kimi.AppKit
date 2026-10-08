@@ -21,8 +21,9 @@
 
 ## 刻意不含的东西（裁决落字）
 
-- **Hangfire：模板不含业务作业**。模板只装配存储与服务器
-  （`AddAppKitHangfire`），不定义任何周期作业；业务作业由各应用自己注册。
+- **Hangfire：模板不含业务作业**。模板只调一次 `AddAppKitHangfire`——它已含存储与后台服务器
+  （内部调用 `AddHangfireServer`，**应用侧不要再调**，否则注册两个服务器）；
+  不定义任何周期作业，业务作业由各应用自己注册。
 - **不含数据库迁移执行脚本**：生产迁移闸门由 S2b 的迁移镜像承接，模板不再带
   `migrate-prod.*`；也不带 `generate-dockerfile.sh`——根目录 `Dockerfile` 即是唯一的镜像构建入口。
 
