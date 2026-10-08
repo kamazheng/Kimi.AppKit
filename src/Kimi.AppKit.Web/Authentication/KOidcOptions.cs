@@ -44,6 +44,26 @@ public sealed class KOidcOptions
     /// <summary>ROPC 密码登录额外追加的 scope。</summary>
     public IList<string> PasswordGrantScopes { get; } = ["offline_access"];
 
+    /// <summary>
+    /// 本应用要调用的下游服务标识（RFC 8707 <c>resource</c> 参数）。
+    /// </summary>
+    /// <remarks>
+    /// 【作用】声明「我这张令牌是要拿去调谁的」，IdP 据此写入 access token 的 <c>aud</c>。
+    ///   两者都没有时（既不配本项，IdP 也没做 scope→resource 映射）令牌无 <c>aud</c>，
+    ///   下游只能关掉受众校验，服务间就此失去边界。
+    ///
+    /// 【为什么用它而不是申请业务 scope】scope 路线要 IdP 预先登记「谁能调谁」，
+    ///   配置量是 O(服务数 × 调用方数)，且加 scope 必须重启 IdP。
+    ///   本路线下 IdP 零配置，授权决策由资源服务自己做（各自的调用方白名单）。
+    ///
+    /// ⚠️ **必须是绝对 URI**：RFC 8707 强制，IdP 会拒绝非 URI 值（ID2030）。
+    /// ⚠️ **必须与目标服务配置的 audience 逐字一致，含尾斜杠。**
+    ///   <c>https://api.example</c> 与 <c>https://api.example/</c> 是两个不同的值，
+    ///   不一致的表现是下游 401 且错误只说 audience 不匹配——指不到少了个斜杠。
+    ///   建议统一带尾斜杠。
+    /// </remarks>
+    public IList<string> Resources { get; } = [];
+
     /// <summary>匿名访问受保护资源时跳转的登录页。</summary>
     /// <remarks>
     /// ⚠️ 必须指向一个**真实存在**的路由。Cookie handler 的默认值是

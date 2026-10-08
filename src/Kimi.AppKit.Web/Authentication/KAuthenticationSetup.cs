@@ -221,7 +221,24 @@ public static class KAuthenticationSetup
                 ? JwtBearerDefaults.AuthenticationScheme
                 : KAuthenticationSchemes.Oidc;
 
-        // ⚠️ 这两件事必须挂在**同一个** OnRedirectToIdentityProvider 上。
+        // ⚠️ 启动时就拒绝多个 resource，不要留到登录时才出问题。
+        //    RFC 8707 的多值语义是**重复参数**（resource=A&resource=B），而
+        //    OpenIdConnectMessage.Parameters 是 IDictionary<string, string>，
+        //    结构上就传不了同名重复参数；退而求其次用空格拼接更糟——
+        //    OpenIddict 的 GetResources() 读 request.Resources 数组、**不按空格切**
+        //    （对比 GetScopes() 才是 GetValues(Scope, Separators.Space)），
+        //    于是整串会被当成**一个** aud 值，下游永远匹配不上，且完全静默。
+        //    要调多个下游，走「refresh_token 现换窄 aud 令牌」——那本来就是更安全的做法，
+        //    一张对所有下游通用的令牌会让下游 A 能转手冒充用户去调下游 B。
+        if (options.Resources.Count > 1)
+        {
+            throw new InvalidOperationException(
+                "OpenIDConnect:Resources 目前只支持一个值（RFC 8707 多值需重复参数，" +
+                "OpenIdConnectMessage 的参数字典不支持）。要调用多个下游服务，" +
+                "请在调用前用 refresh_token 换取 aud 指向目标服务的 access token。");
+        }
+
+        // ⚠️ 这三件事必须挂在**同一个** OnRedirectToIdentityProvider 上。
         //    事件是赋值不是叠加，分开写第二个会把第一个整个顶掉，且没有任何编译或运行时信号。
         oidc.Events.OnRedirectToIdentityProvider = context =>
         {
@@ -249,6 +266,14 @@ public static class KAuthenticationSetup
                     Port = request.Host.Port ?? -1,
                     Path = request.PathBase + oidc.CallbackPath,
                 }.ToString();
+            }
+
+            // RFC 8707 资源指示器：声明本次令牌要拿去调哪个下游服务，IdP 据此写入 aud。
+            // 不配则令牌无 aud，下游只能关掉受众校验——服务间失去边界。
+            // （多值已在上面启动时拒绝，此处必然是 0 或 1 个。）
+            if (options.Resources.Count > 0)
+            {
+                context.ProtocolMessage.SetParameter("resource", options.Resources[0]);
             }
 
             return Task.CompletedTask;
