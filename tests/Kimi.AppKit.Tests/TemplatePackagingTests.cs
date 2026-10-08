@@ -49,7 +49,7 @@ public sealed class TemplatePackagingTests : IClassFixture<TemplatePackagingTest
 
         public TemplatePackage()
         {
-            var csproj = Path.Combine(FindRepoRoot(), "src", "Kimi.AppKit.Templates", "Kimi.AppKit.Templates.csproj");
+            var csproj = Path.Combine(RepoRoot.Find(), "src", "Kimi.AppKit.Templates", "Kimi.AppKit.Templates.csproj");
             Directory.CreateDirectory(_outDir);
 
             using var p = Process.Start(new ProcessStartInfo("dotnet", $"pack \"{csproj}\" -c Release -o \"{_outDir}\" --nologo -v q")
@@ -57,8 +57,11 @@ public sealed class TemplatePackagingTests : IClassFixture<TemplatePackagingTest
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
             })!;
-            var output = p.StandardOutput.ReadToEnd() + p.StandardError.ReadToEnd();
+            // ⚠️ stdout/stderr 必须并发读：先读完一个再读另一个，任一管道缓冲写满（约 64KB）就会互相等死。
+            var stdout = p.StandardOutput.ReadToEndAsync();
+            var stderr = p.StandardError.ReadToEndAsync();
             p.WaitForExit();
+            var output = stdout.GetAwaiter().GetResult() + stderr.GetAwaiter().GetResult();
             Assert.True(p.ExitCode == 0, "dotnet pack 模板包失败：\n" + output);
 
             var nupkg = Directory.GetFiles(_outDir, "Kimi.AppKit.Templates.*.nupkg").Single();
@@ -69,13 +72,6 @@ public sealed class TemplatePackagingTests : IClassFixture<TemplatePackagingTest
         public void Dispose()
         {
             try { Directory.Delete(_outDir, recursive: true); } catch (IOException) { /* 临时目录，清不掉不影响结论 */ }
-        }
-
-        private static string FindRepoRoot()
-        {
-            var dir = new DirectoryInfo(AppContext.BaseDirectory);
-            while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "Kimi.AppKit.slnx"))) dir = dir.Parent;
-            return dir?.FullName ?? throw new InvalidOperationException("找不到仓库根（Kimi.AppKit.slnx）");
         }
     }
 }

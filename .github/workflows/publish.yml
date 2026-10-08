@@ -87,6 +87,18 @@ jobs:
             exit 1
           fi
 
+      # 死选项扫描：public 可写 Options 属性除定义处外 0 引用 = 配置项被删了逻辑却留着（假配置开关）。
+      - name: 死选项扫描（先自检，再扫 src）
+        run: |
+          scripts/dead-options-scan.sh --self-test
+          scripts/dead-options-scan.sh
+
+      # THIRD-PARTY：重新生成并要求与已提交版本一致；名单外许可会使生成步骤本身失败（见 scripts/generate-third-party.sh）。
+      - name: THIRD-PARTY-NOTICES 同步 + 许可白名单
+        run: |
+          scripts/generate-third-party.sh
+          git diff --exit-code THIRD-PARTY-NOTICES.md
+
       # ⚠️ 这一步不允许 continue-on-error。
       #    参考教训：Kimi.MudBlazorExtentions 的 CI 里 run_test 跑的是一个 10 行的空 [Fact]，
       #    于是历次发布实质上没有任何自动化验证。gate 必须是真的。

@@ -57,7 +57,7 @@
 
         <ItemGroup>
             <TemplateSourceFile Include="$(TemplateSourceRoot)**/*"
-                                Exclude="$(TemplateSourceRoot)**/bin/**;$(TemplateSourceRoot)**/obj/**;$(TemplateSourceRoot)**/.vs/**;$(TemplateSourceRoot)**/.vscode/**;$(TemplateSourceRoot)**/.idea/**;$(TemplateSourceRoot)**/node_modules/**;$(TemplateSourceRoot)**/*.user;$(TemplateSourceRoot)KMoldApp.dev.sln;$(TemplateSourceRoot)scripts/template-selftest.sh;$(TemplateSourceRoot)Kimi.AppKit.Sample/api/**" />
+                                Exclude="$(TemplateSourceRoot)**/bin/**;$(TemplateSourceRoot)**/obj/**;$(TemplateSourceRoot)**/.vs/**;$(TemplateSourceRoot)**/.vscode/**;$(TemplateSourceRoot)**/.idea/**;$(TemplateSourceRoot)**/node_modules/**;$(TemplateSourceRoot)**/*.user;$(TemplateSourceRoot)KMoldApp.dev.sln;$(TemplateSourceRoot)scripts/template-selftest.sh" />
         </ItemGroup>
 
         <Copy SourceFiles="@(TemplateSourceFile)"

@@ -1,0 +1,430 @@
+#nullable enable
+Kimi.AppKit.Components.AppKitComponentsServiceCollectionExtensions
+Kimi.AppKit.Components.AppKitMarker
+Kimi.AppKit.Components.Auth.KAuthBrand
+Kimi.AppKit.Components.Auth.KAuthBrand.Branding.get -> Kimi.AppKit.Core.Contracts.KBranding!
+Kimi.AppKit.Components.Auth.KAuthBrand.Branding.set -> void
+Kimi.AppKit.Components.Auth.KAuthBrand.KAuthBrand() -> void
+Kimi.AppKit.Components.Auth.KAuthLayout
+Kimi.AppKit.Components.Auth.KAuthLayout.KAuthLayout() -> void
+Kimi.AppKit.Components.Auth.KAuthPageOptions
+Kimi.AppKit.Components.Auth.KAuthPageOptions.AppCss.get -> string?
+Kimi.AppKit.Components.Auth.KAuthPageOptions.AppCss.set -> void
+Kimi.AppKit.Components.Auth.KAuthPageOptions.AppStylesheet.get -> string?
+Kimi.AppKit.Components.Auth.KAuthPageOptions.AppStylesheet.set -> void
+Kimi.AppKit.Components.Auth.KAuthPageOptions.FaviconPath.get -> string!
+Kimi.AppKit.Components.Auth.KAuthPageOptions.FaviconPath.set -> void
+Kimi.AppKit.Components.Auth.KAuthPageOptions.KAuthPageOptions() -> void
+Kimi.AppKit.Components.Auth.KAuthPageOptions.Language.get -> string!
+Kimi.AppKit.Components.Auth.KAuthPageOptions.Language.set -> void
+Kimi.AppKit.Components.Auth.KAuthPageOptions.ProductName.get -> string!
+Kimi.AppKit.Components.Auth.KAuthPageOptions.ProductName.set -> void
+Kimi.AppKit.Components.Auth.KClientBranding
+Kimi.AppKit.Components.Auth.KClientBranding.GetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Kimi.AppKit.Core.Contracts.KBranding!>
+Kimi.AppKit.Components.Auth.KClientBranding.KClientBranding(Microsoft.AspNetCore.Components.PersistentComponentState! state) -> void
+Kimi.AppKit.Components.Auth.KErrorPage
+Kimi.AppKit.Components.Auth.KErrorPage.KErrorPage() -> void
+Kimi.AppKit.Components.Auth.KErrorPage.RequestId.get -> string?
+Kimi.AppKit.Components.Auth.KErrorPage.RequestId.set -> void
+Kimi.AppKit.Components.Auth.KPasswordLoginPage
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.Branding.get -> Kimi.AppKit.Core.Contracts.KBranding!
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.Branding.set -> void
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.Error.get -> string?
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.Error.set -> void
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.Gate.get -> Kimi.AppKit.Core.Contracts.KNetworkGateResult
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.Gate.set -> void
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.Host.get -> string?
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.Host.set -> void
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.KPasswordLoginPage() -> void
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.ReturnUrl.get -> string?
+Kimi.AppKit.Components.Auth.KPasswordLoginPage.ReturnUrl.set -> void
+Kimi.AppKit.Components.Auth.KPersistentAuthenticationStateProvider
+Kimi.AppKit.Components.Auth.KPersistentAuthenticationStateProvider.KPersistentAuthenticationStateProvider(Microsoft.AspNetCore.Components.PersistentComponentState! state) -> void
+Kimi.AppKit.Components.Auth.KPlainLayout
+Kimi.AppKit.Components.Auth.KPlainLayout.KPlainLayout() -> void
+Kimi.AppKit.Components.Auth.KQrPrintPage
+Kimi.AppKit.Components.Auth.KQrPrintPage.Branding.get -> Kimi.AppKit.Core.Contracts.KBranding!
+Kimi.AppKit.Components.Auth.KQrPrintPage.Branding.set -> void
+Kimi.AppKit.Components.Auth.KQrPrintPage.Error.get -> string?
+Kimi.AppKit.Components.Auth.KQrPrintPage.Error.set -> void
+Kimi.AppKit.Components.Auth.KQrPrintPage.KQrPrintPage() -> void
+Kimi.AppKit.Components.Auth.KQrPrintPage.LifetimeHint.get -> string?
+Kimi.AppKit.Components.Auth.KQrPrintPage.LifetimeHint.set -> void
+Kimi.AppKit.Components.Auth.KQrPrintPage.Payload.get -> string?
+Kimi.AppKit.Components.Auth.KQrPrintPage.Payload.set -> void
+Kimi.AppKit.Components.Auth.KQrPrintPage.UserName.get -> string?
+Kimi.AppKit.Components.Auth.KQrPrintPage.UserName.set -> void
+Kimi.AppKit.Components.Buttons.ApiErrorPresenter
+Kimi.AppKit.Components.Buttons.ErrorCatchButton
+Kimi.AppKit.Components.Buttons.ErrorCatchButton.Display.get -> bool
+Kimi.AppKit.Components.Buttons.ErrorCatchButton.Display.set -> void
+Kimi.AppKit.Components.Buttons.ErrorCatchButton.ErrorCatchButton() -> void
+Kimi.AppKit.Components.Buttons.ErrorCatchButton.Label.get -> string?
+Kimi.AppKit.Components.Buttons.ErrorCatchButton.Label.set -> void
+Kimi.AppKit.Components.Buttons.ErrorCatchDispatcher
+Kimi.AppKit.Components.Buttons.ErrorCatchFab
+Kimi.AppKit.Components.Buttons.ErrorCatchFab.Display.get -> bool
+Kimi.AppKit.Components.Buttons.ErrorCatchFab.Display.set -> void
+Kimi.AppKit.Components.Buttons.ErrorCatchFab.ErrorCatchFab() -> void
+Kimi.AppKit.Components.Buttons.ErrorCatchIconButton
+Kimi.AppKit.Components.Buttons.ErrorCatchIconButton.Display.get -> bool
+Kimi.AppKit.Components.Buttons.ErrorCatchIconButton.Display.set -> void
+Kimi.AppKit.Components.Buttons.ErrorCatchIconButton.ErrorCatchIconButton() -> void
+Kimi.AppKit.Components.Buttons.ProcessingState
+Kimi.AppKit.Components.Buttons.ProcessingState.IsProcessing.get -> bool
+Kimi.AppKit.Components.Buttons.ProcessingState.IsProcessing.set -> void
+Kimi.AppKit.Components.Buttons.ProcessingState.ProcessingState() -> void
+Kimi.AppKit.Components.Components.EnumChipColorAttribute
+Kimi.AppKit.Components.Components.EnumChipColorAttribute.Color.get -> MudBlazor.Color
+Kimi.AppKit.Components.Components.EnumChipColorAttribute.EnumChipColorAttribute(MudBlazor.Color color) -> void
+Kimi.AppKit.Components.Components.KAlert
+Kimi.AppKit.Components.Components.KAlert.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KAlert.ChildContent.set -> void
+Kimi.AppKit.Components.Components.KAlert.Dense.get -> bool
+Kimi.AppKit.Components.Components.KAlert.Dense.set -> void
+Kimi.AppKit.Components.Components.KAlert.KAlert() -> void
+Kimi.AppKit.Components.Components.KAlert.Severity.get -> MudBlazor.Severity
+Kimi.AppKit.Components.Components.KAlert.Severity.set -> void
+Kimi.AppKit.Components.Components.KAppErrorBoundary
+Kimi.AppKit.Components.Components.KAppErrorBoundary.KAppErrorBoundary() -> void
+Kimi.AppKit.Components.Components.KAvatar
+Kimi.AppKit.Components.Components.KAvatar.CssClass.get -> string!
+Kimi.AppKit.Components.Components.KAvatar.CssClass.set -> void
+Kimi.AppKit.Components.Components.KAvatar.Fallback.get -> string!
+Kimi.AppKit.Components.Components.KAvatar.Fallback.set -> void
+Kimi.AppKit.Components.Components.KAvatar.KAvatar() -> void
+Kimi.AppKit.Components.Components.KAvatar.Name.get -> string?
+Kimi.AppKit.Components.Components.KAvatar.Name.set -> void
+Kimi.AppKit.Components.Components.KBrand
+Kimi.AppKit.Components.Components.KBrand.CompanyName.get -> string!
+Kimi.AppKit.Components.Components.KBrand.CompanyName.set -> void
+Kimi.AppKit.Components.Components.KBrand.Href.get -> string!
+Kimi.AppKit.Components.Components.KBrand.Href.set -> void
+Kimi.AppKit.Components.Components.KBrand.KBrand() -> void
+Kimi.AppKit.Components.Components.KBrand.LogoUrl.get -> string?
+Kimi.AppKit.Components.Components.KBrand.LogoUrl.set -> void
+Kimi.AppKit.Components.Components.KBrand.ProductName.get -> string?
+Kimi.AppKit.Components.Components.KBrand.ProductName.set -> void
+Kimi.AppKit.Components.Components.KCard
+Kimi.AppKit.Components.Components.KCard.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KCard.ChildContent.set -> void
+Kimi.AppKit.Components.Components.KCard.Class.get -> string?
+Kimi.AppKit.Components.Components.KCard.Class.set -> void
+Kimi.AppKit.Components.Components.KCard.KCard() -> void
+Kimi.AppKit.Components.Components.KCard.Lede.get -> string?
+Kimi.AppKit.Components.Components.KCard.Lede.set -> void
+Kimi.AppKit.Components.Components.KCard.Narrow.get -> bool
+Kimi.AppKit.Components.Components.KCard.Narrow.set -> void
+Kimi.AppKit.Components.Components.KCard.Title.get -> string?
+Kimi.AppKit.Components.Components.KCard.Title.set -> void
+Kimi.AppKit.Components.Components.KCodeBlock
+Kimi.AppKit.Components.Components.KCodeBlock.Code.get -> string!
+Kimi.AppKit.Components.Components.KCodeBlock.Code.set -> void
+Kimi.AppKit.Components.Components.KCodeBlock.KCodeBlock() -> void
+Kimi.AppKit.Components.Components.KDataTable<T>
+Kimi.AppKit.Components.Components.KDataTable<T>.Class.get -> string?
+Kimi.AppKit.Components.Components.KDataTable<T>.Class.set -> void
+Kimi.AppKit.Components.Components.KDataTable<T>.DataSource.get -> Kimi.AppKit.Core.Abstractions.ICrudDataSource<T>!
+Kimi.AppKit.Components.Components.KDataTable<T>.DataSource.set -> void
+Kimi.AppKit.Components.Components.KDataTable<T>.Dense.get -> bool
+Kimi.AppKit.Components.Components.KDataTable<T>.Dense.set -> void
+Kimi.AppKit.Components.Components.KDataTable<T>.Filter.get -> Kimi.AppKit.Core.Contracts.KQuery?
+Kimi.AppKit.Components.Components.KDataTable<T>.Filter.set -> void
+Kimi.AppKit.Components.Components.KDataTable<T>.FixedHeader.get -> bool
+Kimi.AppKit.Components.Components.KDataTable<T>.FixedHeader.set -> void
+Kimi.AppKit.Components.Components.KDataTable<T>.HeaderContent.get -> Microsoft.AspNetCore.Components.RenderFragment!
+Kimi.AppKit.Components.Components.KDataTable<T>.HeaderContent.set -> void
+Kimi.AppKit.Components.Components.KDataTable<T>.KDataTable() -> void
+Kimi.AppKit.Components.Components.KDataTable<T>.PageSizeOptions.get -> int[]!
+Kimi.AppKit.Components.Components.KDataTable<T>.PageSizeOptions.set -> void
+Kimi.AppKit.Components.Components.KDataTable<T>.ReloadAsync() -> System.Threading.Tasks.Task!
+Kimi.AppKit.Components.Components.KDataTable<T>.RowTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<T>!
+Kimi.AppKit.Components.Components.KDataTable<T>.RowTemplate.set -> void
+Kimi.AppKit.Components.Components.KEmpty
+Kimi.AppKit.Components.Components.KEmpty.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KEmpty.ChildContent.set -> void
+Kimi.AppKit.Components.Components.KEmpty.Icon.get -> string!
+Kimi.AppKit.Components.Components.KEmpty.Icon.set -> void
+Kimi.AppKit.Components.Components.KEmpty.KEmpty() -> void
+Kimi.AppKit.Components.Components.KEmpty.Text.get -> string!
+Kimi.AppKit.Components.Components.KEmpty.Text.set -> void
+Kimi.AppKit.Components.Components.KEnumChip<TEnum>
+Kimi.AppKit.Components.Components.KEnumChip<TEnum>.KEnumChip() -> void
+Kimi.AppKit.Components.Components.KEnumChip<TEnum>.Size.get -> MudBlazor.Size
+Kimi.AppKit.Components.Components.KEnumChip<TEnum>.Size.set -> void
+Kimi.AppKit.Components.Components.KEnumChip<TEnum>.Value.get -> TEnum
+Kimi.AppKit.Components.Components.KEnumChip<TEnum>.Value.set -> void
+Kimi.AppKit.Components.Components.KEnvChip
+Kimi.AppKit.Components.Components.KEnvChip.KEnvChip() -> void
+Kimi.AppKit.Components.Components.KErrorPanel
+Kimi.AppKit.Components.Components.KErrorPanel.Exception.get -> System.Exception?
+Kimi.AppKit.Components.Components.KErrorPanel.Exception.set -> void
+Kimi.AppKit.Components.Components.KErrorPanel.KErrorPanel() -> void
+Kimi.AppKit.Components.Components.KErrorPanel.OnRecover.get -> Microsoft.AspNetCore.Components.EventCallback
+Kimi.AppKit.Components.Components.KErrorPanel.OnRecover.set -> void
+Kimi.AppKit.Components.Components.KErrorPanel.RecoverLabel.get -> string!
+Kimi.AppKit.Components.Components.KErrorPanel.RecoverLabel.set -> void
+Kimi.AppKit.Components.Components.KErrorPanel.Title.get -> string!
+Kimi.AppKit.Components.Components.KErrorPanel.Title.set -> void
+Kimi.AppKit.Components.Components.KExternalMenuItem
+Kimi.AppKit.Components.Components.KExternalMenuItem.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KExternalMenuItem.ChildContent.set -> void
+Kimi.AppKit.Components.Components.KExternalMenuItem.Href.get -> string!
+Kimi.AppKit.Components.Components.KExternalMenuItem.Href.set -> void
+Kimi.AppKit.Components.Components.KExternalMenuItem.Icon.get -> string?
+Kimi.AppKit.Components.Components.KExternalMenuItem.Icon.set -> void
+Kimi.AppKit.Components.Components.KExternalMenuItem.KExternalMenuItem() -> void
+Kimi.AppKit.Components.Components.KField
+Kimi.AppKit.Components.Components.KField.Autocomplete.get -> string?
+Kimi.AppKit.Components.Components.KField.Autocomplete.set -> void
+Kimi.AppKit.Components.Components.KField.Disabled.get -> bool
+Kimi.AppKit.Components.Components.KField.Disabled.set -> void
+Kimi.AppKit.Components.Components.KField.For.get -> System.Linq.Expressions.Expression<System.Func<string?>!>!
+Kimi.AppKit.Components.Components.KField.For.set -> void
+Kimi.AppKit.Components.Components.KField.Id.get -> string!
+Kimi.AppKit.Components.Components.KField.Id.set -> void
+Kimi.AppKit.Components.Components.KField.KField() -> void
+Kimi.AppKit.Components.Components.KField.Label.get -> string!
+Kimi.AppKit.Components.Components.KField.Label.set -> void
+Kimi.AppKit.Components.Components.KField.Placeholder.get -> string?
+Kimi.AppKit.Components.Components.KField.Placeholder.set -> void
+Kimi.AppKit.Components.Components.KField.Value.get -> string?
+Kimi.AppKit.Components.Components.KField.Value.set -> void
+Kimi.AppKit.Components.Components.KField.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<string?>
+Kimi.AppKit.Components.Components.KField.ValueChanged.set -> void
+Kimi.AppKit.Components.Components.KFilterBar
+Kimi.AppKit.Components.Components.KFilterBar.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KFilterBar.Actions.set -> void
+Kimi.AppKit.Components.Components.KFilterBar.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KFilterBar.ChildContent.set -> void
+Kimi.AppKit.Components.Components.KFilterBar.KFilterBar() -> void
+Kimi.AppKit.Components.Components.KFilterBar.Search.get -> string?
+Kimi.AppKit.Components.Components.KFilterBar.Search.set -> void
+Kimi.AppKit.Components.Components.KFilterBar.SearchChanged.get -> Microsoft.AspNetCore.Components.EventCallback<string?>
+Kimi.AppKit.Components.Components.KFilterBar.SearchChanged.set -> void
+Kimi.AppKit.Components.Components.KFilterBar.SearchPlaceholder.get -> string!
+Kimi.AppKit.Components.Components.KFilterBar.SearchPlaceholder.set -> void
+Kimi.AppKit.Components.Components.KLabeledValue
+Kimi.AppKit.Components.Components.KLabeledValue.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KLabeledValue.ChildContent.set -> void
+Kimi.AppKit.Components.Components.KLabeledValue.EmptyText.get -> string!
+Kimi.AppKit.Components.Components.KLabeledValue.EmptyText.set -> void
+Kimi.AppKit.Components.Components.KLabeledValue.KLabeledValue() -> void
+Kimi.AppKit.Components.Components.KLabeledValue.Label.get -> string!
+Kimi.AppKit.Components.Components.KLabeledValue.Label.set -> void
+Kimi.AppKit.Components.Components.KLabeledValue.Value.get -> string?
+Kimi.AppKit.Components.Components.KLabeledValue.Value.set -> void
+Kimi.AppKit.Components.Components.KMetricCard
+Kimi.AppKit.Components.Components.KMetricCard.Delta.get -> string?
+Kimi.AppKit.Components.Components.KMetricCard.Delta.set -> void
+Kimi.AppKit.Components.Components.KMetricCard.DeltaColor.get -> MudBlazor.Color
+Kimi.AppKit.Components.Components.KMetricCard.DeltaColor.set -> void
+Kimi.AppKit.Components.Components.KMetricCard.Icon.get -> string?
+Kimi.AppKit.Components.Components.KMetricCard.Icon.set -> void
+Kimi.AppKit.Components.Components.KMetricCard.IconColor.get -> MudBlazor.Color
+Kimi.AppKit.Components.Components.KMetricCard.IconColor.set -> void
+Kimi.AppKit.Components.Components.KMetricCard.KMetricCard() -> void
+Kimi.AppKit.Components.Components.KMetricCard.Title.get -> string!
+Kimi.AppKit.Components.Components.KMetricCard.Title.set -> void
+Kimi.AppKit.Components.Components.KMetricCard.Value.get -> string!
+Kimi.AppKit.Components.Components.KMetricCard.Value.set -> void
+Kimi.AppKit.Components.Components.KMudField
+Kimi.AppKit.Components.Components.KMudField.Disabled.get -> bool
+Kimi.AppKit.Components.Components.KMudField.Disabled.set -> void
+Kimi.AppKit.Components.Components.KMudField.For.get -> System.Linq.Expressions.Expression<System.Func<string?>!>!
+Kimi.AppKit.Components.Components.KMudField.For.set -> void
+Kimi.AppKit.Components.Components.KMudField.HelperText.get -> string?
+Kimi.AppKit.Components.Components.KMudField.HelperText.set -> void
+Kimi.AppKit.Components.Components.KMudField.InputType.get -> MudBlazor.InputType
+Kimi.AppKit.Components.Components.KMudField.InputType.set -> void
+Kimi.AppKit.Components.Components.KMudField.KMudField() -> void
+Kimi.AppKit.Components.Components.KMudField.Label.get -> string!
+Kimi.AppKit.Components.Components.KMudField.Label.set -> void
+Kimi.AppKit.Components.Components.KMudField.Placeholder.get -> string?
+Kimi.AppKit.Components.Components.KMudField.Placeholder.set -> void
+Kimi.AppKit.Components.Components.KMudField.Required.get -> bool
+Kimi.AppKit.Components.Components.KMudField.Required.set -> void
+Kimi.AppKit.Components.Components.KMudField.Value.get -> string?
+Kimi.AppKit.Components.Components.KMudField.Value.set -> void
+Kimi.AppKit.Components.Components.KMudField.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<string?>
+Kimi.AppKit.Components.Components.KMudField.ValueChanged.set -> void
+Kimi.AppKit.Components.Components.KMudProviders
+Kimi.AppKit.Components.Components.KMudProviders.KMudProviders() -> void
+Kimi.AppKit.Components.Components.KNotAuthorizedView
+Kimi.AppKit.Components.Components.KNotAuthorizedView.KNotAuthorizedView() -> void
+Kimi.AppKit.Components.Components.KPageHead
+Kimi.AppKit.Components.Components.KPageHead.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KPageHead.Actions.set -> void
+Kimi.AppKit.Components.Components.KPageHead.Eyebrow.get -> string?
+Kimi.AppKit.Components.Components.KPageHead.Eyebrow.set -> void
+Kimi.AppKit.Components.Components.KPageHead.KPageHead() -> void
+Kimi.AppKit.Components.Components.KPageHead.Lede.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KPageHead.Lede.set -> void
+Kimi.AppKit.Components.Components.KPageHead.Title.get -> string!
+Kimi.AppKit.Components.Components.KPageHead.Title.set -> void
+Kimi.AppKit.Components.Components.KReconnectModal
+Kimi.AppKit.Components.Components.KReconnectModal.KReconnectModal() -> void
+Kimi.AppKit.Components.Components.KRedirectToLogin
+Kimi.AppKit.Components.Components.KRedirectToLogin.KRedirectToLogin() -> void
+Kimi.AppKit.Components.Components.KRoleGate
+Kimi.AppKit.Components.Components.KRoleGate.Authorized.get -> Microsoft.AspNetCore.Components.RenderFragment!
+Kimi.AppKit.Components.Components.KRoleGate.Authorized.set -> void
+Kimi.AppKit.Components.Components.KRoleGate.FormatRoleName.get -> System.Func<string!, string!>!
+Kimi.AppKit.Components.Components.KRoleGate.FormatRoleName.set -> void
+Kimi.AppKit.Components.Components.KRoleGate.KRoleGate() -> void
+Kimi.AppKit.Components.Components.KRoleGate.NotAuthorized.get -> Microsoft.AspNetCore.Components.RenderFragment<Kimi.AppKit.Components.Components.KRoleGateContext!>!
+Kimi.AppKit.Components.Components.KRoleGate.NotAuthorized.set -> void
+Kimi.AppKit.Components.Components.KRoleGate.Roles.get -> string!
+Kimi.AppKit.Components.Components.KRoleGate.Roles.set -> void
+Kimi.AppKit.Components.Components.KRoleGateContext
+Kimi.AppKit.Components.Components.KRoleGateContext.<Clone>$() -> Kimi.AppKit.Components.Components.KRoleGateContext!
+Kimi.AppKit.Components.Components.KRoleGateContext.Deconstruct(out System.Security.Claims.ClaimsPrincipal! User, out string! MissingRolesHint) -> void
+Kimi.AppKit.Components.Components.KRoleGateContext.Equals(Kimi.AppKit.Components.Components.KRoleGateContext? other) -> bool
+Kimi.AppKit.Components.Components.KRoleGateContext.KRoleGateContext(System.Security.Claims.ClaimsPrincipal! User, string! MissingRolesHint) -> void
+Kimi.AppKit.Components.Components.KRoleGateContext.MissingRolesHint.get -> string!
+Kimi.AppKit.Components.Components.KRoleGateContext.MissingRolesHint.init -> void
+Kimi.AppKit.Components.Components.KRoleGateContext.User.get -> System.Security.Claims.ClaimsPrincipal!
+Kimi.AppKit.Components.Components.KRoleGateContext.User.init -> void
+Kimi.AppKit.Components.Components.KRoleNavLink
+Kimi.AppKit.Components.Components.KRoleNavLink.Href.get -> string!
+Kimi.AppKit.Components.Components.KRoleNavLink.Href.set -> void
+Kimi.AppKit.Components.Components.KRoleNavLink.Icon.get -> string?
+Kimi.AppKit.Components.Components.KRoleNavLink.Icon.set -> void
+Kimi.AppKit.Components.Components.KRoleNavLink.KRoleNavLink() -> void
+Kimi.AppKit.Components.Components.KRoleNavLink.Match.get -> Microsoft.AspNetCore.Components.Routing.NavLinkMatch
+Kimi.AppKit.Components.Components.KRoleNavLink.Match.set -> void
+Kimi.AppKit.Components.Components.KRoleNavLink.Roles.get -> string!
+Kimi.AppKit.Components.Components.KRoleNavLink.Roles.set -> void
+Kimi.AppKit.Components.Components.KRoleNavLink.Target.get -> string?
+Kimi.AppKit.Components.Components.KRoleNavLink.Target.set -> void
+Kimi.AppKit.Components.Components.KRoleNavLink.Title.get -> string!
+Kimi.AppKit.Components.Components.KRoleNavLink.Title.set -> void
+Kimi.AppKit.Components.Components.KSearchField
+Kimi.AppKit.Components.Components.KSearchField.Class.get -> string?
+Kimi.AppKit.Components.Components.KSearchField.Class.set -> void
+Kimi.AppKit.Components.Components.KSearchField.DebounceMilliseconds.get -> int
+Kimi.AppKit.Components.Components.KSearchField.DebounceMilliseconds.set -> void
+Kimi.AppKit.Components.Components.KSearchField.KSearchField() -> void
+Kimi.AppKit.Components.Components.KSearchField.Placeholder.get -> string!
+Kimi.AppKit.Components.Components.KSearchField.Placeholder.set -> void
+Kimi.AppKit.Components.Components.KSearchField.Value.get -> string?
+Kimi.AppKit.Components.Components.KSearchField.Value.set -> void
+Kimi.AppKit.Components.Components.KSearchField.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<string?>
+Kimi.AppKit.Components.Components.KSearchField.ValueChanged.set -> void
+Kimi.AppKit.Components.Components.KStatusChip
+Kimi.AppKit.Components.Components.KStatusChip.KStatusChip() -> void
+Kimi.AppKit.Components.Components.KStatusChip.Severity.get -> MudBlazor.Severity
+Kimi.AppKit.Components.Components.KStatusChip.Severity.set -> void
+Kimi.AppKit.Components.Components.KStatusChip.Size.get -> MudBlazor.Size
+Kimi.AppKit.Components.Components.KStatusChip.Size.set -> void
+Kimi.AppKit.Components.Components.KStatusChip.Text.get -> string!
+Kimi.AppKit.Components.Components.KStatusChip.Text.set -> void
+Kimi.AppKit.Components.Components.KUserMenu
+Kimi.AppKit.Components.Components.KUserMenu.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Components.Components.KUserMenu.ChildContent.set -> void
+Kimi.AppKit.Components.Components.KUserMenu.KUserMenu() -> void
+Kimi.AppKit.Components.Components.KUserMenu.LoginLabel.get -> string!
+Kimi.AppKit.Components.Components.KUserMenu.LoginLabel.set -> void
+Kimi.AppKit.Components.Components.KUserMenu.LoginPath.get -> string!
+Kimi.AppKit.Components.Components.KUserMenu.LoginPath.set -> void
+Kimi.AppKit.Components.Components.KUserMenu.LogoutLabel.get -> string!
+Kimi.AppKit.Components.Components.KUserMenu.LogoutLabel.set -> void
+Kimi.AppKit.Components.Components.KUserMenu.LogoutPath.get -> string!
+Kimi.AppKit.Components.Components.KUserMenu.LogoutPath.set -> void
+Kimi.AppKit.Components.Dialogs.KAccessDeniedDialog
+Kimi.AppKit.Components.Dialogs.KAccessDeniedDialog.KAccessDeniedDialog() -> void
+Kimi.AppKit.Components.Dialogs.KAccessDeniedDialog.Message.get -> string?
+Kimi.AppKit.Components.Dialogs.KAccessDeniedDialog.Message.set -> void
+Kimi.AppKit.Components.Dialogs.KAccessDeniedDialog.MissingRoles.get -> System.Collections.Generic.IReadOnlyList<string!>?
+Kimi.AppKit.Components.Dialogs.KAccessDeniedDialog.MissingRoles.set -> void
+Kimi.AppKit.Components.Dialogs.KErrorDetailDialog
+Kimi.AppKit.Components.Dialogs.KErrorDetailDialog.ClientDetail.get -> string?
+Kimi.AppKit.Components.Dialogs.KErrorDetailDialog.ClientDetail.set -> void
+Kimi.AppKit.Components.Dialogs.KErrorDetailDialog.KErrorDetailDialog() -> void
+Kimi.AppKit.Components.Dialogs.KErrorDetailDialog.Message.get -> string!
+Kimi.AppKit.Components.Dialogs.KErrorDetailDialog.Message.set -> void
+Kimi.AppKit.Components.Dialogs.KErrorDetailDialog.ServerDetail.get -> string?
+Kimi.AppKit.Components.Dialogs.KErrorDetailDialog.ServerDetail.set -> void
+Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog
+Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog.KReasonConfirmDialog() -> void
+Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog.Message.get -> string!
+Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog.Message.set -> void
+Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog.ReasonLabel.get -> string!
+Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog.ReasonLabel.set -> void
+Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog.Title.get -> string!
+Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog.Title.set -> void
+Kimi.AppKit.Components.Dialogs.MudConfirm
+Kimi.AppKit.Components.Dialogs.MudConfirm.DangerAsync(string! title, string! message, string! confirmText = "删除") -> System.Threading.Tasks.Task<bool>!
+Kimi.AppKit.Components.Dialogs.MudConfirm.MudConfirm(MudBlazor.IDialogService! dialogService) -> void
+Kimi.AppKit.Components.Dialogs.MudConfirm.WithReasonAsync(string! title, string! message, string! reasonLabel = "原因") -> System.Threading.Tasks.Task<string?>!
+Kimi.AppKit.Components.Dialogs.MudNotify
+Kimi.AppKit.Components.Dialogs.MudNotify.Fail(string! message) -> void
+Kimi.AppKit.Components.Dialogs.MudNotify.MudNotify(MudBlazor.ISnackbar! snackbar) -> void
+Kimi.AppKit.Components.Dialogs.MudNotify.Ok(string! message) -> void
+Kimi.AppKit.Components.Dialogs.MudNotify.Result(Kimi.AppKit.Core.Contracts.KResult result, string! successText) -> void
+Kimi.AppKit.Components.Dialogs.MudNotify.Warn(string! message) -> void
+Kimi.AppKit.Components.KClientEnvironmentServiceCollectionExtensions
+Kimi.AppKit.Components.KEnvironmentServiceCollectionExtensions
+Kimi.AppKit.Components._Imports
+Kimi.AppKit.Components._Imports.Execute() -> void
+Kimi.AppKit.Components._Imports._Imports() -> void
+override Kimi.AppKit.Components.Auth.KErrorPage.OnInitialized() -> void
+override Kimi.AppKit.Components.Auth.KPersistentAuthenticationStateProvider.GetAuthenticationStateAsync() -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState!>!
+override Kimi.AppKit.Components.Buttons.ErrorCatchButton.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder! builder) -> void
+override Kimi.AppKit.Components.Buttons.ErrorCatchButton.OnClickHandler(Microsoft.AspNetCore.Components.Web.MouseEventArgs! e) -> System.Threading.Tasks.Task!
+override Kimi.AppKit.Components.Buttons.ErrorCatchFab.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder! builder) -> void
+override Kimi.AppKit.Components.Buttons.ErrorCatchFab.OnClickHandler(Microsoft.AspNetCore.Components.Web.MouseEventArgs! e) -> System.Threading.Tasks.Task!
+override Kimi.AppKit.Components.Buttons.ErrorCatchIconButton.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder! builder) -> void
+override Kimi.AppKit.Components.Buttons.ErrorCatchIconButton.OnClickHandler(Microsoft.AspNetCore.Components.Web.MouseEventArgs! e) -> System.Threading.Tasks.Task!
+override Kimi.AppKit.Components.Components.KAppErrorBoundary.OnErrorAsync(System.Exception! exception) -> System.Threading.Tasks.Task!
+override Kimi.AppKit.Components.Components.KEnumChip<TEnum>.OnParametersSet() -> void
+override Kimi.AppKit.Components.Components.KRedirectToLogin.OnInitialized() -> void
+override Kimi.AppKit.Components.Components.KRoleGateContext.Equals(object? obj) -> bool
+override Kimi.AppKit.Components.Components.KRoleGateContext.GetHashCode() -> int
+override Kimi.AppKit.Components.Components.KRoleGateContext.ToString() -> string!
+static Kimi.AppKit.Components.AppKitComponentsServiceCollectionExtensions.AddAppKitDialogs(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Components.Buttons.ApiErrorPresenter.PresentAsync(System.Exception! exception, Kimi.AppKit.Core.Abstractions.IKNotify! notify, MudBlazor.IDialogService? dialogService, Microsoft.AspNetCore.Components.NavigationManager? navigation, string! loginPath = "authentication/login") -> System.Threading.Tasks.Task!
+static Kimi.AppKit.Components.Buttons.ErrorCatchDispatcher.HandleClickAsync(System.Threading.SemaphoreSlim! semaphore, Kimi.AppKit.Components.Buttons.ProcessingState! state, System.Func<Microsoft.AspNetCore.Components.Web.MouseEventArgs!, System.Threading.Tasks.Task!>! onClick, Microsoft.AspNetCore.Components.Web.MouseEventArgs! eventArgs, System.Func<System.Threading.Tasks.Task!>! requestRender, Kimi.AppKit.Core.Abstractions.IKNotify! notify, MudBlazor.IDialogService? dialogService, Microsoft.AspNetCore.Components.NavigationManager? navigation) -> System.Threading.Tasks.Task!
+static Kimi.AppKit.Components.Components.KDataTable<T>.BuildQuery(Kimi.AppKit.Core.Contracts.KQuery? filter, MudBlazor.TableState! state) -> Kimi.AppKit.Core.Contracts.KQuery!
+static Kimi.AppKit.Components.Components.KEnumChip<TEnum>.Resolve(TEnum value) -> (string! Label, MudBlazor.Color Color)
+static Kimi.AppKit.Components.Components.KRoleGateContext.operator !=(Kimi.AppKit.Components.Components.KRoleGateContext? left, Kimi.AppKit.Components.Components.KRoleGateContext? right) -> bool
+static Kimi.AppKit.Components.Components.KRoleGateContext.operator ==(Kimi.AppKit.Components.Components.KRoleGateContext? left, Kimi.AppKit.Components.Components.KRoleGateContext? right) -> bool
+static Kimi.AppKit.Components.Components.KStatusChip.ToColor(MudBlazor.Severity severity) -> MudBlazor.Color
+static Kimi.AppKit.Components.KClientEnvironmentServiceCollectionExtensions.AddAppKitClientEnvironment(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Components.KEnvironmentServiceCollectionExtensions.AddAppKitEnvironment(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+~override Kimi.AppKit.Components.Auth.KAuthBrand.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Auth.KAuthLayout.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Auth.KErrorPage.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Auth.KPasswordLoginPage.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Auth.KPlainLayout.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Auth.KQrPrintPage.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KAlert.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KAppErrorBoundary.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KAvatar.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KBrand.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KCard.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KCodeBlock.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KDataTable<T>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KEmpty.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KEnumChip<TEnum>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KEnvChip.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KErrorPanel.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KExternalMenuItem.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KField.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KFilterBar.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KLabeledValue.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KMetricCard.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KMudField.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KMudProviders.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KNotAuthorizedView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KPageHead.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KReconnectModal.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KRedirectToLogin.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KRoleGate.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KRoleNavLink.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KSearchField.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KStatusChip.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Components.KUserMenu.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Dialogs.KAccessDeniedDialog.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Dialogs.KErrorDetailDialog.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Components.Dialogs.KReasonConfirmDialog.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
