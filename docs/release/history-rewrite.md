@@ -86,3 +86,22 @@ gitleaks：重写前 2 条为旧样例 DataProtection 密钥 XML（路径移除�
 - 重写前先做 bundle 备份并 `git bundle verify`；旧仓改名归档（保持 private），推到新建空仓。
 - G1 之后：用新仓重新克隆本地仓与各 worktree，旧本地仓改名保留，防止旧历史被推进新仓。
 - 演练目录 `/tmp/appkit-rewrite/` 含重写前的完整历史，用完即删。
+
+## 发布演练（A5，2026-10-08）
+
+目的：在 G3 之前证明「打 `0.1.0` tag → `dotnet pack`」确实产出 9 个同版本包，且不弄脏真实仓库。
+
+```bash
+git clone --branch s1/a5-release-prep <本地仓> /tmp/appkit-rehearsal
+cd /tmp/appkit-rehearsal && git tag 0.1.0            # 无 v 前缀（MinVerTagPrefix 为空）
+dotnet pack Kimi.AppKit.slnx -c Release -o out
+ls out/*.0.1.0.nupkg | wc -l                          # 期望 9
+unzip -p out/Kimi.AppKit.Templates.0.1.0.nupkg content/kimiapp/Directory.Packages.props | grep KimiAppKitVersion   # 期望 0.1.0，且无 0.0.0-local
+rm -rf /tmp/appkit-rehearsal
+```
+
+结果：`*.0.1.0.nupkg` = 9（Core / Data / Web / Design / Components / Crud / Http / Observability / Templates）；
+模板包内 `<KimiAppKitVersion>0.1.0</KimiAppKitVersion>`，`0.0.0-local` 命中 0；Core/Web nuspec 版本均为 0.1.0，
+nuspec 中无 PublicApiAnalyzers 依赖（`PrivateAssets=all` 生效）。临时克隆已删除。
+本机演练从本地路径克隆，SourceLink 因 origin 非 URL 告警（NU/SourceLink 警告，仅限本地演练，CI 里 origin 是 GitHub URL 不会有）。
+未发布任何东西。
