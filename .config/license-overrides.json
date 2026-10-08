@@ -2,31 +2,31 @@
   {
     "Id": "Hangfire",
     "Version": "1.8.25",
-    "License": "LGPL-3.0",
+    "License": "LGPL-3.0-or-later",
     "LicenseUrl": "https://www.hangfire.io/"
   },
   {
     "Id": "Hangfire.AspNetCore",
     "Version": "1.8.25",
-    "License": "LGPL-3.0",
+    "License": "LGPL-3.0-or-later",
     "LicenseUrl": "https://www.hangfire.io/"
   },
   {
     "Id": "Hangfire.Core",
     "Version": "1.8.25",
-    "License": "LGPL-3.0",
+    "License": "LGPL-3.0-or-later",
     "LicenseUrl": "https://www.hangfire.io/"
   },
   {
     "Id": "Hangfire.NetCore",
     "Version": "1.8.25",
-    "License": "LGPL-3.0",
+    "License": "LGPL-3.0-or-later",
     "LicenseUrl": "https://www.hangfire.io/"
   },
   {
     "Id": "Hangfire.SqlServer",
     "Version": "1.8.25",
-    "License": "LGPL-3.0",
+    "License": "LGPL-3.0-or-later",
     "LicenseUrl": "https://www.hangfire.io/"
   },
   {
@@ -38,13 +38,13 @@
   {
     "Id": "Microsoft.NETCore.Platforms",
     "Version": "1.1.0",
-    "License": "MIT",
-    "LicenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT"
+    "License": "MS-.NET-Library",
+    "LicenseUrl": "http://go.microsoft.com/fwlink/?LinkId=329770"
   },
   {
     "Id": "NETStandard.Library",
     "Version": "1.6.1",
-    "License": "MIT",
-    "LicenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT"
+    "License": "MS-.NET-Library",
+    "LicenseUrl": "http://go.microsoft.com/fwlink/?LinkId=329770"
   }
 ]
