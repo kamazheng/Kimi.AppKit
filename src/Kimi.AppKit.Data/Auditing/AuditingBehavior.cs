@@ -212,6 +212,11 @@ public sealed class AuditingBehavior(IKCurrentUser currentUser, TimeProvider tim
                     entry.Entity.UpdatedBy = user;
                     break;
                 case EntityState.Modified:
+                    // ⚠️ Created* 是只写一次的事实。CRUD 更新路径是 Attach(DTO)+Modified，
+                    //    DTO 上的缺省值（0001-01-01 / null）会被整行写回：PostgreSQL 上表现为
+                    //    CreatedOn = -infinity、CreatedBy = NULL。在此一律排除出 UPDATE。
+                    entry.Property(nameof(IAuditableEntity.CreatedOn)).IsModified = false;
+                    entry.Property(nameof(IAuditableEntity.CreatedBy)).IsModified = false;
                     entry.Entity.Updated = now;
                     entry.Entity.UpdatedBy = user;
                     break;
