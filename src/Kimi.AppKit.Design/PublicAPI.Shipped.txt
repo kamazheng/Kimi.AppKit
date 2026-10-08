@@ -1,0 +1,57 @@
+#nullable enable
+Kimi.AppKit.Design.AppKitMarker
+Kimi.AppKit.Design.AppKitTheme
+Kimi.AppKit.Design.BrandColors
+Kimi.AppKit.Design.BrandColors.<Clone>$() -> Kimi.AppKit.Design.BrandColors!
+Kimi.AppKit.Design.BrandColors.Accent.get -> string?
+Kimi.AppKit.Design.BrandColors.Accent.init -> void
+Kimi.AppKit.Design.BrandColors.Blueprint.get -> string?
+Kimi.AppKit.Design.BrandColors.Blueprint.init -> void
+Kimi.AppKit.Design.BrandColors.BrandColors(string? Primary = null, string? Accent = null, string? Blueprint = null) -> void
+Kimi.AppKit.Design.BrandColors.Deconstruct(out string? Primary, out string? Accent, out string? Blueprint) -> void
+Kimi.AppKit.Design.BrandColors.Equals(Kimi.AppKit.Design.BrandColors? other) -> bool
+Kimi.AppKit.Design.BrandColors.Primary.get -> string?
+Kimi.AppKit.Design.BrandColors.Primary.init -> void
+Kimi.AppKit.Design.Tokens.BlueprintPalette
+Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Blueprint = "#0B2B4A" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.BlueprintDeep = "#07203A" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.BlueprintLift = "#123B63" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Brass = "#C4841D" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.BrassSoft = "#FBF2E0" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.Brass = "#E0A33D" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.BrassSoft = "#2A2214" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.Draft = "#5FA0DC" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.DraftHover = "#7BB4E8" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.DraftSoft = "#1B2E42" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.ErrorSoft = "#33191A" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.Hair = "#2A3846" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.Ink = "#E4EAF0" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.Ink2 = "#A9B6C4" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.Ink3 = "#8492A1" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.Mist = "#0E1720" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Dark.Paper = "#16202B" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Draft = "#1E5F9E" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.DraftHover = "#17527F" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.DraftSoft = "#E8F0F8" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Error = "#B3261E" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.ErrorSoft = "#FCEDEC" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.FontStack = "
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Hair = "#DCE3EA" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Ink = "#151C24" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Ink2 = "#4A5765" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Ink3 = "#74818F" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Mist = "#F2F5F8" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.MonoStack = "
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Ok = "#1F7A4D" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Paper = "#FFFFFF" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Radius = "3px" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.RadiusLarge = "6px" -> string!
+const Kimi.AppKit.Design.Tokens.BlueprintPalette.Warn = "#B26A00" -> string!
+override Kimi.AppKit.Design.BrandColors.Equals(object? obj) -> bool
+override Kimi.AppKit.Design.BrandColors.GetHashCode() -> int
+override Kimi.AppKit.Design.BrandColors.ToString() -> string!
+static Kimi.AppKit.Design.AppKitTheme.Build(Kimi.AppKit.Design.BrandColors? brand = null) -> MudBlazor.MudTheme!
+static Kimi.AppKit.Design.BrandColors.operator !=(Kimi.AppKit.Design.BrandColors? left, Kimi.AppKit.Design.BrandColors? right) -> bool
+static Kimi.AppKit.Design.BrandColors.operator ==(Kimi.AppKit.Design.BrandColors? left, Kimi.AppKit.Design.BrandColors? right) -> bool
+static readonly Kimi.AppKit.Design.AppKitTheme.Instance -> MudBlazor.MudTheme!

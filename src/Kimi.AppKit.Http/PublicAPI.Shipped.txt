@@ -1,0 +1,6 @@
+#nullable enable
+Kimi.AppKit.Http.AppKitMarker
+Kimi.AppKit.Http.PrerenderApiStub
+Kimi.AppKit.Http.RefitServiceCollectionExtensions
+static Kimi.AppKit.Http.PrerenderApiStub.AddPrerenderRefitClient<T>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Http.RefitServiceCollectionExtensions.AddAppKitRefitClient<T>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! baseAddress) -> Microsoft.Extensions.DependencyInjection.IHttpClientBuilder!

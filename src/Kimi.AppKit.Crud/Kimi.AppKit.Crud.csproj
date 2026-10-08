@@ -1,5 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
+        <!-- RS0041：带 @typeparam 的泛型组件，Razor 源生成器产出的 BuildRenderTree(__builder) 没有 nullable 标注（oblivious），
+             这是生成器行为、无法在 .razor 里改；这些 override 在 PublicAPI.Shipped.txt 里以 `~` 前缀登记。 -->
+        <NoWarn>$(NoWarn);RS0041</NoWarn>
         <Description>Kimi.AppKit 的反射驱动通用 CRUD：登记一个实体即得列表、新增、编辑、删除。数据访问经 ICrudDataSource 抽象，两种宿主通用。Excel 导入导出留给后续阶段。</Description>
     </PropertyGroup>
     <ItemGroup>

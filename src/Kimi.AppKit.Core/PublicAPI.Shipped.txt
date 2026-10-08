@@ -1,0 +1,388 @@
+#nullable enable
+Kimi.AppKit.Core.Abstractions.ICrudDataSource<T>
+Kimi.AppKit.Core.Abstractions.ICrudDataSource<T>.DeleteAsync(object! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+Kimi.AppKit.Core.Abstractions.ICrudDataSource<T>.GetAsync(object! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T?>!
+Kimi.AppKit.Core.Abstractions.ICrudDataSource<T>.LoadAsync(Kimi.AppKit.Core.Contracts.KQuery! query, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KPage<T>!>!
+Kimi.AppKit.Core.Abstractions.ICrudDataSource<T>.UpsertAsync(T item, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+Kimi.AppKit.Core.Abstractions.IKConfirm
+Kimi.AppKit.Core.Abstractions.IKConfirm.DangerAsync(string! title, string! message, string! confirmText = "删除") -> System.Threading.Tasks.Task<bool>!
+Kimi.AppKit.Core.Abstractions.IKConfirm.WithReasonAsync(string! title, string! message, string! reasonLabel = "原因") -> System.Threading.Tasks.Task<string?>!
+Kimi.AppKit.Core.Abstractions.IKCurrentUser
+Kimi.AppKit.Core.Abstractions.IKCurrentUser.GetUserNameAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<string!>
+Kimi.AppKit.Core.Abstractions.IKCurrentUser.IsAuthenticatedAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<bool>
+Kimi.AppKit.Core.Abstractions.IKEnvironment
+Kimi.AppKit.Core.Abstractions.IKEnvironment.IsProduction.get -> bool
+Kimi.AppKit.Core.Abstractions.IKEnvironment.Name.get -> string!
+Kimi.AppKit.Core.Abstractions.IKFileStore
+Kimi.AppKit.Core.Abstractions.IKFileStore.DeleteAsync(string! fileId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+Kimi.AppKit.Core.Abstractions.IKFileStore.GetInfoAsync(string! fileId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Abstractions.KFileInfo?>!
+Kimi.AppKit.Core.Abstractions.IKFileStore.GetUrlAsync(string! fileId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<string?>!
+Kimi.AppKit.Core.Abstractions.IKFileStore.UploadAsync(Kimi.AppKit.Core.Contracts.FileUploadPayload! payload, System.IProgress<double>? progress = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Abstractions.KUploadResult!>!
+Kimi.AppKit.Core.Abstractions.IKNotify
+Kimi.AppKit.Core.Abstractions.IKNotify.Fail(string! message) -> void
+Kimi.AppKit.Core.Abstractions.IKNotify.Ok(string! message) -> void
+Kimi.AppKit.Core.Abstractions.IKNotify.Result(Kimi.AppKit.Core.Contracts.KResult result, string! successText) -> void
+Kimi.AppKit.Core.Abstractions.IKNotify.Warn(string! message) -> void
+Kimi.AppKit.Core.Abstractions.IKPreferenceStore
+Kimi.AppKit.Core.Abstractions.IKPreferenceStore.GetAsync<T>(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<T?>
+Kimi.AppKit.Core.Abstractions.IKPreferenceStore.RemoveAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Kimi.AppKit.Core.Abstractions.IKPreferenceStore.SetAsync<T>(string! key, T value, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Kimi.AppKit.Core.Abstractions.KFileInfo
+Kimi.AppKit.Core.Abstractions.KFileInfo.<Clone>$() -> Kimi.AppKit.Core.Abstractions.KFileInfo!
+Kimi.AppKit.Core.Abstractions.KFileInfo.ContentType.get -> string?
+Kimi.AppKit.Core.Abstractions.KFileInfo.ContentType.init -> void
+Kimi.AppKit.Core.Abstractions.KFileInfo.Deconstruct(out string! FileId, out string! FileName, out long Length, out string? ContentType) -> void
+Kimi.AppKit.Core.Abstractions.KFileInfo.Equals(Kimi.AppKit.Core.Abstractions.KFileInfo? other) -> bool
+Kimi.AppKit.Core.Abstractions.KFileInfo.FileId.get -> string!
+Kimi.AppKit.Core.Abstractions.KFileInfo.FileId.init -> void
+Kimi.AppKit.Core.Abstractions.KFileInfo.FileName.get -> string!
+Kimi.AppKit.Core.Abstractions.KFileInfo.FileName.init -> void
+Kimi.AppKit.Core.Abstractions.KFileInfo.KFileInfo(string! FileId, string! FileName, long Length, string? ContentType) -> void
+Kimi.AppKit.Core.Abstractions.KFileInfo.Length.get -> long
+Kimi.AppKit.Core.Abstractions.KFileInfo.Length.init -> void
+Kimi.AppKit.Core.Abstractions.KUploadResult
+Kimi.AppKit.Core.Abstractions.KUploadResult.<Clone>$() -> Kimi.AppKit.Core.Abstractions.KUploadResult!
+Kimi.AppKit.Core.Abstractions.KUploadResult.Deconstruct(out string! FileId, out string? Url) -> void
+Kimi.AppKit.Core.Abstractions.KUploadResult.Equals(Kimi.AppKit.Core.Abstractions.KUploadResult? other) -> bool
+Kimi.AppKit.Core.Abstractions.KUploadResult.FileId.get -> string!
+Kimi.AppKit.Core.Abstractions.KUploadResult.FileId.init -> void
+Kimi.AppKit.Core.Abstractions.KUploadResult.KUploadResult(string! FileId, string? Url = null) -> void
+Kimi.AppKit.Core.Abstractions.KUploadResult.Url.get -> string?
+Kimi.AppKit.Core.Abstractions.KUploadResult.Url.init -> void
+Kimi.AppKit.Core.AppKitMarker
+Kimi.AppKit.Core.Contracts.ClaimInfo
+Kimi.AppKit.Core.Contracts.ClaimInfo.ClaimInfo() -> void
+Kimi.AppKit.Core.Contracts.ClaimInfo.Type.get -> string!
+Kimi.AppKit.Core.Contracts.ClaimInfo.Type.init -> void
+Kimi.AppKit.Core.Contracts.ClaimInfo.Value.get -> string!
+Kimi.AppKit.Core.Contracts.ClaimInfo.Value.init -> void
+Kimi.AppKit.Core.Contracts.FileUploadPayload
+Kimi.AppKit.Core.Contracts.FileUploadPayload.<Clone>$() -> Kimi.AppKit.Core.Contracts.FileUploadPayload!
+Kimi.AppKit.Core.Contracts.FileUploadPayload.Content.get -> System.IO.Stream!
+Kimi.AppKit.Core.Contracts.FileUploadPayload.Content.init -> void
+Kimi.AppKit.Core.Contracts.FileUploadPayload.ContentType.get -> string?
+Kimi.AppKit.Core.Contracts.FileUploadPayload.ContentType.init -> void
+Kimi.AppKit.Core.Contracts.FileUploadPayload.Deconstruct(out System.IO.Stream! Content, out string! FileName, out long Length, out string? ContentType) -> void
+Kimi.AppKit.Core.Contracts.FileUploadPayload.Equals(Kimi.AppKit.Core.Contracts.FileUploadPayload? other) -> bool
+Kimi.AppKit.Core.Contracts.FileUploadPayload.FileName.get -> string!
+Kimi.AppKit.Core.Contracts.FileUploadPayload.FileName.init -> void
+Kimi.AppKit.Core.Contracts.FileUploadPayload.FileUploadPayload(System.IO.Stream! Content, string! FileName, long Length, string? ContentType = null) -> void
+Kimi.AppKit.Core.Contracts.FileUploadPayload.Length.get -> long
+Kimi.AppKit.Core.Contracts.FileUploadPayload.Length.init -> void
+Kimi.AppKit.Core.Contracts.IKBrandingSource
+Kimi.AppKit.Core.Contracts.IKBrandingSource.GetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Kimi.AppKit.Core.Contracts.KBranding!>
+Kimi.AppKit.Core.Contracts.IMultipartApi<TOutbound>
+Kimi.AppKit.Core.Contracts.IMultipartApi<TOutbound>.Fields.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Kimi.AppKit.Core.Contracts.IMultipartApi<TOutbound>.Path.get -> string!
+Kimi.AppKit.Core.Contracts.IMultipartApi<TOutbound>.Payload.get -> Kimi.AppKit.Core.Contracts.FileUploadPayload?
+Kimi.AppKit.Core.Contracts.KBranding
+Kimi.AppKit.Core.Contracts.KBranding.<Clone>$() -> Kimi.AppKit.Core.Contracts.KBranding!
+Kimi.AppKit.Core.Contracts.KBranding.CompanyName.get -> string!
+Kimi.AppKit.Core.Contracts.KBranding.CompanyName.init -> void
+Kimi.AppKit.Core.Contracts.KBranding.Deconstruct(out string! CompanyName, out string? LogoUrl) -> void
+Kimi.AppKit.Core.Contracts.KBranding.Equals(Kimi.AppKit.Core.Contracts.KBranding? other) -> bool
+Kimi.AppKit.Core.Contracts.KBranding.KBranding(string! CompanyName, string? LogoUrl) -> void
+Kimi.AppKit.Core.Contracts.KBranding.LogoUrl.get -> string?
+Kimi.AppKit.Core.Contracts.KBranding.LogoUrl.init -> void
+Kimi.AppKit.Core.Contracts.KImportError
+Kimi.AppKit.Core.Contracts.KImportError.<Clone>$() -> Kimi.AppKit.Core.Contracts.KImportError!
+Kimi.AppKit.Core.Contracts.KImportError.Deconstruct(out int RowNumber, out string! Reason) -> void
+Kimi.AppKit.Core.Contracts.KImportError.Equals(Kimi.AppKit.Core.Contracts.KImportError? other) -> bool
+Kimi.AppKit.Core.Contracts.KImportError.KImportError(int RowNumber, string! Reason) -> void
+Kimi.AppKit.Core.Contracts.KImportError.Reason.get -> string!
+Kimi.AppKit.Core.Contracts.KImportError.Reason.init -> void
+Kimi.AppKit.Core.Contracts.KImportError.RowNumber.get -> int
+Kimi.AppKit.Core.Contracts.KImportError.RowNumber.init -> void
+Kimi.AppKit.Core.Contracts.KImportReport
+Kimi.AppKit.Core.Contracts.KImportReport.<Clone>$() -> Kimi.AppKit.Core.Contracts.KImportReport!
+Kimi.AppKit.Core.Contracts.KImportReport.Deconstruct(out int SucceededCount, out System.Collections.Generic.IReadOnlyList<Kimi.AppKit.Core.Contracts.KImportError!>! Errors) -> void
+Kimi.AppKit.Core.Contracts.KImportReport.Equals(Kimi.AppKit.Core.Contracts.KImportReport? other) -> bool
+Kimi.AppKit.Core.Contracts.KImportReport.Errors.get -> System.Collections.Generic.IReadOnlyList<Kimi.AppKit.Core.Contracts.KImportError!>!
+Kimi.AppKit.Core.Contracts.KImportReport.Errors.init -> void
+Kimi.AppKit.Core.Contracts.KImportReport.FailedCount.get -> int
+Kimi.AppKit.Core.Contracts.KImportReport.IsCompleteSuccess.get -> bool
+Kimi.AppKit.Core.Contracts.KImportReport.KImportReport(int SucceededCount, System.Collections.Generic.IReadOnlyList<Kimi.AppKit.Core.Contracts.KImportError!>! Errors) -> void
+Kimi.AppKit.Core.Contracts.KImportReport.SucceededCount.get -> int
+Kimi.AppKit.Core.Contracts.KImportReport.SucceededCount.init -> void
+Kimi.AppKit.Core.Contracts.KNetworkGateResult
+Kimi.AppKit.Core.Contracts.KNetworkGateResult.Allowed = 0 -> Kimi.AppKit.Core.Contracts.KNetworkGateResult
+Kimi.AppKit.Core.Contracts.KNetworkGateResult.DeniedNotConfigured = 1 -> Kimi.AppKit.Core.Contracts.KNetworkGateResult
+Kimi.AppKit.Core.Contracts.KNetworkGateResult.DeniedOutOfRange = 3 -> Kimi.AppKit.Core.Contracts.KNetworkGateResult
+Kimi.AppKit.Core.Contracts.KNetworkGateResult.DeniedUnknownAddress = 2 -> Kimi.AppKit.Core.Contracts.KNetworkGateResult
+Kimi.AppKit.Core.Contracts.KPage<T>
+Kimi.AppKit.Core.Contracts.KPage<T>.<Clone>$() -> Kimi.AppKit.Core.Contracts.KPage<T>!
+Kimi.AppKit.Core.Contracts.KPage<T>.Deconstruct(out System.Collections.Generic.IReadOnlyList<T>! Items, out int TotalCount, out int Page, out int PageSize) -> void
+Kimi.AppKit.Core.Contracts.KPage<T>.Equals(Kimi.AppKit.Core.Contracts.KPage<T>? other) -> bool
+Kimi.AppKit.Core.Contracts.KPage<T>.FirstRowNumber.get -> int
+Kimi.AppKit.Core.Contracts.KPage<T>.Items.get -> System.Collections.Generic.IReadOnlyList<T>!
+Kimi.AppKit.Core.Contracts.KPage<T>.Items.init -> void
+Kimi.AppKit.Core.Contracts.KPage<T>.KPage(System.Collections.Generic.IReadOnlyList<T>! Items, int TotalCount, int Page, int PageSize) -> void
+Kimi.AppKit.Core.Contracts.KPage<T>.Page.get -> int
+Kimi.AppKit.Core.Contracts.KPage<T>.Page.init -> void
+Kimi.AppKit.Core.Contracts.KPage<T>.PageSize.get -> int
+Kimi.AppKit.Core.Contracts.KPage<T>.PageSize.init -> void
+Kimi.AppKit.Core.Contracts.KPage<T>.TotalCount.get -> int
+Kimi.AppKit.Core.Contracts.KPage<T>.TotalCount.init -> void
+Kimi.AppKit.Core.Contracts.KPage<T>.TotalPages.get -> int
+Kimi.AppKit.Core.Contracts.KProblem
+Kimi.AppKit.Core.Contracts.KProblem.<Clone>$() -> Kimi.AppKit.Core.Contracts.KProblem!
+Kimi.AppKit.Core.Contracts.KProblem.Deconstruct(out int Status, out string! Message, out System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>! FieldErrors) -> void
+Kimi.AppKit.Core.Contracts.KProblem.Equals(Kimi.AppKit.Core.Contracts.KProblem? other) -> bool
+Kimi.AppKit.Core.Contracts.KProblem.FieldErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>!
+Kimi.AppKit.Core.Contracts.KProblem.FieldErrors.init -> void
+Kimi.AppKit.Core.Contracts.KProblem.KProblem(int Status, string! Message, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>! FieldErrors) -> void
+Kimi.AppKit.Core.Contracts.KProblem.Message.get -> string!
+Kimi.AppKit.Core.Contracts.KProblem.Message.init -> void
+Kimi.AppKit.Core.Contracts.KProblem.Status.get -> int
+Kimi.AppKit.Core.Contracts.KProblem.Status.init -> void
+Kimi.AppKit.Core.Contracts.KProblem.ToMessages() -> System.Collections.Generic.IReadOnlyList<string!>!
+Kimi.AppKit.Core.Contracts.KQuery
+Kimi.AppKit.Core.Contracts.KQuery.<Clone>$() -> Kimi.AppKit.Core.Contracts.KQuery!
+Kimi.AppKit.Core.Contracts.KQuery.Equals(Kimi.AppKit.Core.Contracts.KQuery? other) -> bool
+Kimi.AppKit.Core.Contracts.KQuery.Filters.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
+Kimi.AppKit.Core.Contracts.KQuery.Filters.init -> void
+Kimi.AppKit.Core.Contracts.KQuery.KQuery() -> void
+Kimi.AppKit.Core.Contracts.KQuery.Page.get -> int
+Kimi.AppKit.Core.Contracts.KQuery.Page.init -> void
+Kimi.AppKit.Core.Contracts.KQuery.PageSize.get -> int
+Kimi.AppKit.Core.Contracts.KQuery.PageSize.init -> void
+Kimi.AppKit.Core.Contracts.KQuery.Search.get -> string?
+Kimi.AppKit.Core.Contracts.KQuery.Search.init -> void
+Kimi.AppKit.Core.Contracts.KQuery.Skip.get -> int
+Kimi.AppKit.Core.Contracts.KQuery.SortBy.get -> string?
+Kimi.AppKit.Core.Contracts.KQuery.SortBy.init -> void
+Kimi.AppKit.Core.Contracts.KQuery.SortDescending.get -> bool
+Kimi.AppKit.Core.Contracts.KQuery.SortDescending.init -> void
+Kimi.AppKit.Core.Contracts.KResult
+Kimi.AppKit.Core.Contracts.KResult.Equals(Kimi.AppKit.Core.Contracts.KResult other) -> bool
+Kimi.AppKit.Core.Contracts.KResult.Errors.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Kimi.AppKit.Core.Contracts.KResult.KResult() -> void
+Kimi.AppKit.Core.Contracts.KResult.Succeeded.get -> bool
+Kimi.AppKit.Core.Contracts.KTokenResponse
+Kimi.AppKit.Core.Contracts.KTokenResponse.AccessToken.get -> string?
+Kimi.AppKit.Core.Contracts.KTokenResponse.AccessToken.set -> void
+Kimi.AppKit.Core.Contracts.KTokenResponse.ExpiresIn.get -> int
+Kimi.AppKit.Core.Contracts.KTokenResponse.ExpiresIn.set -> void
+Kimi.AppKit.Core.Contracts.KTokenResponse.IdToken.get -> string?
+Kimi.AppKit.Core.Contracts.KTokenResponse.IdToken.set -> void
+Kimi.AppKit.Core.Contracts.KTokenResponse.KTokenResponse() -> void
+Kimi.AppKit.Core.Contracts.KTokenResponse.RefreshToken.get -> string?
+Kimi.AppKit.Core.Contracts.KTokenResponse.RefreshToken.set -> void
+Kimi.AppKit.Core.Contracts.KTokenResponse.TokenType.get -> string?
+Kimi.AppKit.Core.Contracts.KTokenResponse.TokenType.set -> void
+Kimi.AppKit.Core.Contracts.KUserInfo
+Kimi.AppKit.Core.Contracts.KUserInfo.Claims.get -> System.Collections.Generic.List<Kimi.AppKit.Core.Contracts.ClaimInfo!>!
+Kimi.AppKit.Core.Contracts.KUserInfo.Claims.init -> void
+Kimi.AppKit.Core.Contracts.KUserInfo.DisplayName.get -> string!
+Kimi.AppKit.Core.Contracts.KUserInfo.DisplayName.init -> void
+Kimi.AppKit.Core.Contracts.KUserInfo.IdToken.get -> string!
+Kimi.AppKit.Core.Contracts.KUserInfo.IdToken.init -> void
+Kimi.AppKit.Core.Contracts.KUserInfo.KUserInfo() -> void
+Kimi.AppKit.Core.Contracts.KUserInfo.Name.get -> string!
+Kimi.AppKit.Core.Contracts.KUserInfo.Name.init -> void
+Kimi.AppKit.Core.Contracts.KUserInfo.ToClaimsPrincipal() -> System.Security.Claims.ClaimsPrincipal!
+Kimi.AppKit.Core.Entities.AuditableEntityWithName
+Kimi.AppKit.Core.Entities.AuditableEntityWithName.AuditableEntityWithName() -> void
+Kimi.AppKit.Core.Entities.AuditableEntityWithName.Description.get -> string?
+Kimi.AppKit.Core.Entities.AuditableEntityWithName.Description.set -> void
+Kimi.AppKit.Core.Entities.AuditableEntityWithName.Name.get -> string!
+Kimi.AppKit.Core.Entities.AuditableEntityWithName.Name.set -> void
+Kimi.AppKit.Core.Entities.BaseAuditableEntity
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.Active.get -> bool
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.Active.set -> void
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.BaseAuditableEntity() -> void
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.CreatedBy.get -> string?
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.CreatedBy.set -> void
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.CreatedOn.get -> System.DateTimeOffset
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.CreatedOn.set -> void
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.Id.get -> int
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.Id.set -> void
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.Updated.get -> System.DateTimeOffset
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.Updated.set -> void
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.UpdatedBy.get -> string?
+Kimi.AppKit.Core.Entities.BaseAuditableEntity.UpdatedBy.set -> void
+Kimi.AppKit.Core.Entities.HideFromTableAttribute
+Kimi.AppKit.Core.Entities.HideFromTableAttribute.HideFromTableAttribute() -> void
+Kimi.AppKit.Core.Entities.IAuditableEntity
+Kimi.AppKit.Core.Entities.IAuditableEntity.CreatedBy.get -> string?
+Kimi.AppKit.Core.Entities.IAuditableEntity.CreatedBy.set -> void
+Kimi.AppKit.Core.Entities.IAuditableEntity.CreatedOn.get -> System.DateTimeOffset
+Kimi.AppKit.Core.Entities.IAuditableEntity.CreatedOn.set -> void
+Kimi.AppKit.Core.Entities.IAuditableEntity.Updated.get -> System.DateTimeOffset
+Kimi.AppKit.Core.Entities.IAuditableEntity.Updated.set -> void
+Kimi.AppKit.Core.Entities.IAuditableEntity.UpdatedBy.get -> string?
+Kimi.AppKit.Core.Entities.IAuditableEntity.UpdatedBy.set -> void
+Kimi.AppKit.Core.Entities.IConcurrencyStamped
+Kimi.AppKit.Core.Entities.IConcurrencyStamped.ConcurrencyStamp.get -> string?
+Kimi.AppKit.Core.Entities.IConcurrencyStamped.ConcurrencyStamp.set -> void
+Kimi.AppKit.Core.Entities.ISkipNameUnique
+Kimi.AppKit.Core.Entities.ISoftDeleteEntity
+Kimi.AppKit.Core.Entities.ISoftDeleteEntity.Active.get -> bool
+Kimi.AppKit.Core.Entities.ISoftDeleteEntity.Active.set -> void
+Kimi.AppKit.Core.Hosting.SchemeUrlResolver
+Kimi.AppKit.Core.Http.KHttpResponseExtensions
+Kimi.AppKit.Core.Http.KLocalizationHeaders
+Kimi.AppKit.Core.Naming.NameBuilder
+Kimi.AppKit.Core.Naming.NameBuilder.Build() -> string!
+Kimi.AppKit.Core.Naming.NameBuilder.Date(System.DateTimeOffset date, string! separator = "") -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.DateFormat(string! format, System.DateTimeOffset date) -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.Quarter(System.DateTimeOffset date) -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.Text(string? text) -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.Week(System.DateTimeOffset date) -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.When(bool condition, string? text) -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.WithSeparator(string! separator) -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.Year(System.DateTimeOffset date) -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.YearMonth(System.DateTimeOffset date, string! separator = "") -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Naming.NameBuilder.YearShort(System.DateTimeOffset date) -> Kimi.AppKit.Core.Naming.NameBuilder!
+Kimi.AppKit.Core.Reflection.DisplayLabelExtensions
+Kimi.AppKit.Core.Reflection.EntityPropertyInspector
+Kimi.AppKit.Core.Reflection.XmlDocLookup
+Kimi.AppKit.Core.Settings.IKSettingEntity
+Kimi.AppKit.Core.Settings.IKSettingEntity.Description.get -> string?
+Kimi.AppKit.Core.Settings.IKSettingEntity.Description.set -> void
+Kimi.AppKit.Core.Settings.IKSettingEntity.IsSystem.get -> bool
+Kimi.AppKit.Core.Settings.IKSettingEntity.IsSystem.set -> void
+Kimi.AppKit.Core.Settings.IKSettingEntity.Name.get -> string!
+Kimi.AppKit.Core.Settings.IKSettingEntity.Name.set -> void
+Kimi.AppKit.Core.Settings.IKSettingEntity.Value.get -> string!
+Kimi.AppKit.Core.Settings.IKSettingEntity.Value.set -> void
+Kimi.AppKit.Core.Settings.IKSettingEntity.ValueTypeFullName.get -> string!
+Kimi.AppKit.Core.Settings.IKSettingEntity.ValueTypeFullName.set -> void
+Kimi.AppKit.Core.Settings.ISetting
+Kimi.AppKit.Core.Settings.ISetting.Description.get -> string!
+Kimi.AppKit.Core.Settings.ISettingService
+Kimi.AppKit.Core.Settings.ISettingService.DeleteAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Kimi.AppKit.Core.Settings.ISettingService.ExistsAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<bool>!
+Kimi.AppKit.Core.Settings.ISettingService.GetAsync<T>(string! key, T? defaultValue = default(T?), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T?>!
+Kimi.AppKit.Core.Settings.ISettingService.GetRawJsonAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<string?>!
+Kimi.AppKit.Core.Settings.ISettingService.ResetToDefaultAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Kimi.AppKit.Core.Settings.ISettingService.SetAsync<T>(string! key, T value, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Kimi.AppKit.Core.Settings.SettingDefaultEntry
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.<Clone>$() -> Kimi.AppKit.Core.Settings.SettingDefaultEntry!
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.Deconstruct(out string! ValueTypeFullName, out string! DefaultValueJson, out string! Description, out bool IsSystem) -> void
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.DefaultValueJson.get -> string!
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.DefaultValueJson.init -> void
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.Description.get -> string!
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.Description.init -> void
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.Equals(Kimi.AppKit.Core.Settings.SettingDefaultEntry? other) -> bool
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.IsSystem.get -> bool
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.IsSystem.init -> void
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.SettingDefaultEntry(string! ValueTypeFullName, string! DefaultValueJson, string! Description, bool IsSystem = true) -> void
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.ValueTypeFullName.get -> string!
+Kimi.AppKit.Core.Settings.SettingDefaultEntry.ValueTypeFullName.init -> void
+Kimi.AppKit.Core.Settings.SettingDefaults
+Kimi.AppKit.Core.Settings.SettingDefaults.All.get -> System.Collections.Generic.IReadOnlyDictionary<string!, Kimi.AppKit.Core.Settings.SettingDefaultEntry!>!
+Kimi.AppKit.Core.Settings.SettingDefaults.Get(string! key) -> Kimi.AppKit.Core.Settings.SettingDefaultEntry?
+Kimi.AppKit.Core.Settings.SettingDefaults.Has(string! key) -> bool
+Kimi.AppKit.Core.Settings.SettingDefaults.Register<T>(string! key, T defaultValue, bool isSystem = true, System.Text.Json.JsonSerializerOptions? jsonOptions = null) -> Kimi.AppKit.Core.Settings.SettingDefaults!
+Kimi.AppKit.Core.Settings.SettingDefaults.SettingDefaults() -> void
+Kimi.AppKit.Core.Time.AppTimeZone
+Kimi.AppKit.Core.Time.AppTimeZone.AppTimeZone(System.TimeZoneInfo! zone) -> void
+Kimi.AppKit.Core.Time.AppTimeZone.AppTimeZone(string? timeZoneId) -> void
+Kimi.AppKit.Core.Time.AppTimeZone.FromLocal(System.DateTime wallClock) -> System.DateTimeOffset
+Kimi.AppKit.Core.Time.AppTimeZone.ToLocal(System.DateTimeOffset instant) -> System.DateTimeOffset
+Kimi.AppKit.Core.Time.AppTimeZone.Zone.get -> System.TimeZoneInfo!
+Kimi.AppKit.Core.Time.IAppTimeZone
+Kimi.AppKit.Core.Time.IAppTimeZone.FromLocal(System.DateTime wallClock) -> System.DateTimeOffset
+Kimi.AppKit.Core.Time.IAppTimeZone.ToLocal(System.DateTimeOffset instant) -> System.DateTimeOffset
+Kimi.AppKit.Core.Time.IAppTimeZone.Zone.get -> System.TimeZoneInfo!
+const Kimi.AppKit.Core.Contracts.KQuery.DefaultPageSize = 50 -> int
+const Kimi.AppKit.Core.Contracts.KQuery.MaxPageSize = 500 -> int
+const Kimi.AppKit.Core.Contracts.KUserInfo.DisplayNameClaimType = "display_name" -> string!
+const Kimi.AppKit.Core.Contracts.KUserInfo.NameClaimType = "name" -> string!
+const Kimi.AppKit.Core.Contracts.KUserInfo.RoleClaimType = "role" -> string!
+const Kimi.AppKit.Core.Http.KHttpResponseExtensions.BodyKey = "body" -> string!
+const Kimi.AppKit.Core.Http.KHttpResponseExtensions.MissingPermissionsKey = "missingPermissions" -> string!
+const Kimi.AppKit.Core.Http.KHttpResponseExtensions.MissingRolesKey = "missingRoles" -> string!
+const Kimi.AppKit.Core.Http.KHttpResponseExtensions.ServerExceptionKey = "serverException" -> string!
+const Kimi.AppKit.Core.Http.KLocalizationHeaders.RequestLanguage = "X-Request-Language" -> string!
+const Kimi.AppKit.Core.Time.AppTimeZone.DefaultZoneId = "UTC" -> string!
+override Kimi.AppKit.Core.Abstractions.KFileInfo.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Abstractions.KFileInfo.GetHashCode() -> int
+override Kimi.AppKit.Core.Abstractions.KFileInfo.ToString() -> string!
+override Kimi.AppKit.Core.Abstractions.KUploadResult.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Abstractions.KUploadResult.GetHashCode() -> int
+override Kimi.AppKit.Core.Abstractions.KUploadResult.ToString() -> string!
+override Kimi.AppKit.Core.Contracts.FileUploadPayload.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Contracts.FileUploadPayload.GetHashCode() -> int
+override Kimi.AppKit.Core.Contracts.FileUploadPayload.ToString() -> string!
+override Kimi.AppKit.Core.Contracts.KBranding.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Contracts.KBranding.GetHashCode() -> int
+override Kimi.AppKit.Core.Contracts.KBranding.ToString() -> string!
+override Kimi.AppKit.Core.Contracts.KImportError.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Contracts.KImportError.GetHashCode() -> int
+override Kimi.AppKit.Core.Contracts.KImportError.ToString() -> string!
+override Kimi.AppKit.Core.Contracts.KImportReport.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Contracts.KImportReport.GetHashCode() -> int
+override Kimi.AppKit.Core.Contracts.KImportReport.ToString() -> string!
+override Kimi.AppKit.Core.Contracts.KPage<T>.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Contracts.KPage<T>.GetHashCode() -> int
+override Kimi.AppKit.Core.Contracts.KPage<T>.ToString() -> string!
+override Kimi.AppKit.Core.Contracts.KProblem.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Contracts.KProblem.GetHashCode() -> int
+override Kimi.AppKit.Core.Contracts.KProblem.ToString() -> string!
+override Kimi.AppKit.Core.Contracts.KQuery.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Contracts.KQuery.GetHashCode() -> int
+override Kimi.AppKit.Core.Contracts.KQuery.ToString() -> string!
+override Kimi.AppKit.Core.Contracts.KResult.GetHashCode() -> int
+override Kimi.AppKit.Core.Entities.BaseAuditableEntity.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Entities.BaseAuditableEntity.GetHashCode() -> int
+override Kimi.AppKit.Core.Naming.NameBuilder.ToString() -> string!
+override Kimi.AppKit.Core.Settings.SettingDefaultEntry.Equals(object? obj) -> bool
+override Kimi.AppKit.Core.Settings.SettingDefaultEntry.GetHashCode() -> int
+override Kimi.AppKit.Core.Settings.SettingDefaultEntry.ToString() -> string!
+static Kimi.AppKit.Core.Abstractions.KFileInfo.operator !=(Kimi.AppKit.Core.Abstractions.KFileInfo? left, Kimi.AppKit.Core.Abstractions.KFileInfo? right) -> bool
+static Kimi.AppKit.Core.Abstractions.KFileInfo.operator ==(Kimi.AppKit.Core.Abstractions.KFileInfo? left, Kimi.AppKit.Core.Abstractions.KFileInfo? right) -> bool
+static Kimi.AppKit.Core.Abstractions.KUploadResult.operator !=(Kimi.AppKit.Core.Abstractions.KUploadResult? left, Kimi.AppKit.Core.Abstractions.KUploadResult? right) -> bool
+static Kimi.AppKit.Core.Abstractions.KUploadResult.operator ==(Kimi.AppKit.Core.Abstractions.KUploadResult? left, Kimi.AppKit.Core.Abstractions.KUploadResult? right) -> bool
+static Kimi.AppKit.Core.Contracts.FileUploadPayload.operator !=(Kimi.AppKit.Core.Contracts.FileUploadPayload? left, Kimi.AppKit.Core.Contracts.FileUploadPayload? right) -> bool
+static Kimi.AppKit.Core.Contracts.FileUploadPayload.operator ==(Kimi.AppKit.Core.Contracts.FileUploadPayload? left, Kimi.AppKit.Core.Contracts.FileUploadPayload? right) -> bool
+static Kimi.AppKit.Core.Contracts.KBranding.operator !=(Kimi.AppKit.Core.Contracts.KBranding? left, Kimi.AppKit.Core.Contracts.KBranding? right) -> bool
+static Kimi.AppKit.Core.Contracts.KBranding.operator ==(Kimi.AppKit.Core.Contracts.KBranding? left, Kimi.AppKit.Core.Contracts.KBranding? right) -> bool
+static Kimi.AppKit.Core.Contracts.KImportError.operator !=(Kimi.AppKit.Core.Contracts.KImportError? left, Kimi.AppKit.Core.Contracts.KImportError? right) -> bool
+static Kimi.AppKit.Core.Contracts.KImportError.operator ==(Kimi.AppKit.Core.Contracts.KImportError? left, Kimi.AppKit.Core.Contracts.KImportError? right) -> bool
+static Kimi.AppKit.Core.Contracts.KImportReport.Success(int count) -> Kimi.AppKit.Core.Contracts.KImportReport!
+static Kimi.AppKit.Core.Contracts.KImportReport.operator !=(Kimi.AppKit.Core.Contracts.KImportReport? left, Kimi.AppKit.Core.Contracts.KImportReport? right) -> bool
+static Kimi.AppKit.Core.Contracts.KImportReport.operator ==(Kimi.AppKit.Core.Contracts.KImportReport? left, Kimi.AppKit.Core.Contracts.KImportReport? right) -> bool
+static Kimi.AppKit.Core.Contracts.KPage<T>.Empty(Kimi.AppKit.Core.Contracts.KQuery! query) -> Kimi.AppKit.Core.Contracts.KPage<T>!
+static Kimi.AppKit.Core.Contracts.KPage<T>.operator !=(Kimi.AppKit.Core.Contracts.KPage<T>? left, Kimi.AppKit.Core.Contracts.KPage<T>? right) -> bool
+static Kimi.AppKit.Core.Contracts.KPage<T>.operator ==(Kimi.AppKit.Core.Contracts.KPage<T>? left, Kimi.AppKit.Core.Contracts.KPage<T>? right) -> bool
+static Kimi.AppKit.Core.Contracts.KProblem.operator !=(Kimi.AppKit.Core.Contracts.KProblem? left, Kimi.AppKit.Core.Contracts.KProblem? right) -> bool
+static Kimi.AppKit.Core.Contracts.KProblem.operator ==(Kimi.AppKit.Core.Contracts.KProblem? left, Kimi.AppKit.Core.Contracts.KProblem? right) -> bool
+static Kimi.AppKit.Core.Contracts.KQuery.operator !=(Kimi.AppKit.Core.Contracts.KQuery? left, Kimi.AppKit.Core.Contracts.KQuery? right) -> bool
+static Kimi.AppKit.Core.Contracts.KQuery.operator ==(Kimi.AppKit.Core.Contracts.KQuery? left, Kimi.AppKit.Core.Contracts.KQuery? right) -> bool
+static Kimi.AppKit.Core.Contracts.KResult.Combine(System.Collections.Generic.IEnumerable<Kimi.AppKit.Core.Contracts.KResult>! results) -> Kimi.AppKit.Core.Contracts.KResult
+static Kimi.AppKit.Core.Contracts.KResult.Fail(System.Collections.Generic.IEnumerable<string!>! errors) -> Kimi.AppKit.Core.Contracts.KResult
+static Kimi.AppKit.Core.Contracts.KResult.Fail(params string![]! errors) -> Kimi.AppKit.Core.Contracts.KResult
+static Kimi.AppKit.Core.Contracts.KResult.Ok() -> Kimi.AppKit.Core.Contracts.KResult
+static Kimi.AppKit.Core.Contracts.KResult.operator !=(Kimi.AppKit.Core.Contracts.KResult left, Kimi.AppKit.Core.Contracts.KResult right) -> bool
+static Kimi.AppKit.Core.Contracts.KResult.operator ==(Kimi.AppKit.Core.Contracts.KResult left, Kimi.AppKit.Core.Contracts.KResult right) -> bool
+static Kimi.AppKit.Core.Contracts.KUserInfo.FromClaimsPrincipal(System.Security.Claims.ClaimsPrincipal! principal, string! idToken) -> Kimi.AppKit.Core.Contracts.KUserInfo!
+static Kimi.AppKit.Core.Hosting.SchemeUrlResolver.Resolve(string? appBaseAddress, string? httpsUrl, string? httpUrl) -> string!
+static Kimi.AppKit.Core.Http.KHttpResponseExtensions.BuildException(System.Net.HttpStatusCode statusCode, string? content) -> System.Net.Http.HttpRequestException!
+static Kimi.AppKit.Core.Http.KHttpResponseExtensions.EnsureSuccessOrThrowAsync(this System.Net.Http.HttpResponseMessage! response, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+static Kimi.AppKit.Core.Naming.NameBuilder.Create() -> Kimi.AppKit.Core.Naming.NameBuilder!
+static Kimi.AppKit.Core.Naming.NameBuilder.From(System.TimeProvider! timeProvider, System.TimeZoneInfo! zone) -> System.DateTimeOffset
+static Kimi.AppKit.Core.Reflection.DisplayLabelExtensions.GetDisplayLabel(this System.Reflection.MemberInfo! member) -> string!
+static Kimi.AppKit.Core.Reflection.DisplayLabelExtensions.SplitPascalCase(string! name) -> string!
+static Kimi.AppKit.Core.Reflection.EntityPropertyInspector.BuildSortSelector(this System.Reflection.PropertyInfo! property) -> System.Func<object!, object!>!
+static Kimi.AppKit.Core.Reflection.EntityPropertyInspector.GetEditableProperties(System.Type! entityType, System.Collections.Generic.IEnumerable<System.Type!>? excludeInterfaces = null) -> System.Collections.Generic.IReadOnlyList<System.Reflection.PropertyInfo!>!
+static Kimi.AppKit.Core.Reflection.EntityPropertyInspector.IsFieldReadOnly<T>(System.Reflection.PropertyInfo! property, T model, bool formReadOnly, System.Func<T, string!, bool>? fieldReadOnly) -> bool
+static Kimi.AppKit.Core.Reflection.EntityPropertyInspector.IsIdProperty(System.Reflection.PropertyInfo! property) -> bool
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.GetXmlEnumFieldSummaries(this System.Type! enumType) -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.GetXmlEnumFieldSummary(this System.Type! enumType, string! fieldName) -> string?
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.GetXmlSummary(this System.Enum! enumValue) -> string?
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.GetXmlSummary(this System.Reflection.FieldInfo! field) -> string?
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.GetXmlSummary(this System.Reflection.MethodInfo! method) -> string?
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.GetXmlSummary(this System.Reflection.PropertyInfo! prop) -> string?
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.GetXmlSummary(this System.Type! type) -> string?
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.InitAsync(System.Net.Http.HttpClient! httpClient, string! xmlPath) -> System.Threading.Tasks.Task!
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.InitFromFile(string! fullPath) -> void
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.TryInitFromAssemblyOf<TFromAssembly>() -> bool
+static Kimi.AppKit.Core.Reflection.XmlDocLookup.TryInitFromBaseDirectory(string! xmlFileName) -> bool
+static Kimi.AppKit.Core.Settings.SettingDefaultEntry.operator !=(Kimi.AppKit.Core.Settings.SettingDefaultEntry? left, Kimi.AppKit.Core.Settings.SettingDefaultEntry? right) -> bool
+static Kimi.AppKit.Core.Settings.SettingDefaultEntry.operator ==(Kimi.AppKit.Core.Settings.SettingDefaultEntry? left, Kimi.AppKit.Core.Settings.SettingDefaultEntry? right) -> bool
+static readonly Kimi.AppKit.Core.Contracts.KBranding.Fallback -> Kimi.AppKit.Core.Contracts.KBranding!
+static readonly Kimi.AppKit.Core.Contracts.KProblem.NoFieldErrors -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>!
+~override Kimi.AppKit.Core.Contracts.KResult.Equals(object obj) -> bool
+~override Kimi.AppKit.Core.Contracts.KResult.ToString() -> string

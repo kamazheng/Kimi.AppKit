@@ -20,6 +20,9 @@
         <PackageVersion Include="MinVer" Version="7.0.0" />
         <PackageVersion Include="DotNet.ReproducibleBuilds" Version="2.0.5" />
         <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.400" />
+        <!-- 公开 API 面快照（PublicAPI.Shipped.txt）：发包后任何公开类型/成员的增删改都会让构建失败，
+             逼着在 PublicAPI.Unshipped.txt 里显式登记。0.x 期间仍可改，但必须是有意的。 -->
+        <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.0.0" />
     </ItemGroup>
 
     <!-- ── ASP.NET Core / EF Core（整族对齐 10.0.11）──────────────────── -->

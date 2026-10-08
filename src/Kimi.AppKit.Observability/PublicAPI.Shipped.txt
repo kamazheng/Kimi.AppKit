@@ -1,0 +1,21 @@
+#nullable enable
+Kimi.AppKit.Observability.KObservabilityOptions
+Kimi.AppKit.Observability.KObservabilityOptions.AdditionalSensitiveKeys.get -> System.Collections.Generic.List<string!>!
+Kimi.AppKit.Observability.KObservabilityOptions.ExcludedOutboundHosts.get -> System.Collections.Generic.List<string!>!
+Kimi.AppKit.Observability.KObservabilityOptions.ExcludedPathPrefixes.get -> System.Collections.Generic.List<string!>!
+Kimi.AppKit.Observability.KObservabilityOptions.ExcludedSqlFragments.get -> System.Collections.Generic.List<string!>!
+Kimi.AppKit.Observability.KObservabilityOptions.KObservabilityOptions() -> void
+Kimi.AppKit.Observability.KObservabilityOptions.ServiceName.get -> string?
+Kimi.AppKit.Observability.KObservabilityOptions.ServiceName.set -> void
+Kimi.AppKit.Observability.KObservabilityOptions.ServiceNamespace.get -> string?
+Kimi.AppKit.Observability.KObservabilityOptions.ServiceNamespace.set -> void
+Kimi.AppKit.Observability.KObservabilityOptions.ServiceVersion.get -> string?
+Kimi.AppKit.Observability.KObservabilityOptions.ServiceVersion.set -> void
+Kimi.AppKit.Observability.KObservabilitySetup
+Kimi.AppKit.Observability.KSensitiveDataRedactor
+const Kimi.AppKit.Observability.KSensitiveDataRedactor.Mask = "****" -> string!
+static Kimi.AppKit.Observability.KObservabilitySetup.AddAppKitObservability(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, System.Action<Kimi.AppKit.Observability.KObservabilityOptions!>? configure = null) -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
+static Kimi.AppKit.Observability.KObservabilitySetup.UseAppKitEndUserTag(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+static Kimi.AppKit.Observability.KSensitiveDataRedactor.DefaultSensitiveKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static Kimi.AppKit.Observability.KSensitiveDataRedactor.Redact(string? text, System.Collections.Generic.IEnumerable<string!>? additionalKeys = null) -> string?
+static Kimi.AppKit.Observability.KSensitiveDataRedactor.RedactAuthorizationHeader(string? headerValue) -> string!

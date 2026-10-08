@@ -1,0 +1,293 @@
+#nullable enable
+Kimi.AppKit.Web.AppKitMarker
+Kimi.AppKit.Web.Authentication.IKOidcTokenService
+Kimi.AppKit.Web.Authentication.IKOidcTokenService.PasswordLoginAsync(string! username, string! password, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KTokenResponse?>!
+Kimi.AppKit.Web.Authentication.IKOidcTokenService.RefreshTokenAsync(string! refreshToken, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KTokenResponse?>!
+Kimi.AppKit.Web.Authentication.JwtBearerSetup
+Kimi.AppKit.Web.Authentication.KAuthenticationSchemes
+Kimi.AppKit.Web.Authentication.KAuthenticationSetup
+Kimi.AppKit.Web.Authentication.KCookieSignIn
+Kimi.AppKit.Web.Authentication.KOidcOptions
+Kimi.AppKit.Web.Authentication.KOidcOptions.AccessDeniedPath.get -> string?
+Kimi.AppKit.Web.Authentication.KOidcOptions.AccessDeniedPath.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.ClientId.get -> string?
+Kimi.AppKit.Web.Authentication.KOidcOptions.ClientId.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.ClientSecret.get -> string?
+Kimi.AppKit.Web.Authentication.KOidcOptions.ClientSecret.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.ForceHttpsRedirectUri.get -> bool
+Kimi.AppKit.Web.Authentication.KOidcOptions.ForceHttpsRedirectUri.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.HubPathPrefix.get -> string!
+Kimi.AppKit.Web.Authentication.KOidcOptions.HubPathPrefix.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.IsConfigured.get -> bool
+Kimi.AppKit.Web.Authentication.KOidcOptions.Issuer.get -> string?
+Kimi.AppKit.Web.Authentication.KOidcOptions.Issuer.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.KOidcOptions() -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.LoginPath.get -> string!
+Kimi.AppKit.Web.Authentication.KOidcOptions.LoginPath.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.PasswordGrantScopes.get -> System.Collections.Generic.IList<string!>!
+Kimi.AppKit.Web.Authentication.KOidcOptions.RequireHttpsMetadata.get -> bool
+Kimi.AppKit.Web.Authentication.KOidcOptions.RequireHttpsMetadata.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.Resources.get -> System.Collections.Generic.IList<string!>!
+Kimi.AppKit.Web.Authentication.KOidcOptions.Scopes.get -> System.Collections.Generic.IList<string!>!
+Kimi.AppKit.Web.Authentication.KOidcOptions.SignOutCallbackPath.get -> string!
+Kimi.AppKit.Web.Authentication.KOidcOptions.SignOutCallbackPath.set -> void
+Kimi.AppKit.Web.Authentication.KOidcOptions.TokenEndpoint.get -> string?
+Kimi.AppKit.Web.Authentication.KOidcOptions.TokenEndpoint.set -> void
+Kimi.AppKit.Web.Authentication.KOidcTokenService
+Kimi.AppKit.Web.Authentication.KOidcTokenService.KOidcTokenService(System.Net.Http.IHttpClientFactory! httpClientFactory, Microsoft.Extensions.Options.IOptionsMonitor<Kimi.AppKit.Web.Authentication.KOidcOptions!>! options) -> void
+Kimi.AppKit.Web.Authentication.KOidcTokenService.PasswordLoginAsync(string! username, string! password, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KTokenResponse?>!
+Kimi.AppKit.Web.Authentication.KOidcTokenService.RefreshTokenAsync(string! refreshToken, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KTokenResponse?>!
+Kimi.AppKit.Web.Authentication.KOidcTokenServiceCollectionExtensions
+Kimi.AppKit.Web.Authentication.KPasswordLoginEndpoint
+Kimi.AppKit.Web.Authentication.KPersistingAuthenticationStateProvider
+Kimi.AppKit.Web.Authentication.KPersistingAuthenticationStateProvider.Dispose() -> void
+Kimi.AppKit.Web.Authentication.KPersistingAuthenticationStateProvider.KPersistingAuthenticationStateProvider(Microsoft.AspNetCore.Components.PersistentComponentState! state, Microsoft.AspNetCore.Http.IHttpContextAccessor! httpContextAccessor, Microsoft.Extensions.Logging.ILogger<Kimi.AppKit.Web.Authentication.KPersistingAuthenticationStateProvider!>! logger) -> void
+Kimi.AppKit.Web.Authentication.KPersistingAuthenticationStateProvider.SetAuthenticationState(System.Threading.Tasks.Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState!>! authenticationStateTask) -> void
+Kimi.AppKit.Web.Authentication.KQrLogin
+Kimi.AppKit.Web.Authentication.KQrLogin.KQrLogin(Microsoft.AspNetCore.DataProtection.IDataProtectionProvider! provider, Microsoft.Extensions.Options.IOptionsMonitor<Kimi.AppKit.Web.Authentication.KQrLoginOptions!>! options, Microsoft.Extensions.Logging.ILogger<Kimi.AppKit.Web.Authentication.KQrLogin!>! logger) -> void
+Kimi.AppKit.Web.Authentication.KQrLogin.Protect(string! username, string! password, System.TimeSpan? lifetime = null) -> string!
+Kimi.AppKit.Web.Authentication.KQrLogin.TryUnprotect(string? payload) -> (string! Username, string! Password)?
+Kimi.AppKit.Web.Authentication.KQrLoginEndpoints
+Kimi.AppKit.Web.Authentication.KQrLoginOptions
+Kimi.AppKit.Web.Authentication.KQrLoginOptions.KQrLoginOptions() -> void
+Kimi.AppKit.Web.Authentication.KQrLoginOptions.Lifetime.get -> System.TimeSpan
+Kimi.AppKit.Web.Authentication.KQrLoginOptions.Lifetime.set -> void
+Kimi.AppKit.Web.Authentication.KQrLoginServiceCollectionExtensions
+Kimi.AppKit.Web.Authentication.KReturnUrl
+Kimi.AppKit.Web.Authorization.AppRoleAuthorizationHandler
+Kimi.AppKit.Web.Authorization.AppRoleAuthorizationHandler.AppRoleAuthorizationHandler() -> void
+Kimi.AppKit.Web.Authorization.AppRoleRequirement
+Kimi.AppKit.Web.Authorization.AppRoleRequirement.AppRoleRequirement(params string![]! roles) -> void
+Kimi.AppKit.Web.Authorization.AppRoleRequirement.Roles.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Kimi.AppKit.Web.Authorization.AuthorizationSetup
+Kimi.AppKit.Web.Authorization.KNetworkGate
+Kimi.AppKit.Web.Authorization.KNetworkGate.Evaluate(Microsoft.AspNetCore.Http.HttpContext! context) -> Kimi.AppKit.Core.Contracts.KNetworkGateResult
+Kimi.AppKit.Web.Authorization.KNetworkGate.KNetworkGate(Microsoft.Extensions.Options.IOptionsMonitor<Kimi.AppKit.Web.Authorization.KNetworkGateOptions!>! options, Microsoft.Extensions.Logging.ILogger<Kimi.AppKit.Web.Authorization.KNetworkGate!>! logger) -> void
+Kimi.AppKit.Web.Authorization.KNetworkGateOptions
+Kimi.AppKit.Web.Authorization.KNetworkGateOptions.AllowLoopback.get -> bool
+Kimi.AppKit.Web.Authorization.KNetworkGateOptions.AllowLoopback.set -> void
+Kimi.AppKit.Web.Authorization.KNetworkGateOptions.AllowedSubnets.get -> System.Collections.Generic.IList<string!>!
+Kimi.AppKit.Web.Authorization.KNetworkGateOptions.KNetworkGateOptions() -> void
+Kimi.AppKit.Web.Authorization.KNetworkGateServiceCollectionExtensions
+Kimi.AppKit.Web.Authorization.KRoleBypassClaimsTransformation
+Kimi.AppKit.Web.Authorization.KRoleBypassClaimsTransformation.KRoleBypassClaimsTransformation(Kimi.AppKit.Web.Authorization.KRoleBypassGate! gate, Kimi.AppKit.Web.Authorization.KRoleBypassOptions! options) -> void
+Kimi.AppKit.Web.Authorization.KRoleBypassClaimsTransformation.TransformAsync(System.Security.Claims.ClaimsPrincipal! principal) -> System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal!>!
+Kimi.AppKit.Web.Authorization.KRoleBypassGate
+Kimi.AppKit.Web.Authorization.KRoleBypassGate.IsActive.get -> bool
+Kimi.AppKit.Web.Authorization.KRoleBypassGate.KRoleBypassGate(bool enabled, bool isProduction) -> void
+Kimi.AppKit.Web.Authorization.KRoleBypassOptions
+Kimi.AppKit.Web.Authorization.KRoleBypassOptions.Enabled.get -> bool
+Kimi.AppKit.Web.Authorization.KRoleBypassOptions.Enabled.set -> void
+Kimi.AppKit.Web.Authorization.KRoleBypassOptions.InjectRoles.get -> System.Action<System.Security.Claims.ClaimsIdentity!>?
+Kimi.AppKit.Web.Authorization.KRoleBypassOptions.InjectRoles.set -> void
+Kimi.AppKit.Web.Authorization.KRoleBypassOptions.KRoleBypassOptions() -> void
+Kimi.AppKit.Web.Authorization.KRoleBypassServiceCollectionExtensions
+Kimi.AppKit.Web.BackgroundJobs.HangfireSetup
+Kimi.AppKit.Web.BackgroundJobs.KHangfireDashboardSetup
+Kimi.AppKit.Web.Branding.KBrandingClient
+Kimi.AppKit.Web.Branding.KBrandingClient.GetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KBranding!>!
+Kimi.AppKit.Web.Branding.KBrandingClient.KBrandingClient(System.Net.Http.IHttpClientFactory! httpClientFactory, Microsoft.Extensions.Options.IOptionsMonitor<Kimi.AppKit.Web.Authentication.KOidcOptions!>! oidcOptions, Microsoft.Extensions.Caching.Memory.IMemoryCache! cache, Microsoft.Extensions.Logging.ILogger<Kimi.AppKit.Web.Branding.KBrandingClient!>! logger) -> void
+Kimi.AppKit.Web.Branding.KBrandingServiceCollectionExtensions
+Kimi.AppKit.Web.Branding.KServerBranding
+Kimi.AppKit.Web.Branding.KServerBranding.Dispose() -> void
+Kimi.AppKit.Web.Branding.KServerBranding.GetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Kimi.AppKit.Core.Contracts.KBranding!>
+Kimi.AppKit.Web.Branding.KServerBranding.KServerBranding(Kimi.AppKit.Web.Branding.KBrandingClient! client, Microsoft.AspNetCore.Components.PersistentComponentState! state) -> void
+Kimi.AppKit.Web.CorsSetup
+Kimi.AppKit.Web.Crud.KCrudEndpointRouteBuilderExtensions
+Kimi.AppKit.Web.Crud.KCrudEndpoints
+Kimi.AppKit.Web.Crud.KCrudEndpoints.AllowAnonymousRead() -> Kimi.AppKit.Web.Crud.KCrudEndpoints!
+Kimi.AppKit.Web.Crud.KCrudEndpoints.Read.get -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
+Kimi.AppKit.Web.Crud.KCrudEndpoints.RequireAuthorization(params string![]! policyNames) -> Kimi.AppKit.Web.Crud.KCrudEndpoints!
+Kimi.AppKit.Web.Crud.KCrudEndpoints.RequireReadAuthorization(params string![]! policyNames) -> Kimi.AppKit.Web.Crud.KCrudEndpoints!
+Kimi.AppKit.Web.Crud.KCrudEndpoints.RequireWriteAuthorization(params string![]! policyNames) -> Kimi.AppKit.Web.Crud.KCrudEndpoints!
+Kimi.AppKit.Web.Crud.KCrudEndpoints.Write.get -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
+Kimi.AppKit.Web.Crud.KQueryRequest
+Kimi.AppKit.Web.Crud.KQueryRequest.KQueryRequest() -> void
+Kimi.AppKit.Web.Crud.KQueryRequest.Query.get -> Kimi.AppKit.Core.Contracts.KQuery!
+Kimi.AppKit.Web.Email.IKEmailSender
+Kimi.AppKit.Web.Email.IKEmailSender.SendAsync(Kimi.AppKit.Web.Email.KEmailMessage! message, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Kimi.AppKit.Web.Email.KEmailAttachment
+Kimi.AppKit.Web.Email.KEmailAttachment.<Clone>$() -> Kimi.AppKit.Web.Email.KEmailAttachment!
+Kimi.AppKit.Web.Email.KEmailAttachment.Content.get -> byte[]!
+Kimi.AppKit.Web.Email.KEmailAttachment.Content.init -> void
+Kimi.AppKit.Web.Email.KEmailAttachment.ContentType.get -> string?
+Kimi.AppKit.Web.Email.KEmailAttachment.ContentType.init -> void
+Kimi.AppKit.Web.Email.KEmailAttachment.Deconstruct(out string! FileName, out byte[]! Content, out string? ContentType) -> void
+Kimi.AppKit.Web.Email.KEmailAttachment.Equals(Kimi.AppKit.Web.Email.KEmailAttachment? other) -> bool
+Kimi.AppKit.Web.Email.KEmailAttachment.FileName.get -> string!
+Kimi.AppKit.Web.Email.KEmailAttachment.FileName.init -> void
+Kimi.AppKit.Web.Email.KEmailAttachment.KEmailAttachment(string! FileName, byte[]! Content, string? ContentType = null) -> void
+Kimi.AppKit.Web.Email.KEmailMessage
+Kimi.AppKit.Web.Email.KEmailMessage.Attachments.get -> System.Collections.Generic.IReadOnlyList<Kimi.AppKit.Web.Email.KEmailAttachment!>!
+Kimi.AppKit.Web.Email.KEmailMessage.Attachments.init -> void
+Kimi.AppKit.Web.Email.KEmailMessage.Bcc.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Kimi.AppKit.Web.Email.KEmailMessage.Bcc.init -> void
+Kimi.AppKit.Web.Email.KEmailMessage.Body.get -> string!
+Kimi.AppKit.Web.Email.KEmailMessage.Body.init -> void
+Kimi.AppKit.Web.Email.KEmailMessage.Cc.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Kimi.AppKit.Web.Email.KEmailMessage.Cc.init -> void
+Kimi.AppKit.Web.Email.KEmailMessage.From.get -> string?
+Kimi.AppKit.Web.Email.KEmailMessage.From.init -> void
+Kimi.AppKit.Web.Email.KEmailMessage.KEmailMessage() -> void
+Kimi.AppKit.Web.Email.KEmailMessage.Subject.get -> string!
+Kimi.AppKit.Web.Email.KEmailMessage.Subject.init -> void
+Kimi.AppKit.Web.Email.KEmailMessage.To.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Kimi.AppKit.Web.Email.KEmailMessage.To.init -> void
+Kimi.AppKit.Web.Email.KEmailOptions
+Kimi.AppKit.Web.Email.KEmailOptions.FromAddress.get -> string!
+Kimi.AppKit.Web.Email.KEmailOptions.FromAddress.set -> void
+Kimi.AppKit.Web.Email.KEmailOptions.FromDisplayName.get -> string?
+Kimi.AppKit.Web.Email.KEmailOptions.FromDisplayName.set -> void
+Kimi.AppKit.Web.Email.KEmailOptions.Host.get -> string!
+Kimi.AppKit.Web.Email.KEmailOptions.Host.set -> void
+Kimi.AppKit.Web.Email.KEmailOptions.KEmailOptions() -> void
+Kimi.AppKit.Web.Email.KEmailOptions.NonProductionSubjectPrefix.get -> string?
+Kimi.AppKit.Web.Email.KEmailOptions.NonProductionSubjectPrefix.set -> void
+Kimi.AppKit.Web.Email.KEmailOptions.Password.get -> string?
+Kimi.AppKit.Web.Email.KEmailOptions.Password.set -> void
+Kimi.AppKit.Web.Email.KEmailOptions.Port.get -> int
+Kimi.AppKit.Web.Email.KEmailOptions.Port.set -> void
+Kimi.AppKit.Web.Email.KEmailOptions.SecureSocketOptions.get -> MailKit.Security.SecureSocketOptions
+Kimi.AppKit.Web.Email.KEmailOptions.SecureSocketOptions.set -> void
+Kimi.AppKit.Web.Email.KEmailOptions.Timeout.get -> System.TimeSpan
+Kimi.AppKit.Web.Email.KEmailOptions.Timeout.set -> void
+Kimi.AppKit.Web.Email.KEmailOptions.UserName.get -> string?
+Kimi.AppKit.Web.Email.KEmailOptions.UserName.set -> void
+Kimi.AppKit.Web.Email.KEmailServiceCollectionExtensions
+Kimi.AppKit.Web.Email.MailKitEmailSender
+Kimi.AppKit.Web.Email.MailKitEmailSender.MailKitEmailSender(Microsoft.Extensions.Options.IOptionsMonitor<Kimi.AppKit.Web.Email.KEmailOptions!>! options, Microsoft.Extensions.Hosting.IHostEnvironment! environment, Microsoft.Extensions.Logging.ILogger<Kimi.AppKit.Web.Email.MailKitEmailSender!>! logger) -> void
+Kimi.AppKit.Web.Email.MailKitEmailSender.SendAsync(Kimi.AppKit.Web.Email.KEmailMessage! message, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Kimi.AppKit.Web.ErrorHandling.BaseException
+Kimi.AppKit.Web.ErrorHandling.BaseException.BaseException(string! message, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.BadRequest) -> void
+Kimi.AppKit.Web.ErrorHandling.BaseException.StatusCode.get -> System.Net.HttpStatusCode
+Kimi.AppKit.Web.ErrorHandling.FixedErrorDetailPolicy
+Kimi.AppKit.Web.ErrorHandling.FixedErrorDetailPolicy.FixedErrorDetailPolicy(bool exposeDetails) -> void
+Kimi.AppKit.Web.ErrorHandling.FixedErrorDetailPolicy.ShouldExposeDetailsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<bool>
+Kimi.AppKit.Web.ErrorHandling.GlobalExceptionHandler
+Kimi.AppKit.Web.ErrorHandling.GlobalExceptionHandler.GlobalExceptionHandler(Microsoft.Extensions.Logging.ILogger<Kimi.AppKit.Web.ErrorHandling.GlobalExceptionHandler!>! logger, Kimi.AppKit.Web.ErrorHandling.IErrorDetailPolicy! errorDetailPolicy) -> void
+Kimi.AppKit.Web.ErrorHandling.GlobalExceptionHandler.TryHandleAsync(Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Exception! exception, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<bool>
+Kimi.AppKit.Web.ErrorHandling.IErrorDetailPolicy
+Kimi.AppKit.Web.ErrorHandling.IErrorDetailPolicy.ShouldExposeDetailsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<bool>
+Kimi.AppKit.Web.ErrorHandling.KErrorHandlingServiceCollectionExtensions
+Kimi.AppKit.Web.ErrorHandling.KErrorPageEndpoint
+Kimi.AppKit.Web.Excel.ExcelServiceCollectionExtensions
+Kimi.AppKit.Web.Excel.IExcelService
+Kimi.AppKit.Web.Excel.IExcelService.Export<T>(System.Collections.Generic.IEnumerable<T>! items, string! sheetName = "Sheet1") -> byte[]!
+Kimi.AppKit.Web.Excel.IExcelService.Import<T>(System.IO.Stream! content, int sheetIndex = 0) -> System.Collections.Generic.IReadOnlyList<T>!
+Kimi.AppKit.Web.HealthChecks.HealthCheckSetup
+Kimi.AppKit.Web.Hosting.KAppPipeline
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.ApiNotFoundFallback.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.ApiNotFoundFallback.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.ApiPathPrefix.get -> string!
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.ApiPathPrefix.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.AuthenticationEndpoints.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.AuthenticationEndpoints.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.DefaultCulture.get -> string!
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.DefaultCulture.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.ErrorPage.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.ErrorPage.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.ErrorPath.get -> string!
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.ErrorPath.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.HangfireDashboard.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.HangfireDashboard.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.HealthChecks.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.HealthChecks.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.KAppPipelineOptions() -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.LoginPath.get -> string!
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.LoginPath.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.NotFoundPath.get -> string!
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.NotFoundPath.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.OpenApi.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.OpenApi.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.OpsPolicy.get -> string?
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.OpsPolicy.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.PasswordLogin.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.PasswordLogin.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.PasswordLoginPath.get -> string!
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.PasswordLoginPath.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.QrLogin.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.QrLogin.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.RequestLocalization.get -> bool
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.RequestLocalization.set -> void
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.SupportedCultures.get -> string![]!
+Kimi.AppKit.Web.Hosting.KAppPipelineOptions.SupportedCultures.set -> void
+Kimi.AppKit.Web.Hosting.KAppServiceOptions
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.Excel.get -> bool
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.Excel.set -> void
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.InjectBypassRoles.get -> System.Action<System.Security.Claims.ClaimsIdentity!>?
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.InjectBypassRoles.set -> void
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.KAppServiceOptions() -> void
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.LoginPath.get -> string!
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.LoginPath.set -> void
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.OpenApi.get -> bool
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.OpenApi.set -> void
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.RoleBypass.get -> bool
+Kimi.AppKit.Web.Hosting.KAppServiceOptions.RoleBypass.set -> void
+Kimi.AppKit.Web.Hosting.KAppServices
+Kimi.AppKit.Web.Identity.HttpContextCurrentUser
+Kimi.AppKit.Web.Identity.HttpContextCurrentUser.GetUserNameAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<string!>
+Kimi.AppKit.Web.Identity.HttpContextCurrentUser.HttpContextCurrentUser(Microsoft.AspNetCore.Http.IHttpContextAccessor! accessor) -> void
+Kimi.AppKit.Web.Identity.HttpContextCurrentUser.IsAuthenticatedAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<bool>
+Kimi.AppKit.Web.Localization.KRequestLanguageHeaderCultureProvider
+Kimi.AppKit.Web.Localization.KRequestLanguageHeaderCultureProvider.KRequestLanguageHeaderCultureProvider() -> void
+Kimi.AppKit.Web.Localization.KRequestLocalizationExtensions
+Kimi.AppKit.Web.OpenApi.KOpenApiOptions
+Kimi.AppKit.Web.OpenApi.KOpenApiOptions.Enabled.get -> bool?
+Kimi.AppKit.Web.OpenApi.KOpenApiOptions.Enabled.set -> void
+Kimi.AppKit.Web.OpenApi.KOpenApiOptions.KOpenApiOptions() -> void
+Kimi.AppKit.Web.OpenApi.KOpenApiSetup
+const Kimi.AppKit.Web.Authentication.KAuthenticationSchemes.Oidc = "AppKitOpenId" -> string!
+const Kimi.AppKit.Web.Authentication.KAuthenticationSchemes.PasswordLogin = "AppKitPassword" -> string!
+const Kimi.AppKit.Web.Authentication.KOidcOptions.SectionName = "OpenIDConnect" -> string!
+const Kimi.AppKit.Web.Authentication.KOidcTokenService.HttpClientName = "AppKitIdpToken" -> string!
+const Kimi.AppKit.Web.Authentication.KQrLoginOptions.SectionName = "Auth:QrLogin" -> string!
+const Kimi.AppKit.Web.Authentication.KReturnUrl.Fallback = "/" -> string!
+const Kimi.AppKit.Web.Authorization.AuthorizationSetup.BlazorFrameworkPath = "/_framework" -> string!
+const Kimi.AppKit.Web.Authorization.KNetworkGateOptions.SectionName = "Auth:NetworkGate" -> string!
+const Kimi.AppKit.Web.Authorization.KRoleBypassOptions.SectionName = "Auth:RoleBypass" -> string!
+const Kimi.AppKit.Web.BackgroundJobs.KHangfireDashboardSetup.Path = "/hangfire" -> string!
+const Kimi.AppKit.Web.Branding.KBrandingClient.HttpClientName = "AppKitBranding" -> string!
+const Kimi.AppKit.Web.CorsSetup.PolicyName = "AppKitCors" -> string!
+const Kimi.AppKit.Web.Email.KEmailOptions.SectionName = "Email" -> string!
+const Kimi.AppKit.Web.Identity.HttpContextCurrentUser.Anonymous = "anonymous:unauthenticated" -> string!
+const Kimi.AppKit.Web.Identity.HttpContextCurrentUser.Unresolved = "anonymous:unresolved" -> string!
+const Kimi.AppKit.Web.OpenApi.KOpenApiOptions.SectionName = "OpenApi" -> string!
+override Kimi.AppKit.Web.Authentication.KPersistingAuthenticationStateProvider.GetAuthenticationStateAsync() -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState!>!
+override Kimi.AppKit.Web.Email.KEmailAttachment.Equals(object? obj) -> bool
+override Kimi.AppKit.Web.Email.KEmailAttachment.GetHashCode() -> int
+override Kimi.AppKit.Web.Email.KEmailAttachment.ToString() -> string!
+override Kimi.AppKit.Web.Localization.KRequestLanguageHeaderCultureProvider.DetermineProviderCultureResult(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Localization.ProviderCultureResult?>!
+static Kimi.AppKit.Web.Authentication.JwtBearerSetup.ConfigureAppKitJwtBearer(this Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions! options, string! authority, string! audience, bool requireHttpsMetadata = true, string! roleClaimType = "role", System.TimeSpan? clockSkew = null, System.Action<Microsoft.IdentityModel.Tokens.TokenValidationParameters!>? configureValidation = null) -> void
+static Kimi.AppKit.Web.Authentication.KAuthenticationSetup.AddAppKitAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Kimi.AppKit.Web.Authentication.KOidcOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.Authentication.KCookieSignIn.SignInAsync(Microsoft.AspNetCore.Http.HttpContext! http, Kimi.AppKit.Core.Contracts.KTokenResponse! token) -> System.Threading.Tasks.Task!
+static Kimi.AppKit.Web.Authentication.KOidcTokenServiceCollectionExtensions.AddAppKitOidcTokenService(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.Authentication.KPasswordLoginEndpoint.MapAppKitPasswordLogin(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> Microsoft.AspNetCore.Routing.IEndpointRouteBuilder!
+static Kimi.AppKit.Web.Authentication.KQrLoginEndpoints.MapAppKitQrLogin(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> Microsoft.AspNetCore.Routing.IEndpointRouteBuilder!
+static Kimi.AppKit.Web.Authentication.KQrLoginServiceCollectionExtensions.AddAppKitQrLogin(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.Authentication.KReturnUrl.Sanitize(string? returnUrl, System.Collections.Generic.IReadOnlyList<string!>? blockedPrefixes = null) -> string!
+static Kimi.AppKit.Web.Authorization.AuthorizationSetup.AddDefaultDenyAuthorization(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Microsoft.AspNetCore.Authorization.AuthorizationOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.Authorization.AuthorizationSetup.RequireAnyRole(params string![]! roles) -> Microsoft.AspNetCore.Authorization.AuthorizationPolicy!
+static Kimi.AppKit.Web.Authorization.KNetworkGateServiceCollectionExtensions.AddAppKitNetworkGate(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.Authorization.KRoleBypassServiceCollectionExtensions.AddAppKitRoleBypass(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, bool isProduction, System.Action<System.Security.Claims.ClaimsIdentity!>? injectRoles = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.BackgroundJobs.HangfireSetup.AddAppKitHangfire(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Kimi.AppKit.Data.Providers.DatabaseProvider provider, string! connectionString, System.Action<Hangfire.IGlobalConfiguration!>! configurePostgres, System.Action<System.IServiceProvider!, Hangfire.IGlobalConfiguration!>? configureAdditional = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.BackgroundJobs.KHangfireDashboardSetup.MapAppKitHangfireDashboard(this Microsoft.AspNetCore.Builder.WebApplication! app, string! policy) -> Microsoft.AspNetCore.Builder.WebApplication!
+static Kimi.AppKit.Web.Branding.KBrandingServiceCollectionExtensions.AddAppKitBranding(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.CorsSetup.AddAppCors(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyList<string!>! allowedOrigins, System.Collections.Generic.IReadOnlyList<string!>? allowedMethods = null, System.Collections.Generic.IReadOnlyList<string!>? allowedHeaders = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.Crud.KCrudEndpointRouteBuilderExtensions.MapCrudEndpoints<TEntity>(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string? prefix = null) -> Kimi.AppKit.Web.Crud.KCrudEndpoints!
+static Kimi.AppKit.Web.Crud.KQueryRequest.BindAsync(Microsoft.AspNetCore.Http.HttpContext! context, System.Reflection.ParameterInfo! parameter) -> System.Threading.Tasks.ValueTask<Kimi.AppKit.Web.Crud.KQueryRequest?>
+static Kimi.AppKit.Web.Email.KEmailAttachment.operator !=(Kimi.AppKit.Web.Email.KEmailAttachment? left, Kimi.AppKit.Web.Email.KEmailAttachment? right) -> bool
+static Kimi.AppKit.Web.Email.KEmailAttachment.operator ==(Kimi.AppKit.Web.Email.KEmailAttachment? left, Kimi.AppKit.Web.Email.KEmailAttachment? right) -> bool
+static Kimi.AppKit.Web.Email.KEmailServiceCollectionExtensions.AddAppKitEmail(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.ErrorHandling.KErrorHandlingServiceCollectionExtensions.AddAppKitErrorHandling(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.ErrorHandling.KErrorPageEndpoint.MapAppKitErrorPage(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> Microsoft.AspNetCore.Routing.IEndpointRouteBuilder!
+static Kimi.AppKit.Web.Excel.ExcelServiceCollectionExtensions.AddAppKitExcel(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.HealthChecks.HealthCheckSetup.AddAppHealthChecks<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! checkName = "database") -> Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder!
+static Kimi.AppKit.Web.HealthChecks.HealthCheckSetup.MapAppHealthChecks(this Microsoft.AspNetCore.Builder.WebApplication! app) -> Microsoft.AspNetCore.Builder.WebApplication!
+static Kimi.AppKit.Web.Hosting.KAppPipeline.MapAppKitApp(this Microsoft.AspNetCore.Builder.WebApplication! app, System.Action<Kimi.AppKit.Web.Hosting.KAppPipelineOptions!>? configure = null) -> Microsoft.AspNetCore.Builder.WebApplication!
+static Kimi.AppKit.Web.Hosting.KAppServices.AddAppKitApp(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder, System.Action<Kimi.AppKit.Web.Hosting.KAppServiceOptions!>? configure = null) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Kimi.AppKit.Web.Localization.KRequestLocalizationExtensions.CreateOptions(string! defaultCulture, System.Collections.Generic.IReadOnlyList<string!>! supportedCultures) -> Microsoft.AspNetCore.Builder.RequestLocalizationOptions!
+static Kimi.AppKit.Web.Localization.KRequestLocalizationExtensions.UseAppKitRequestLocalization(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! defaultCulture, System.Collections.Generic.IReadOnlyList<string!>! supportedCultures) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+static Kimi.AppKit.Web.OpenApi.KOpenApiSetup.AddAppKitOpenApi(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Web.OpenApi.KOpenApiSetup.MapAppKitOpenApi(this Microsoft.AspNetCore.Builder.WebApplication! app, string? productionPolicy = null) -> Microsoft.AspNetCore.Builder.WebApplication!
+static readonly Kimi.AppKit.Web.ErrorHandling.FixedErrorDetailPolicy.Disabled -> Kimi.AppKit.Web.ErrorHandling.FixedErrorDetailPolicy!

@@ -33,6 +33,13 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+    </ItemGroup>
+
+    <!-- 公开 API 快照文件：每个库工程各一对。Templates 是内容包（无程序集），无公开 API，排除。 -->
+    <ItemGroup Condition="'$(MSBuildProjectName)' != 'Kimi.AppKit.Templates'">
+        <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+        <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
     </ItemGroup>
 
     <ItemGroup Condition="Exists('$(MSBuildProjectDirectory)/README.md')">

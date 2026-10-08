@@ -1,0 +1,153 @@
+#nullable enable
+Kimi.AppKit.Data.AppKitMarker
+Kimi.AppKit.Data.Auditing.AuditableDbContext
+Kimi.AppKit.Data.Auditing.AuditableDbContext.AuditTrails.get -> Microsoft.EntityFrameworkCore.DbSet<Kimi.AppKit.Data.Auditing.Trail!>!
+Kimi.AppKit.Data.Auditing.AuditableDbContext.AuditableDbContext(Microsoft.EntityFrameworkCore.DbContextOptions! options, Kimi.AppKit.Core.Abstractions.IKCurrentUser! currentUser, System.TimeProvider! timeProvider) -> void
+Kimi.AppKit.Data.Auditing.AuditingBehavior
+Kimi.AppKit.Data.Auditing.AuditingBehavior.AuditingBehavior(Kimi.AppKit.Core.Abstractions.IKCurrentUser! currentUser, System.TimeProvider! timeProvider) -> void
+Kimi.AppKit.Data.Auditing.AuditingBehavior.SaveChangesAsync(Microsoft.EntityFrameworkCore.DbContext! context, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<int>!>! saveChanges, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken), bool recordTrails = true) -> System.Threading.Tasks.Task<int>!
+Kimi.AppKit.Data.Auditing.Trail
+Kimi.AppKit.Data.Auditing.Trail.AffectedColumns.get -> string?
+Kimi.AppKit.Data.Auditing.Trail.AffectedColumns.set -> void
+Kimi.AppKit.Data.Auditing.Trail.AuditOn.get -> System.DateTimeOffset
+Kimi.AppKit.Data.Auditing.Trail.AuditOn.set -> void
+Kimi.AppKit.Data.Auditing.Trail.Description.get -> string?
+Kimi.AppKit.Data.Auditing.Trail.Description.set -> void
+Kimi.AppKit.Data.Auditing.Trail.Id.get -> int
+Kimi.AppKit.Data.Auditing.Trail.Id.set -> void
+Kimi.AppKit.Data.Auditing.Trail.Name.get -> string!
+Kimi.AppKit.Data.Auditing.Trail.Name.set -> void
+Kimi.AppKit.Data.Auditing.Trail.NewValues.get -> string?
+Kimi.AppKit.Data.Auditing.Trail.NewValues.set -> void
+Kimi.AppKit.Data.Auditing.Trail.OldValues.get -> string?
+Kimi.AppKit.Data.Auditing.Trail.OldValues.set -> void
+Kimi.AppKit.Data.Auditing.Trail.PrimaryKey.get -> string?
+Kimi.AppKit.Data.Auditing.Trail.PrimaryKey.set -> void
+Kimi.AppKit.Data.Auditing.Trail.TableName.get -> string?
+Kimi.AppKit.Data.Auditing.Trail.TableName.set -> void
+Kimi.AppKit.Data.Auditing.Trail.Trail() -> void
+Kimi.AppKit.Data.Auditing.Trail.Type.get -> Kimi.AppKit.Data.Auditing.TrailType
+Kimi.AppKit.Data.Auditing.Trail.Type.set -> void
+Kimi.AppKit.Data.Auditing.Trail.UserId.get -> string!
+Kimi.AppKit.Data.Auditing.Trail.UserId.set -> void
+Kimi.AppKit.Data.Auditing.TrailType
+Kimi.AppKit.Data.Auditing.TrailType.Create = 1 -> Kimi.AppKit.Data.Auditing.TrailType
+Kimi.AppKit.Data.Auditing.TrailType.Delete = 3 -> Kimi.AppKit.Data.Auditing.TrailType
+Kimi.AppKit.Data.Auditing.TrailType.None = 0 -> Kimi.AppKit.Data.Auditing.TrailType
+Kimi.AppKit.Data.Auditing.TrailType.Update = 2 -> Kimi.AppKit.Data.Auditing.TrailType
+Kimi.AppKit.Data.Conventions.ConcurrencyConvention
+Kimi.AppKit.Data.Conventions.EnumStringConvention
+Kimi.AppKit.Data.Conventions.ModelConfigurationBuilderExtensions
+Kimi.AppKit.Data.Conventions.SoftDeleteConvention
+Kimi.AppKit.Data.Conventions.UniqueNameConvention
+Kimi.AppKit.Data.Conventions.UtcDateTimeOffsetConverter
+Kimi.AppKit.Data.Conventions.UtcDateTimeOffsetConverter.UtcDateTimeOffsetConverter() -> void
+Kimi.AppKit.Data.DbSchema
+Kimi.AppKit.Data.DesignTimeDbContextFactoryBase<TContext>
+Kimi.AppKit.Data.DesignTimeDbContextFactoryBase<TContext>.CreateDbContext(string![]! args) -> TContext!
+Kimi.AppKit.Data.DesignTimeDbContextFactoryBase<TContext>.DesignTimeDbContextFactoryBase() -> void
+Kimi.AppKit.Data.EfCrudDataSource<TContext, TEntity>
+Kimi.AppKit.Data.EfCrudDataSource<TContext, TEntity>.ContextFactory.get -> Microsoft.EntityFrameworkCore.IDbContextFactory<TContext!>!
+Kimi.AppKit.Data.EfCrudDataSource<TContext, TEntity>.EfCrudDataSource(Microsoft.EntityFrameworkCore.IDbContextFactory<TContext!>! contextFactory) -> void
+Kimi.AppKit.Data.KCrudBuilder<TContext>
+Kimi.AppKit.Data.KCrudBuilder<TContext>.AddEntity<TEntity, TDataSource>() -> Kimi.AppKit.Data.KCrudBuilder<TContext!>!
+Kimi.AppKit.Data.KCrudBuilder<TContext>.AddEntity<TEntity>() -> Kimi.AppKit.Data.KCrudBuilder<TContext!>!
+Kimi.AppKit.Data.KCrudBuilder<TContext>.KCrudBuilder(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+Kimi.AppKit.Data.KCrudBuilder<TContext>.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Kimi.AppKit.Data.KCrudEntityRegistration
+Kimi.AppKit.Data.KCrudEntityRegistration.<Clone>$() -> Kimi.AppKit.Data.KCrudEntityRegistration!
+Kimi.AppKit.Data.KCrudEntityRegistration.Deconstruct(out System.Type! EntityType) -> void
+Kimi.AppKit.Data.KCrudEntityRegistration.EntityType.get -> System.Type!
+Kimi.AppKit.Data.KCrudEntityRegistration.EntityType.init -> void
+Kimi.AppKit.Data.KCrudEntityRegistration.Equals(Kimi.AppKit.Data.KCrudEntityRegistration? other) -> bool
+Kimi.AppKit.Data.KCrudEntityRegistration.KCrudEntityRegistration(System.Type! EntityType) -> void
+Kimi.AppKit.Data.KCrudServiceCollectionExtensions
+Kimi.AppKit.Data.Modeling.KJsonConversionExtensions
+Kimi.AppKit.Data.Modeling.KModelingExtensions
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.End() -> Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity!>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.EntityBuilder.get -> Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity!>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.HasColumnType(string! columnType) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TProperty>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.HasDefaultValue(object? value) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TProperty>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.HasJsonConversion(System.Text.Json.JsonSerializerOptions? options = null) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TProperty>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.HasMaxLength(int maxLength) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TProperty>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.HasPrecision(int precision, int scale = 0) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TProperty>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.HasRange(long minValue, long maxValue, bool allowNull = false, string? constraintName = null) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TProperty>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.IsRequired(bool required = true) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TProperty>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.KProperty<TNext>(System.Linq.Expressions.Expression<System.Func<TEntity!, TNext>!>! nextProperty) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TNext>!
+Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity, TProperty>.PropertyBuilder.get -> Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder<TProperty>!
+Kimi.AppKit.Data.Providers.DatabaseProvider
+Kimi.AppKit.Data.Providers.DatabaseProvider.Npgsql = 0 -> Kimi.AppKit.Data.Providers.DatabaseProvider
+Kimi.AppKit.Data.Providers.DatabaseProvider.SqlServer = 1 -> Kimi.AppKit.Data.Providers.DatabaseProvider
+Kimi.AppKit.Data.Providers.DatabaseProviderSetup
+Kimi.AppKit.Data.Providers.IDbProviderDialect
+Kimi.AppKit.Data.Providers.IDbProviderDialect.ApplyModelConventions(Microsoft.EntityFrameworkCore.ModelBuilder! builder) -> void
+Kimi.AppKit.Data.Providers.IDbProviderDialect.BooleanLiteral(bool value) -> string!
+Kimi.AppKit.Data.Providers.IDbProviderDialect.IsUniqueConstraintViolation(System.Exception! exception) -> bool
+Kimi.AppKit.Data.Providers.IDbProviderDialect.Name.get -> string!
+Kimi.AppKit.Data.Providers.IDbProviderDialect.Quote(string! identifier) -> string!
+Kimi.AppKit.Data.Providers.PostgresDialect
+Kimi.AppKit.Data.Providers.PostgresDialect.ApplyModelConventions(Microsoft.EntityFrameworkCore.ModelBuilder! builder) -> void
+Kimi.AppKit.Data.Providers.PostgresDialect.BooleanLiteral(bool value) -> string!
+Kimi.AppKit.Data.Providers.PostgresDialect.IsUniqueConstraintViolation(System.Exception! exception) -> bool
+Kimi.AppKit.Data.Providers.PostgresDialect.Name.get -> string!
+Kimi.AppKit.Data.Providers.PostgresDialect.PostgresDialect() -> void
+Kimi.AppKit.Data.Providers.PostgresDialect.Quote(string! identifier) -> string!
+Kimi.AppKit.Data.Providers.ProviderDetection
+Kimi.AppKit.Data.Providers.SqlServerDialect
+Kimi.AppKit.Data.Providers.SqlServerDialect.ApplyModelConventions(Microsoft.EntityFrameworkCore.ModelBuilder! builder) -> void
+Kimi.AppKit.Data.Providers.SqlServerDialect.BooleanLiteral(bool value) -> string!
+Kimi.AppKit.Data.Providers.SqlServerDialect.IsUniqueConstraintViolation(System.Exception! exception) -> bool
+Kimi.AppKit.Data.Providers.SqlServerDialect.Name.get -> string!
+Kimi.AppKit.Data.Providers.SqlServerDialect.Quote(string! identifier) -> string!
+Kimi.AppKit.Data.Providers.SqlServerDialect.SqlServerDialect() -> void
+Kimi.AppKit.Data.ReflectiveCrudDataSource<TContext, TEntity>
+Kimi.AppKit.Data.ReflectiveCrudDataSource<TContext, TEntity>.ReflectiveCrudDataSource(Microsoft.EntityFrameworkCore.IDbContextFactory<TContext!>! contextFactory) -> void
+Kimi.AppKit.Data.Settings.KSettingService<TContext, TEntity>
+Kimi.AppKit.Data.Settings.KSettingService<TContext, TEntity>.DeleteAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Kimi.AppKit.Data.Settings.KSettingService<TContext, TEntity>.ExistsAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<bool>!
+Kimi.AppKit.Data.Settings.KSettingService<TContext, TEntity>.GetAsync<T>(string! key, T? defaultValue = default(T?), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T?>!
+Kimi.AppKit.Data.Settings.KSettingService<TContext, TEntity>.GetRawJsonAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<string?>!
+Kimi.AppKit.Data.Settings.KSettingService<TContext, TEntity>.KSettingService(TContext! db, Kimi.AppKit.Core.Settings.SettingDefaults! defaults, Microsoft.Extensions.Logging.ILogger<Kimi.AppKit.Data.Settings.KSettingService<TContext!, TEntity!>!>! logger) -> void
+Kimi.AppKit.Data.Settings.KSettingService<TContext, TEntity>.ResetToDefaultAsync(string! key, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Kimi.AppKit.Data.Settings.KSettingService<TContext, TEntity>.SetAsync<T>(string! key, T value, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Kimi.AppKit.Data.Settings.KSettingsServiceCollectionExtensions
+Kimi.AppKit.Data.UnitOfWork
+Kimi.AppKit.Data.UnitOfWork.ExecuteAsync(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! action, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+Kimi.AppKit.Data.UnitOfWork.UnitOfWork(Microsoft.EntityFrameworkCore.DbContext! context) -> void
+abstract Kimi.AppKit.Data.DesignTimeDbContextFactoryBase<TContext>.ConfigureProvider(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder<TContext!>! builder, string! connectionString) -> void
+abstract Kimi.AppKit.Data.DesignTimeDbContextFactoryBase<TContext>.CreateContext(Microsoft.EntityFrameworkCore.DbContextOptions<TContext!>! options) -> TContext!
+abstract Kimi.AppKit.Data.DesignTimeDbContextFactoryBase<TContext>.GetConnectionString() -> string!
+const Kimi.AppKit.Data.Conventions.SoftDeleteConvention.FilterKey = "AppKit:SoftDelete" -> string!
+const Kimi.AppKit.Data.DbSchema.Data = "Data" -> string!
+const Kimi.AppKit.Data.DbSchema.Reference = "Reference" -> string!
+const Kimi.AppKit.Data.Providers.DatabaseProviderSetup.ConfigKey = "Database:Provider" -> string!
+override Kimi.AppKit.Data.Auditing.AuditableDbContext.ConfigureConventions(Microsoft.EntityFrameworkCore.ModelConfigurationBuilder! builder) -> void
+override Kimi.AppKit.Data.Auditing.AuditableDbContext.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+override Kimi.AppKit.Data.KCrudEntityRegistration.Equals(object? obj) -> bool
+override Kimi.AppKit.Data.KCrudEntityRegistration.GetHashCode() -> int
+override Kimi.AppKit.Data.KCrudEntityRegistration.ToString() -> string!
+override Kimi.AppKit.Data.ReflectiveCrudDataSource<TContext, TEntity>.Filter(System.Linq.IQueryable<TEntity!>! source, Kimi.AppKit.Core.Contracts.KQuery! query) -> System.Linq.IQueryable<TEntity!>!
+static Kimi.AppKit.Data.Conventions.ConcurrencyConvention.ApplyConcurrencyTokens(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder, Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade! database) -> Microsoft.EntityFrameworkCore.ModelBuilder!
+static Kimi.AppKit.Data.Conventions.EnumStringConvention.ApplyEnumStringConstraints(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder, Kimi.AppKit.Data.Providers.IDbProviderDialect! dialect) -> Microsoft.EntityFrameworkCore.ModelBuilder!
+static Kimi.AppKit.Data.Conventions.ModelConfigurationBuilderExtensions.ApplyAppKitConventions(this Microsoft.EntityFrameworkCore.ModelConfigurationBuilder! builder) -> Microsoft.EntityFrameworkCore.ModelConfigurationBuilder!
+static Kimi.AppKit.Data.Conventions.SoftDeleteConvention.ApplySoftDeleteFilter(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!
+static Kimi.AppKit.Data.Conventions.UniqueNameConvention.ApplyUniqueNameConstraint(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder, Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade! database) -> Microsoft.EntityFrameworkCore.ModelBuilder!
+static Kimi.AppKit.Data.KCrudEntityRegistration.operator !=(Kimi.AppKit.Data.KCrudEntityRegistration? left, Kimi.AppKit.Data.KCrudEntityRegistration? right) -> bool
+static Kimi.AppKit.Data.KCrudEntityRegistration.operator ==(Kimi.AppKit.Data.KCrudEntityRegistration? left, Kimi.AppKit.Data.KCrudEntityRegistration? right) -> bool
+static Kimi.AppKit.Data.KCrudServiceCollectionExtensions.AddKCrud<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Kimi.AppKit.Data.KCrudBuilder<TContext!>!
+static Kimi.AppKit.Data.Modeling.KJsonConversionExtensions.HasJsonConversion<TProperty>(this Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder<TProperty>! propertyBuilder, System.Text.Json.JsonSerializerOptions? options = null) -> Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder<TProperty>!
+static Kimi.AppKit.Data.Modeling.KModelingExtensions.KProperty<TEntity, TProperty>(this Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity!>! builder, System.Linq.Expressions.Expression<System.Func<TEntity!, TProperty>!>! property, Kimi.AppKit.Data.Providers.IDbProviderDialect? dialect = null) -> Kimi.AppKit.Data.Modeling.KPropertyChain<TEntity!, TProperty>!
+static Kimi.AppKit.Data.Modeling.KModelingExtensions.ToSchemaTable<TEntity>(this Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity!>! builder, string! schema, string? tableName = null) -> Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity!>!
+static Kimi.AppKit.Data.Providers.DatabaseProviderSetup.Resolve(string? name) -> Kimi.AppKit.Data.Providers.DatabaseProvider
+static Kimi.AppKit.Data.Providers.ProviderDetection.Dialect(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade! database) -> Kimi.AppKit.Data.Providers.IDbProviderDialect!
+static Kimi.AppKit.Data.Providers.ProviderDetection.IsPostgres(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade! database) -> bool
+static Kimi.AppKit.Data.Providers.ProviderDetection.IsSqlServer(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade! database) -> bool
+static Kimi.AppKit.Data.Providers.ProviderDetection.IsSqlite(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade! database) -> bool
+static Kimi.AppKit.Data.Settings.KSettingsServiceCollectionExtensions.AddAppKitSettings<TContext, TEntity>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Kimi.AppKit.Core.Settings.SettingDefaults!>? registerDefaults = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+virtual Kimi.AppKit.Data.Auditing.AuditableDbContext.AuditingEnabled.get -> bool
+virtual Kimi.AppKit.Data.EfCrudDataSource<TContext, TEntity>.DeleteAsync(object! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+virtual Kimi.AppKit.Data.EfCrudDataSource<TContext, TEntity>.Filter(System.Linq.IQueryable<TEntity!>! source, Kimi.AppKit.Core.Contracts.KQuery! query) -> System.Linq.IQueryable<TEntity!>!
+virtual Kimi.AppKit.Data.EfCrudDataSource<TContext, TEntity>.GetAsync(object! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TEntity?>!
+virtual Kimi.AppKit.Data.EfCrudDataSource<TContext, TEntity>.LoadAsync(Kimi.AppKit.Core.Contracts.KQuery! query, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KPage<TEntity!>!>!
+virtual Kimi.AppKit.Data.EfCrudDataSource<TContext, TEntity>.UpsertAsync(TEntity! item, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!

@@ -1,0 +1,173 @@
+#nullable enable
+Kimi.AppKit.Crud.AppKitMarker
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.ExcludeInterfaces.get -> System.Collections.Generic.IEnumerable<System.Type!>?
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.ExcludeInterfaces.set -> void
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.FieldReadOnly.get -> System.Func<T!, string!, bool>?
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.FieldReadOnly.set -> void
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.HideIdentity.get -> bool
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.HideIdentity.set -> void
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.KEntityFormDialog() -> void
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.Model.get -> T!
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.Model.set -> void
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.ReadOnly.get -> bool
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.ReadOnly.set -> void
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.Title.get -> string!
+Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.Title.set -> void
+Kimi.AppKit.Crud.Http.KHttpCrudDataSource<T>
+Kimi.AppKit.Crud.Http.KHttpCrudDataSource<T>.DeleteAsync(object! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+Kimi.AppKit.Crud.Http.KHttpCrudDataSource<T>.GetAsync(object! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T?>!
+Kimi.AppKit.Crud.Http.KHttpCrudDataSource<T>.KHttpCrudDataSource(System.Net.Http.HttpClient! httpClient, string? prefix = null) -> void
+Kimi.AppKit.Crud.Http.KHttpCrudDataSource<T>.LoadAsync(Kimi.AppKit.Core.Contracts.KQuery! query, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KPage<T>!>!
+Kimi.AppKit.Crud.Http.KHttpCrudDataSource<T>.UpsertAsync(T item, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+Kimi.AppKit.Crud.Http.KHttpCrudServiceCollectionExtensions
+Kimi.AppKit.Crud.Http.KHttpResultExtensions
+Kimi.AppKit.Crud.Http.KPrerenderCrudDataSource<T>
+Kimi.AppKit.Crud.Http.KPrerenderCrudDataSource<T>.DeleteAsync(object! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+Kimi.AppKit.Crud.Http.KPrerenderCrudDataSource<T>.GetAsync(object! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T?>!
+Kimi.AppKit.Crud.Http.KPrerenderCrudDataSource<T>.KPrerenderCrudDataSource() -> void
+Kimi.AppKit.Crud.Http.KPrerenderCrudDataSource<T>.LoadAsync(Kimi.AppKit.Core.Contracts.KQuery! query, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KPage<T>!>!
+Kimi.AppKit.Crud.Http.KPrerenderCrudDataSource<T>.UpsertAsync(T item, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+Kimi.AppKit.Crud.Http.KPrerenderCrudServiceCollectionExtensions
+Kimi.AppKit.Crud.KCrudLayout<T>
+Kimi.AppKit.Crud.KCrudLayout<T>.CancelLabel.get -> string!
+Kimi.AppKit.Crud.KCrudLayout<T>.CancelLabel.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Crud.KCrudLayout<T>.ChildContent.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.DeleteLabel.get -> string!
+Kimi.AppKit.Crud.KCrudLayout<T>.DeleteLabel.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.FooterContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Crud.KCrudLayout<T>.FooterContent.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.FormId.get -> string?
+Kimi.AppKit.Crud.KCrudLayout<T>.FormId.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.KCrudLayout() -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.Model.get -> T!
+Kimi.AppKit.Crud.KCrudLayout<T>.Model.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.OnCancel.get -> Microsoft.AspNetCore.Components.EventCallback
+Kimi.AppKit.Crud.KCrudLayout<T>.OnCancel.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.OnDelete.get -> Microsoft.AspNetCore.Components.EventCallback
+Kimi.AppKit.Crud.KCrudLayout<T>.OnDelete.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.OnValidSubmit.get -> Microsoft.AspNetCore.Components.EventCallback<T!>
+Kimi.AppKit.Crud.KCrudLayout<T>.OnValidSubmit.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.ReadOnly.get -> bool
+Kimi.AppKit.Crud.KCrudLayout<T>.ReadOnly.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.ShowActionBar.get -> bool
+Kimi.AppKit.Crud.KCrudLayout<T>.ShowActionBar.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.ShowDelete.get -> bool
+Kimi.AppKit.Crud.KCrudLayout<T>.ShowDelete.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.ShowSubmit.get -> bool
+Kimi.AppKit.Crud.KCrudLayout<T>.ShowSubmit.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.SubmitLabel.get -> string!
+Kimi.AppKit.Crud.KCrudLayout<T>.SubmitLabel.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.UserActions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Crud.KCrudLayout<T>.UserActions.set -> void
+Kimi.AppKit.Crud.KCrudLayout<T>.Validator.get -> Microsoft.AspNetCore.Components.RenderFragment?
+Kimi.AppKit.Crud.KCrudLayout<T>.Validator.set -> void
+Kimi.AppKit.Crud.KEntityCrudPage<T>
+Kimi.AppKit.Crud.KEntityCrudPage<T>.DataSource.get -> Kimi.AppKit.Core.Abstractions.ICrudDataSource<T!>!
+Kimi.AppKit.Crud.KEntityCrudPage<T>.DataSource.set -> void
+Kimi.AppKit.Crud.KEntityCrudPage<T>.ExcludeInterfaces.get -> System.Collections.Generic.IEnumerable<System.Type!>?
+Kimi.AppKit.Crud.KEntityCrudPage<T>.ExcludeInterfaces.set -> void
+Kimi.AppKit.Crud.KEntityCrudPage<T>.FieldReadOnly.get -> System.Func<T!, string!, bool>?
+Kimi.AppKit.Crud.KEntityCrudPage<T>.FieldReadOnly.set -> void
+Kimi.AppKit.Crud.KEntityCrudPage<T>.KEntityCrudPage() -> void
+Kimi.AppKit.Crud.KEntityCrudPage<T>.SearchPlaceholder.get -> string!
+Kimi.AppKit.Crud.KEntityCrudPage<T>.SearchPlaceholder.set -> void
+Kimi.AppKit.Crud.KEntityField
+Kimi.AppKit.Crud.KEntityField.KEntityField() -> void
+Kimi.AppKit.Crud.KEntityField.Model.get -> object!
+Kimi.AppKit.Crud.KEntityField.Model.set -> void
+Kimi.AppKit.Crud.KEntityField.Property.get -> System.Reflection.PropertyInfo!
+Kimi.AppKit.Crud.KEntityField.Property.set -> void
+Kimi.AppKit.Crud.KEntityField.ReadOnly.get -> bool
+Kimi.AppKit.Crud.KEntityField.ReadOnly.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>
+Kimi.AppKit.Crud.KEntityForm<T>.DeleteLabel.get -> string!
+Kimi.AppKit.Crud.KEntityForm<T>.DeleteLabel.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.ExcludeInterfaces.get -> System.Collections.Generic.IEnumerable<System.Type!>?
+Kimi.AppKit.Crud.KEntityForm<T>.ExcludeInterfaces.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.FieldReadOnly.get -> System.Func<T!, string!, bool>?
+Kimi.AppKit.Crud.KEntityForm<T>.FieldReadOnly.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.FormId.get -> string?
+Kimi.AppKit.Crud.KEntityForm<T>.FormId.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.HideIdentity.get -> bool
+Kimi.AppKit.Crud.KEntityForm<T>.HideIdentity.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.KEntityForm() -> void
+Kimi.AppKit.Crud.KEntityForm<T>.Model.get -> T!
+Kimi.AppKit.Crud.KEntityForm<T>.Model.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.OnCancel.get -> Microsoft.AspNetCore.Components.EventCallback
+Kimi.AppKit.Crud.KEntityForm<T>.OnCancel.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.OnDelete.get -> Microsoft.AspNetCore.Components.EventCallback
+Kimi.AppKit.Crud.KEntityForm<T>.OnDelete.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.OnValidSubmit.get -> Microsoft.AspNetCore.Components.EventCallback<T!>
+Kimi.AppKit.Crud.KEntityForm<T>.OnValidSubmit.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.ReadOnly.get -> bool
+Kimi.AppKit.Crud.KEntityForm<T>.ReadOnly.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.ShowActionBar.get -> bool
+Kimi.AppKit.Crud.KEntityForm<T>.ShowActionBar.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.ShowDelete.get -> bool
+Kimi.AppKit.Crud.KEntityForm<T>.ShowDelete.set -> void
+Kimi.AppKit.Crud.KEntityForm<T>.SubmitLabel.get -> string!
+Kimi.AppKit.Crud.KEntityForm<T>.SubmitLabel.set -> void
+Kimi.AppKit.Crud.KEntityTable<T>
+Kimi.AppKit.Crud.KEntityTable<T>.DataSource.get -> Kimi.AppKit.Core.Abstractions.ICrudDataSource<T!>!
+Kimi.AppKit.Crud.KEntityTable<T>.DataSource.set -> void
+Kimi.AppKit.Crud.KEntityTable<T>.Dense.get -> bool
+Kimi.AppKit.Crud.KEntityTable<T>.Dense.set -> void
+Kimi.AppKit.Crud.KEntityTable<T>.ExcludeInterfaces.get -> System.Collections.Generic.IEnumerable<System.Type!>?
+Kimi.AppKit.Crud.KEntityTable<T>.ExcludeInterfaces.set -> void
+Kimi.AppKit.Crud.KEntityTable<T>.Filter.get -> Kimi.AppKit.Core.Contracts.KQuery?
+Kimi.AppKit.Crud.KEntityTable<T>.Filter.set -> void
+Kimi.AppKit.Crud.KEntityTable<T>.KEntityTable() -> void
+Kimi.AppKit.Crud.KEntityTable<T>.PageSizeOptions.get -> int[]!
+Kimi.AppKit.Crud.KEntityTable<T>.PageSizeOptions.set -> void
+Kimi.AppKit.Crud.KEntityTable<T>.ReloadAsync() -> System.Threading.Tasks.Task!
+Kimi.AppKit.Crud.KEntityTable<T>.RowActions.get -> Microsoft.AspNetCore.Components.RenderFragment<T!>?
+Kimi.AppKit.Crud.KEntityTable<T>.RowActions.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>
+Kimi.AppKit.Crud.KSearchSelect<TItem>.DataSource.get -> Kimi.AppKit.Core.Abstractions.ICrudDataSource<TItem!>!
+Kimi.AppKit.Crud.KSearchSelect<TItem>.DataSource.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Disabled.get -> bool
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Disabled.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Filters.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>?
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Filters.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.HelperText.get -> string?
+Kimi.AppKit.Crud.KSearchSelect<TItem>.HelperText.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.IdOf.get -> System.Func<TItem!, int>!
+Kimi.AppKit.Crud.KSearchSelect<TItem>.IdOf.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.KSearchSelect() -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Label.get -> string?
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Label.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.MaxItems.get -> int
+Kimi.AppKit.Crud.KSearchSelect<TItem>.MaxItems.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.NoItemsText.get -> string!
+Kimi.AppKit.Crud.KSearchSelect<TItem>.NoItemsText.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.PrimaryText.get -> System.Func<TItem!, string!>!
+Kimi.AppKit.Crud.KSearchSelect<TItem>.PrimaryText.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Required.get -> bool
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Required.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.SecondaryText.get -> System.Func<TItem!, string!>?
+Kimi.AppKit.Crud.KSearchSelect<TItem>.SecondaryText.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Value.get -> int?
+Kimi.AppKit.Crud.KSearchSelect<TItem>.Value.set -> void
+Kimi.AppKit.Crud.KSearchSelect<TItem>.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<int?>
+Kimi.AppKit.Crud.KSearchSelect<TItem>.ValueChanged.set -> void
+Kimi.AppKit.Crud._Imports
+Kimi.AppKit.Crud._Imports.Execute() -> void
+Kimi.AppKit.Crud._Imports._Imports() -> void
+override Kimi.AppKit.Crud.KEntityField.OnParametersSet() -> void
+override Kimi.AppKit.Crud.KEntityForm<T>.OnInitialized() -> void
+override Kimi.AppKit.Crud.KEntityTable<T>.OnInitialized() -> void
+override Kimi.AppKit.Crud.KSearchSelect<TItem>.OnParametersSetAsync() -> System.Threading.Tasks.Task!
+static Kimi.AppKit.Crud.Http.KHttpCrudServiceCollectionExtensions.AddHttpCrudDataSource<T>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string? prefix = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Crud.Http.KHttpResultExtensions.ToKProblemAsync(this System.Net.Http.HttpResponseMessage! response, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KProblem!>!
+static Kimi.AppKit.Crud.Http.KHttpResultExtensions.ToKResultAsync(this System.Net.Http.HttpResponseMessage! response, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Kimi.AppKit.Core.Contracts.KResult>!
+static Kimi.AppKit.Crud.Http.KPrerenderCrudServiceCollectionExtensions.AddPrerenderCrudDataSource<T>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Kimi.AppKit.Crud.KEntityTable<T>.FormatValue(System.Reflection.PropertyInfo! property, T! row) -> string!
+~override Kimi.AppKit.Crud.Dialogs.KEntityFormDialog<T>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Crud.KCrudLayout<T>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Crud.KEntityCrudPage<T>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Crud.KEntityField.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Crud.KEntityForm<T>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Crud.KEntityTable<T>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override Kimi.AppKit.Crud.KSearchSelect<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
