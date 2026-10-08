@@ -2,8 +2,7 @@
 
 .NET 10 企业应用基座：一套 NuGet 包 + 一个项目模板，把 Blazor 业务系统里反复重写的东西一次做对。
 
-> 🚧 **开发中。** 当前处于 P0（仓库骨架与可运行基线），包内容尚未填充。
-> 路线图见 [`docs/ROADMAP.md`](docs/ROADMAP.md)。
+> 1.0 之前（0.x）API 可能有破坏性变更；发布说明见 GitHub Release。
 
 ## 包
 
@@ -11,10 +10,12 @@
 |---|---|
 | `Kimi.AppKit.Core` | 零依赖基座：抽象接口、契约 POCO、反射与字符串工具、单号生成器、四层设置契约 |
 | `Kimi.AppKit.Data` | EF Core 10：审计轨迹、软删除、双 provider（PostgreSQL / SQL Server）方言收口、UTC 时间归一、动态查询引擎 |
-| `Kimi.AppKit.Web` | ASP.NET Core 10：全局异常处理、健康检查、认证装配、OpenAPI、Excel 导入导出、后台任务、可观测性 |
+| `Kimi.AppKit.Web` | ASP.NET Core 10：全局异常处理、健康检查、认证装配、OpenAPI、Excel 导入导出、后台任务 |
 | `Kimi.AppKit.Design` | 设计系统：蓝图配色令牌、`MudTheme` 预设、`.k-*` 样式、自托管字体 |
 | `Kimi.AppKit.Components` | 标准化 Blazor 组件库，**渲染模式无关** |
 | `Kimi.AppKit.Crud` | 反射驱动通用 CRUD：登记一个实体即得列表、增删改与 Excel 导入导出 |
+| `Kimi.AppKit.Http` | Refit 客户端注册的标准封装：源生成、零反射，统一 JSON 约定与错误处理 |
+| `Kimi.AppKit.Observability` | OpenTelemetry 装配（独立包，带 10 个传递依赖，按需引用） |
 | `Kimi.AppKit.Templates` | `dotnet new kimiapp` 项目模板 |
 
 ## 三条设计原则
@@ -31,8 +32,8 @@
 ## 仓库结构
 
 ```
-src/         七个包工程
-samples/     AppTemplate —— 既是 dotnet new 模板源，也是每个阶段的真实验收载体
+src/         九个包工程（8 库 + 模板）
+samples/     AppTemplate.Next —— dotnet new 模板源，也是每个阶段的真实验收载体
 tests/       打包契约与依赖方向的回归测试
 docs/        路线图、各阶段复盘
 ```

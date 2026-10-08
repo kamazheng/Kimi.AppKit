@@ -33,7 +33,7 @@ public static partial class XmlDocLookup
     /// <param name="xmlPath">XML 文件相对 wwwroot 的路径，例如 <c>"MyApp.Shared.xml"</c>。</param>
     /// <remarks>
     /// ⚠️ <paramref name="xmlPath"/> **没有默认值**，必须显式传。
-    /// 前身实现把它默认成了另一个项目的文件名（<c>"CDU_TMES.Shared.xml"</c>）——
+    /// 前身实现把它默认成了另一个项目的文件名（<c>"{另一项目}.Shared.xml"</c>）——
     /// 换个项目照抄这行代码，拉取 404、静默失败，界面上所有提示文字全部消失，且不报错。
     /// </remarks>
     public static async Task InitAsync(HttpClient httpClient, string xmlPath)

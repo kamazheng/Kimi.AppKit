@@ -6,11 +6,11 @@ namespace Kimi.AppKit.Observability;
 /// <remarks>
 /// 【⚠️ 这里每一项都曾经是硬编码】前身的 OTel 装配里写死了：
 /// <list type="bullet">
-/// <item><c>service.namespace = "Company-{env}"</c>——会出现在**每一条**遥测数据上，
+/// <item><c>service.namespace = "{公司缩写}-{env}"</c>——会出现在**每一条**遥测数据上，
 ///       客户在自己的 Grafana 里看到的是别人公司的名字</item>
 /// <item><c>serviceVersion = "1.0"</c>——所有版本的数据混在一起，没法按版本区分问题，
 ///       而项目里明明有取真实版本号的办法</item>
-/// <item>HttpClient 过滤按域名 <c>internal.example.com</c> 排除——客户环境不命中，
+/// <item>HttpClient 过滤按域名 <c>配置中心主机名</c> 排除——客户环境不命中，
 ///       等于这条过滤不存在</item>
 /// <item>SQL 过滤只认 <c>Microsoft.Data.SqlClient.SqlCommand</c>——切到 PostgreSQL 后
 ///       **整个失效**，Hangfire 的轮询 SQL 会灌满 trace</item>
