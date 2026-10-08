@@ -1,7 +1,7 @@
 # CLAUDE.md — KMoldApp
 
 `dotnet new` 模板的样例宿主。它同时是**两样东西**：
-① 派生真实业务系统的起点；② `Kimi.AppKit` 七个包的**活体集成测试**。
+① 派生真实业务系统的起点；② `Kimi.AppKit` 九个包（8 库 + 模板）的**活体集成测试**。
 
 ---
 
@@ -10,12 +10,23 @@
 **第 0 步永远是：查 `Kimi.AppKit` 是不是已经有实现。**
 
 包里有的能力**禁止在本项目里自己写一套**。强制对照表见
-`.claude/rules/appkit-api-map.md`——那张表列了七个包的全部公开能力，
+`.claude/rules/appkit-api-map.md`——那张表列了 8 个库包的全部公开能力，
 以「想做 X → 必须用 Y → 禁止自写 Z」的形式组织。
 
 查法有讲究（错过三次）：只 grep `public static class` 会漏掉接口+实现形态；
 只查一个包会漏；按方法名统计用量会把不同类的同名方法混成一个。
 正确查法见 `.claude/rules/appkit-consumption.md` 第 0 节。
+
+---
+
+## 刻意不含的东西（裁决落字）
+
+- **Hangfire：模板不含业务作业，S6 由 Mes 仓实现**。模板只装配存储与服务器
+  （`AddAppKitHangfire` + `AddHangfireServer`），不定义任何周期作业；
+  作业与其落点（装配放 Mes 仓还是进 AppKit 包）由 S6 评审裁决。
+  ⚠️ 与子计划原话「模板不含 Hangfire」不符，原因见 A3 线报告「待决」。
+- **不含数据库迁移执行脚本**：生产迁移闸门由 S2b 的迁移镜像承接，模板不再带
+  `migrate-prod.*`；也不带 `generate-dockerfile.sh`——根目录 `Dockerfile` 即是唯一的镜像构建入口。
 
 ---
 
